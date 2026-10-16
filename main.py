@@ -5110,7 +5110,7 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
     def do_GET(self):
         parsed = urlparse(self.path)
         path = parsed.path
-        if os.environ.get("ELITE_HEADLESS") == "1" and (path in ("/game-builder", "/admin/game-builder", "/network-monitor") or path.startswith("/api/admin/")):
+        if os.environ.get("ELITE_HEADLESS") == "1" and (path in ("/game-builder", "/admin/game-builder") or path.startswith("/api/admin/")):
             self.send_error(403, "Administration disabled on public server")
             return
         query = parse_qs(parsed.query)
