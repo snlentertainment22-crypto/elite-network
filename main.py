@@ -9,13 +9,20 @@ import threading
 import time
 import io
 import qrcode
-import tkinter as tk
+if os.environ.get("ELITE_HEADLESS") == "1":
+    tk = None
+    messagebox = None
+    simpledialog = None
+    ttk = None
+else:
+    import tkinter as tk
+    from tkinter import messagebox, simpledialog, ttk
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from tkinter import messagebox, simpledialog, ttk
+
 from urllib.parse import parse_qs, urlparse
 from urllib.request import Request, urlopen
 from game_builder.admin_data import get_game_builder_payload
