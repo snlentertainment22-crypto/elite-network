@@ -1,0 +1,1213 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Elite Trivia Blitz TV</title>
+<style>
+:root{color-scheme:dark;--cyan:#63dfff;--pink:#ff4edc;--white:#fff;--shadow:0 0 20px rgba(0,0,0,.45)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;font-family:Arial,Helvetica,sans-serif;color:#fff}
+#viewport{position:fixed;inset:0;display:grid;place-items:center;background:#02040a;overflow:hidden}
+#stage{position:relative;width:min(100vw,calc(100vh * 16 / 9));height:min(100vh,calc(100vw * 9 / 16));aspect-ratio:16/9;overflow:hidden;background:#04060b}
+#screen,.overlay{position:absolute;inset:0}
+#screen{background:#04060b center/100% 100% no-repeat}
+.hidden{display:none!important}
+.debugFooter{position:absolute;left:1%;right:1%;bottom:.5%;text-align:center;font-size:12px;font-weight:700;color:#d9e7ff;text-shadow:0 2px 6px rgba(0,0,0,.8);opacity:.82;pointer-events:none}
+.centerWrap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:82%;text-align:center}
+.pill{display:inline-block;padding:.65% 1.7%;border-radius:999px;background:rgba(4,10,20,.70);border:2px solid rgba(99,223,255,.75);font-size:26px;font-weight:900;letter-spacing:.04em;box-shadow:var(--shadow)}
+.categoryTitle{margin:2% auto 0;width:84%;font-size:112px;font-weight:1000;line-height:1.02;text-shadow:0 4px 18px rgba(0,0,0,.7);text-transform:uppercase;overflow:hidden}
+.categorySub{margin-top:1.5%;font-size:44px;font-weight:900;text-shadow:0 4px 18px rgba(0,0,0,.7)}
+.waitingCopy{margin-top:2%;font-size:34px;font-weight:800;text-shadow:0 4px 16px rgba(0,0,0,.7)}
+.board{position:absolute;inset:0}
+.topInfo{position:absolute;inset:0;font-weight:900;text-shadow:0 2px 10px rgba(0,0,0,.75);pointer-events:none}
+.topInfo .left,.topInfo .mid,.topInfo .right{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+/* Regular question / final wager header: coordinates are matched to the artwork. */
+.topInfo.questionHeader .left{left:11.55%;width:11.6%;top:4.45%;height:13.0%;font-size:64px;line-height:1}
+.topInfo.questionHeader .mid{left:27.2%;right:26.2%;top:4.45%;height:13.0%;font-size:30px;line-height:1.02;padding:0 1.2%}
+.topInfo.questionHeader .right{right:8.2%;width:15.6%;top:4.45%;height:13.0%;font-size:50px;line-height:1.0;white-space:nowrap}
+/* Roulette wager header uses the roulette artwork, whose timer circle sits slightly farther left. */
+.topInfo.rouletteHeader .left{left:10.45%;width:11.2%;top:3.55%;height:14.1%;font-size:64px;line-height:1;z-index:2}
+.topInfo.rouletteHeader .mid{left:28.0%;right:29.0%;top:3.45%;height:13.6%;font-size:30px;line-height:1.02;padding:0 1.2%;background:linear-gradient(90deg,rgba(4,13,34,.94),rgba(16,10,43,.94));border-radius:10px;z-index:2}
+.topInfo.rouletteHeader .right{right:9.45%;width:16.6%;top:3.45%;height:13.6%;font-size:48px;line-height:1.0;white-space:nowrap;background:linear-gradient(90deg,rgba(13,11,39,.96),rgba(7,20,45,.96));border-radius:10px;z-index:2}
+.questionBox{position:absolute;left:10.8%;right:10.8%;top:22.4%;height:20.5%;display:flex;align-items:center;justify-content:center;padding:1.3% 4.2%;text-align:center;font-size:58px;font-weight:900;line-height:1.08;text-shadow:0 3px 12px rgba(0,0,0,.85);overflow:hidden}
+.choiceGrid{position:absolute;left:10.1%;right:10.1%;top:47.4%;height:34.2%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8% 3.6%}
+.choiceCell{position:relative;display:flex;align-items:center;justify-content:center;padding:1.5% 8% 1.5% 13%;text-align:center;font-size:40px;font-weight:900;line-height:1.05;text-shadow:0 3px 12px rgba(0,0,0,.9);overflow:hidden}
+.choiceCell.correct::before{content:"";position:absolute;inset:5%;border-radius:18px;background:rgba(76,255,151,.22);box-shadow:0 0 18px rgba(76,255,151,.55),inset 0 0 0 3px rgba(255,255,255,.25)}
+.choiceCell>span{position:relative;z-index:1;display:block;width:100%;max-height:100%;overflow:hidden}
+.sixMask{position:absolute;left:11.5%;right:8.5%;top:45.5%;bottom:5.5%;background:rgba(3,8,18,.88);border-radius:22px;box-shadow:inset 0 0 40px rgba(0,0,0,.35)}
+.sixGrid{position:absolute;left:13%;right:10%;top:47%;height:43%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:5.5% 3%}
+.sixChoice{position:relative;display:flex;align-items:center;justify-content:center;padding:1% 6%;border:4px solid;border-radius:18px;background:rgba(3,8,18,.62);text-align:center;font-size:32px;font-weight:900;line-height:1.03;text-shadow:0 3px 12px rgba(0,0,0,.9);overflow:hidden}
+.sixChoice:nth-child(1){border-color:#15dfff;box-shadow:0 0 15px #15dfff}.sixChoice:nth-child(2){border-color:#ff9a21;box-shadow:0 0 15px #ff9a21}.sixChoice:nth-child(3){border-color:#57ff2d;box-shadow:0 0 15px #57ff2d}.sixChoice:nth-child(4){border-color:#ffe52e;box-shadow:0 0 15px #ffe52e}.sixChoice:nth-child(5){border-color:#b96cff;box-shadow:0 0 15px #b96cff}.sixChoice:nth-child(6){border-color:#ff4f8f;box-shadow:0 0 15px #ff4f8f}
+.sixChoice.correct::before{content:"";position:absolute;inset:4px;border-radius:12px;background:rgba(76,255,151,.24);box-shadow:inset 0 0 0 3px rgba(255,255,255,.24)}
+.sixChoice>span{position:relative;z-index:1}
+.rouletteGrid{position:absolute;left:20%;right:20%;top:43.2%;height:46.8%;display:grid;grid-template-columns:1fr;grid-template-rows:repeat(3,1fr);gap:5.5%}
+.rouletteChoice{display:flex;align-items:center;justify-content:center;text-align:center;font-size:46px;font-weight:1000;line-height:1;overflow:hidden}
+.bottomBanner{position:absolute;left:18%;right:18%;bottom:3.4%;text-align:center;font-size:22px;font-weight:800;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.finalLabel{position:absolute;left:50%;top:17.5%;transform:translateX(-50%);font-size:38px;font-weight:1000;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,.8)}
+.finalNote{position:absolute;left:13%;right:13%;bottom:12%;text-align:center;font-size:42px;font-weight:900;line-height:1.16;text-shadow:0 3px 12px rgba(0,0,0,.85)}
+.scoreWrap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76%}
+.scoreTitle{text-align:center;font-size:96px;font-weight:1000;text-transform:uppercase;text-shadow:0 4px 18px rgba(0,0,0,.7)}
+.scoreSub{text-align:center;font-size:38px;font-weight:900;margin-top:.5%;text-shadow:0 4px 16px rgba(0,0,0,.7)}
+.scoreList{display:grid;gap:10px;margin-top:2%}
+.scoreRow{display:grid;grid-template-columns:8% 1fr 14%;gap:1.5%;align-items:center;padding:1.15% 1.6%;border-radius:18px;background:rgba(4,10,20,.76);border:2px solid rgba(99,223,255,.75);box-shadow:var(--shadow);font-size:32px;font-weight:900}
+.rank{color:#7eeaff}.score{color:#ffe67c;text-align:right}
+.smallMsg{margin-top:1.5%;text-align:center;font-size:26px;font-weight:800}
+.speedWrap{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:72%;text-align:center;padding:3%;border-radius:28px;background:rgba(4,10,20,.80);border:3px solid rgba(255,203,84,.8);box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.speedTitle{font-size:82px;font-weight:1000;color:#ffe67c;text-shadow:0 4px 16px rgba(0,0,0,.75)}
+.speedList{margin-top:2%;display:grid;gap:12px}
+.speedRow{display:grid;grid-template-columns:10% 1fr 24%;gap:1.5%;align-items:center;padding:1.3% 1.7%;border-radius:18px;background:rgba(255,255,255,.08);font-size:32px;font-weight:900}
+
+.networkShell{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:4.5%;text-align:center;background:radial-gradient(circle at top,#182a44 0,#07101c 58%,#02050a 100%)}
+.networkShell.sports{background:radial-gradient(circle at top,#1f5934 0,#092414 58%,#020904 100%)}
+.networkShell.afterdark{background:radial-gradient(circle at top,#5c174c 0,#21081c 58%,#060205 100%)}
+.networkShell.miniGameShell{background:transparent}
+.networkKicker{font-size:30px;font-weight:1000;letter-spacing:.18em;color:#7eeaff;margin-bottom:22px}
+.networkTitle{font-size:82px;font-weight:1000;line-height:1.02;text-transform:uppercase;text-shadow:0 5px 24px rgba(0,0,0,.45)}
+.networkSub{font-size:30px;font-weight:800;color:#d2d9e7;margin-top:24px;line-height:1.35}
+.networkNext{margin-top:34px;display:inline-block;padding:14px 24px;border-radius:999px;background:rgba(255,255,255,.1);font-size:24px;font-weight:900}
+.channelCard{width:86%;max-width:1280px;padding:48px 56px;border-radius:30px;background:linear-gradient(145deg,rgba(255,255,255,.105),rgba(255,255,255,.045));border:2px solid rgba(126,234,255,.18);box-shadow:0 20px 70px rgba(0,0,0,.35)}
+.channelCard .label{font-size:28px;letter-spacing:.15em;font-weight:1000;color:#ffd85a;margin-bottom:22px}
+.channelCard .main{font-size:54px;font-weight:950;line-height:1.18}
+.channelCard .small{font-size:25px;color:#c7cfda;margin-top:26px;font-weight:700}
+.channelClock{position:absolute;right:3.3%;top:3.2%;font-size:20px;font-weight:900;color:#dbe9ff;opacity:.85}
+.guideGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:18px;text-align:left}
+.guideItem{padding:14px 16px;border-radius:15px;background:rgba(3,8,18,.58);border:1px solid rgba(126,234,255,.24);min-height:72px}
+.guideTime{font-size:20px;font-weight:1000;color:#ffd85a;margin-bottom:5px}
+.guideTitle{font-size:21px;font-weight:950;line-height:1.05}
+.comingTime{font-size:96px;font-weight:1000;line-height:1;color:#7eeaff;margin:10px 0;text-shadow:0 0 28px rgba(99,223,255,.25)}
+.showBug{position:absolute;left:1.7%;top:1.8%;z-index:30;padding:8px 14px;border-radius:10px;background:rgba(2,7,16,.88);border:2px solid rgba(99,223,255,.7);font-size:16px;font-weight:1000;letter-spacing:.06em;text-transform:uppercase;box-shadow:0 8px 25px rgba(0,0,0,.35)}
+.showBug.sports{border-color:#65ff91;color:#9cffb6}.showBug.after_dark{border-color:#ff65df;color:#ff9deb}.showBug.standard{color:#8feaff}
+.miniWrap{width:86%;max-width:1280px;margin:auto;padding:46px 56px;border-radius:30px;background:linear-gradient(145deg,rgba(14,35,67,.96),rgba(6,10,24,.96));border:3px solid rgba(126,234,255,.48);box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.miniTitle{font-size:76px;font-weight:1000;text-transform:uppercase;line-height:1}.miniSub{font-size:27px;font-weight:900;color:#ffd85a;margin-top:16px}.miniCategory{font-size:24px;font-weight:1000;letter-spacing:.12em;color:#7eeaff;text-transform:uppercase;margin-bottom:14px}.miniQuestion{font-size:46px;font-weight:1000;line-height:1.12;margin:0 auto 24px;max-width:1100px}.miniChoices{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}.miniChoice{position:relative;padding:17px 20px;border-radius:16px;background:rgba(255,255,255,.075);border:2px solid rgba(255,255,255,.16);font-size:27px;font-weight:950;line-height:1.1}.miniChoice.correct{background:rgba(68,255,143,.19);border-color:#6cffaf;box-shadow:0 0 22px rgba(108,255,175,.22)}.miniTimer{position:absolute;right:4%;top:5%;font-size:56px;font-weight:1000;color:#fff}.miniProgress{font-size:21px;font-weight:900;color:#c9d5e8;margin-top:20px}.miniAnswer{font-size:26px;font-weight:950;color:#6cffaf;margin-top:15px}
+
+/* =========================================================
+   ELITE LIVE-DRAWN TRIVIA UI
+   Background images are ART ONLY.
+   All functional panels are drawn by the browser.
+   ========================================================= */
+
+.board{
+ --elite-a:#20dcff;
+ --elite-b:#ff43d7;
+ --elite-panel:rgba(2,8,24,.86);
+ --elite-panel2:rgba(10,13,35,.91);
+}
+
+.board.sports{
+ --elite-a:#20dcff;
+ --elite-b:#52ff83;
+ --elite-panel:rgba(2,13,28,.88);
+ --elite-panel2:rgba(3,22,30,.91);
+}
+
+.board.after_dark{
+ --elite-a:#ff46dc;
+ --elite-b:#9b65ff;
+ --elite-panel:rgba(16,3,30,.88);
+ --elite-panel2:rgba(25,5,38,.92);
+}
+
+/* ---------- TOP HUD ---------- */
+
+.topInfo.questionHeader .left,
+.topInfo.questionHeader .mid,
+.topInfo.questionHeader .right,
+.topInfo.rouletteHeader .left,
+.topInfo.rouletteHeader .mid,
+.topInfo.rouletteHeader .right{
+ background:linear-gradient(
+  180deg,
+  rgba(6,14,35,.94),
+  rgba(2,6,19,.88)
+ );
+ border:3px solid var(--elite-a);
+ border-radius:18px;
+ box-shadow:
+  0 0 16px color-mix(in srgb,var(--elite-a) 65%,transparent),
+  inset 0 0 18px rgba(255,255,255,.035);
+ padding:0 .8%;
+}
+
+.topInfo.questionHeader .left,
+.topInfo.rouletteHeader .left{
+ left:10.5%;
+ width:12%;
+ top:4%;
+ height:10.5%;
+ font-size:54px;
+}
+
+.topInfo.questionHeader .mid,
+.topInfo.rouletteHeader .mid{
+ left:27%;
+ right:27%;
+ top:4%;
+ height:10.5%;
+ font-size:27px;
+ background:linear-gradient(
+  90deg,
+  rgba(4,13,34,.94),
+  rgba(16,10,43,.94)
+ );
+}
+
+.topInfo.questionHeader .right,
+.topInfo.rouletteHeader .right{
+ right:9%;
+ width:14%;
+ top:4%;
+ height:10.5%;
+ font-size:42px;
+}
+
+/* ---------- QUESTION ---------- */
+
+.questionBox{
+ left:9%;
+ right:9%;
+ top:18%;
+ height:22%;
+ padding:1.5% 4%;
+ background:linear-gradient(
+  180deg,
+  var(--elite-panel2),
+  var(--elite-panel)
+ );
+ border:4px solid var(--elite-a);
+ border-radius:24px;
+ box-shadow:
+  0 0 20px color-mix(in srgb,var(--elite-a) 58%,transparent),
+  inset 0 0 28px rgba(0,0,0,.34);
+ font-size:54px;
+}
+
+/* ---------- FOUR CHOICES ---------- */
+
+.choiceGrid{
+ left:10%;
+ right:10%;
+ top:45%;
+ height:37%;
+ gap:6% 3.2%;
+}
+
+.choiceCell{
+ background:rgba(3,9,25,.88);
+ border:4px solid #20dcff;
+ border-radius:20px;
+ padding:1.5% 5% 1.5% 10%;
+ box-shadow:
+  inset 0 0 24px rgba(0,0,0,.32);
+ font-size:38px;
+}
+
+.choiceCell:nth-child(1){
+ border-color:#20dcff;
+ box-shadow:0 0 15px rgba(32,220,255,.55);
+}
+
+.choiceCell:nth-child(2){
+ border-color:#ff9a21;
+ box-shadow:0 0 15px rgba(255,154,33,.55);
+}
+
+.choiceCell:nth-child(3){
+ border-color:#55ff42;
+ box-shadow:0 0 15px rgba(85,255,66,.50);
+}
+
+.choiceCell:nth-child(4){
+ border-color:#ffe33c;
+ box-shadow:0 0 15px rgba(255,227,60,.50);
+}
+
+.choiceCell::after{
+ position:absolute;
+ left:3.2%;
+ top:50%;
+ transform:translateY(-50%);
+ font-size:34px;
+ font-weight:1000;
+ z-index:2;
+}
+
+.choiceCell:nth-child(1)::after{content:"A";color:#20dcff}
+.choiceCell:nth-child(2)::after{content:"B";color:#ff9a21}
+.choiceCell:nth-child(3)::after{content:"C";color:#55ff42}
+.choiceCell:nth-child(4)::after{content:"D";color:#ffe33c}
+
+/* ---------- SIX CHOICES ---------- */
+
+.sixMask{
+ display:none;
+}
+
+.sixGrid{
+ left:9%;
+ right:9%;
+ top:44%;
+ height:45%;
+ gap:4.2% 3%;
+}
+
+.sixChoice{
+ background:rgba(3,9,25,.88);
+ border-width:4px;
+ border-radius:18px;
+ padding:1% 5% 1% 9%;
+ font-size:30px;
+}
+
+.sixChoice::after{
+ position:absolute;
+ left:3%;
+ top:50%;
+ transform:translateY(-50%);
+ font-size:29px;
+ font-weight:1000;
+ z-index:2;
+}
+
+.sixChoice:nth-child(1)::after{content:"A";color:#15dfff}
+.sixChoice:nth-child(2)::after{content:"B";color:#ff9a21}
+.sixChoice:nth-child(3)::after{content:"C";color:#57ff2d}
+.sixChoice:nth-child(4)::after{content:"D";color:#ffe52e}
+.sixChoice:nth-child(5)::after{content:"E";color:#b96cff}
+.sixChoice:nth-child(6)::after{content:"F";color:#ff4f8f}
+
+/* ---------- ROULETTE ---------- */
+
+.rouletteGrid{
+ left:25%;
+ right:25%;
+ top:46%;
+ height:40%;
+ gap:7%;
+}
+
+.rouletteChoice{
+ background:rgba(3,9,25,.90);
+ border:4px solid;
+ border-radius:22px;
+ font-size:46px;
+ box-shadow:
+  inset 0 0 24px rgba(0,0,0,.38);
+}
+
+.rouletteChoice:nth-child(1){
+ border-color:#20dcff;
+ box-shadow:0 0 18px rgba(32,220,255,.55);
+}
+
+.rouletteChoice:nth-child(2){
+ border-color:#ff9a21;
+ box-shadow:0 0 18px rgba(255,154,33,.55);
+}
+
+.rouletteChoice:nth-child(3){
+ border-color:#55ff42;
+ box-shadow:0 0 18px rgba(85,255,66,.50);
+}
+
+/* ---------- FINAL WAGER ---------- */
+
+.finalLabel{
+ top:16.2%;
+ padding:.45% 2.2%;
+ background:rgba(3,9,25,.90);
+ border:3px solid var(--elite-b);
+ border-radius:18px;
+ box-shadow:
+  0 0 18px color-mix(in srgb,var(--elite-b) 55%,transparent);
+ font-size:32px;
+}
+
+.finalNote{
+ left:14%;
+ right:14%;
+ bottom:10%;
+ padding:1.1% 2%;
+ background:rgba(3,9,25,.90);
+ border:3px solid var(--elite-b);
+ border-radius:18px;
+ box-shadow:
+  0 0 16px color-mix(in srgb,var(--elite-b) 45%,transparent);
+ font-size:30px;
+}
+
+/* ---------- ANSWER REVEAL ---------- */
+
+.choiceCell.correct,
+.sixChoice.correct{
+ border-color:#6cffaf !important;
+ box-shadow:
+  0 0 26px rgba(108,255,175,.78),
+  inset 0 0 28px rgba(108,255,175,.15) !important;
+}
+
+.bottomBanner{
+ background:rgba(2,7,20,.72);
+ border-radius:12px;
+ padding:.35% 1%;
+}
+
+
+/* ELITE REVEAL COLOR */ .choiceCell.correct,.sixChoice.correct{background:#12a85b!important;border:4px solid #a5ffba!important;color:#fff!important;box-shadow:0 0 30px rgba(46,255,130,.85)!important;}
+</style>
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <div id="screen"></div>
+    <div id="overlay" class="overlay"></div>
+    <div id="showBug" class="showBug hidden"></div>
+    <div id="footer" class="debugFooter">Connectingâ€¦</div>
+  </div>
+</div>
+<script>
+const PAGE_BUILD='__AUTO_ELITE_BUILD__';
+const standardAssets={
+  category:'/assets/slides/category_bg.png',
+  question:'/assets/slides/question_bg.png',
+  roulette:'/assets/slides/roulette_bg.png',
+  sociable:'/assets/slides/sociable_slide.png',
+  rules:{
+    welcome:'/assets/slides/welcome_slide.png',
+    how_to_answer:'/assets/slides/how_to_answer_slide.png',
+    roulette:'/assets/slides/elite_roulette_slide.png',
+    wager:'/assets/slides/elite_wager_slide.png',
+    tie_breaker:'/assets/slides/tie_breaker_slide.png'
+  }
+};
+function makeThemeAssets(folder){return {
+  category:`/assets/slides/${folder}/category_bg.png`,
+  question:`/assets/slides/${folder}/question_bg.png`,
+  roulette:`/assets/slides/${folder}/roulette_bg.png`,
+  sociable:`/assets/slides/${folder}/sociable_slide.png`,
+  rules:{
+    welcome:`/assets/slides/${folder}/welcome_slide.png`,
+    how_to_answer:`/assets/slides/${folder}/how_to_answer_slide.png`,
+    roulette:`/assets/slides/${folder}/elite_roulette_slide.png`,
+    wager:`/assets/slides/${folder}/elite_wager_slide.png`,
+    tie_breaker:`/assets/slides/${folder}/tie_breaker_slide.png`
+  }
+};}
+const sportsAssets=makeThemeAssets('sports');
+const afterDarkAssets=makeThemeAssets('after_dark');
+function assetsFor(state){
+  const profile=state?.network?.show_profile||'standard';
+  if(profile==='sports')return sportsAssets;
+  if(profile==='after_dark')return afterDarkAssets;
+  return standardAssets;
+}
+const FALLBACK_DISPLAY={
+  category_max_px:112,category_min_px:42,
+  question_max_px:58,question_min_px:26,
+  answer_max_px:40,answer_min_px:20,
+  roulette_hint_max_px:54,roulette_hint_min_px:24,
+  team_status_max_px:30,team_status_min_px:16,
+  timer_px:64,points_px:50
+};
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function ensureCurrentBuild(serverBuild){if(!serverBuild||serverBuild===PAGE_BUILD)return true;const u=new URL(location.href);u.searchParams.set('build',serverBuild);u.searchParams.set('_reload',Date.now());location.replace(u.toString());return false;}
+let CURRENT_BACKGROUND=null;
+function setBackground(url){
+  const next=url||null;
+  if(next===CURRENT_BACKGROUND)return;
+  CURRENT_BACKGROUND=next;
+  document.getElementById('screen').style.backgroundImage=next?`url('${next}')`:'none';
+}
+function footerText(state){return `${state.status} â€¢ ${state.team_count} team${state.team_count===1?'':'s'} â€¢ Build ${state.app_build}`;}
+function stageScale(){return Math.max(.45,document.getElementById('stage').clientWidth/1600);}
+function fitText(el,maxPx,minPx){if(!el)return;const scale=stageScale();let size=Math.max(minPx*scale,maxPx*scale);const floor=minPx*scale;el.style.fontSize=`${size}px`;let guard=0;while(size>floor&&(el.scrollHeight>el.clientHeight+1||el.scrollWidth>el.clientWidth+1)&&guard<120){size-=1;el.style.fontSize=`${size}px`;guard++;}}
+function fitAll(state){const d={...FALLBACK_DISPLAY,...(state.display_settings||{})};requestAnimationFrame(()=>{document.querySelectorAll('.categoryTitle').forEach(el=>fitText(el,d.category_max_px,d.category_min_px));document.querySelectorAll('.questionBox').forEach(el=>fitText(el,el.dataset.kind==='hint'?d.roulette_hint_max_px:d.question_max_px,el.dataset.kind==='hint'?d.roulette_hint_min_px:d.question_min_px));document.querySelectorAll('.choiceCell').forEach(el=>fitText(el,d.answer_max_px,d.answer_min_px));document.querySelectorAll('.sixChoice').forEach(el=>fitText(el,Math.min(d.answer_max_px,32),Math.min(d.answer_min_px,18)));document.querySelectorAll('.rouletteChoice').forEach(el=>fitText(el,48,28));document.querySelectorAll('.topInfo .mid').forEach(el=>fitText(el,d.team_status_max_px,d.team_status_min_px));const left=document.querySelector('.topInfo .left');if(left)left.style.fontSize=`${d.timer_px*stageScale()}px`;const right=document.querySelector('.topInfo .right');if(right)right.style.fontSize=`${d.points_px*stageScale()}px`;});}
+function pointLabel(q,state){if(q.scoring_type==='fastest'){const v=state.current_fastest_display==null?q.max_points:Number(state.current_fastest_display);return `${v} PTS`;}if(q.scoring_type==='roulette')return '--';if(q.scoring_type==='final_wager')return 'WAGER';return `${q.fixed_points} PTS`;}
+function scoreRows(rows){if(!rows.length)return '<div class="smallMsg">Waiting for teams.</div>';return rows.map(r=>`<div class="scoreRow"><div class="rank">#${r.rank}</div><div>${esc(r.name)}</div><div class="score">${r.score}</div></div>`).join('');}
+function teamStatus(state,phase){const rows=phase==='wager'?state.outstanding_wager_teams:state.outstanding_answer_teams;const done=phase==='wager'?state.all_wagers_in:state.all_answers_in;if(state.team_count===0)return 'NO TEAMS REGISTERED';if(done)return 'âœ“ ALL TEAMS IN';if(!rows||!rows.length)return `${state.team_count} TEAMS READY`;return rows.map(t=>`#${t.number} ${esc(t.name)}`).join(' â€¢ ');}
+
+function renderCategory(state){
+  const q=state.question;
+  setBackground(assetsFor(state).category);
+
+  let extra='';
+  if(q.scoring_type==='fastest')extra='FASTEST ANSWER';
+  else if(q.scoring_type==='roulette')extra='ELITE ROULETTE';
+  else if(q.scoring_type==='final_wager')extra='ELITE WAGER';
+
+  document.getElementById('overlay').innerHTML=`
+    <div style="position:absolute;left:4%;right:4%;top:15%;bottom:12%;display:flex;align-items:center;gap:3%">
+
+      <div style="width:66%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-width:0">
+
+        <div class="pill">
+          ROUND ${q.round} â€¢ QUESTION ${q.question_number} OF ${state.round_question_count}
+        </div>
+
+        <div class="categoryTitle" style="width:100%;max-height:56%;font-size:145px;margin:4% 0 2%;overflow:hidden">
+          ${esc(q.category)}
+        </div>
+
+        ${extra?`<div class="categorySub">${extra}</div>`:''}
+
+      </div>
+
+      <div style="width:31%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px">
+
+        <div style="background:white;padding:14px;border-radius:16px;box-shadow:0 0 28px rgba(99,223,255,.55);width:88%;box-sizing:border-box">
+          <img src="/join-qr.png" style="display:block;width:100%;aspect-ratio:1;object-fit:contain">
+        </div>
+
+        <div style="font-size:34px;font-weight:1000;color:#63dfff;text-align:center;text-shadow:0 3px 12px #000">
+          SCAN TO JOIN
+        </div>
+
+      </div>
+
+    </div>`;
+
+  fitAll(state);
+  const categoryTitle=document.querySelector('.categoryTitle');
+  if(categoryTitle){
+    requestAnimationFrame(()=>{
+      fitText(categoryTitle,145,42);
+    });
+  }
+}
+
+function renderWaiting(state){setBackground(assetsFor(state).category);document.getElementById('overlay').innerHTML=`<div class="centerWrap"><div class="pill">ELITE TRIVIA BLITZ</div><div class="categoryTitle">Waiting to Start</div><div class="waitingCopy">${state.team_count} team${state.team_count===1?'':'s'} registered</div><div class="waitingCopy">Rules slides will play automatically when the game begins.</div></div>`;fitAll(state);}
+function renderRules(state){const a=assetsFor(state);setBackground(a.rules[state.rule_slide_key]||a.rules.welcome);document.getElementById('overlay').innerHTML='';}
+function renderQuestionBoard(state,reveal){const q=state.question;setBackground(assetsFor(state).question);const profile=state?.network?.show_profile||'standard';const isFinal=q.scoring_type==='final_wager';const left=state.timer_running?Math.ceil(state.timer_remaining):q.timer_seconds;const right=pointLabel(q,state);const teams=teamStatus(state,'answer');let content='';
+ if(isFinal){const answer=reveal&&q.answer_display?`<div class="finalNote" style="bottom:5.5%;color:#6cffaf">ANSWER: ${esc(q.answer_display)}</div>`:'';content=`<div class="finalLabel">ELITE WAGER</div><div class="questionBox">${esc(q.question)}</div><div class="finalNote">Teams choose <span style="color:#ff6de8">ALL IN</span> or <span style="color:#63dfff">SAVE MY POINTS</span> on their phones.</div>${answer}`;}
+ else {const allChoices=(q.choices||[]);if(allChoices.length>4){const choices=allChoices.slice(0,6).map((txt,i)=>`<div class="sixChoice ${reveal&&i===q.correct_index?'correct':''}"><span>${esc(txt)}</span></div>`).join('');content=`<div class="questionBox">${esc(q.question)}</div><div class="sixMask"></div><div class="sixGrid">${choices}</div>`;}else{const choices=allChoices.slice(0,4).map((txt,i)=>`<div class="choiceCell ${reveal&&i===q.correct_index?'correct':''}"><span>${esc(txt)}</span></div>`).join('');content=`<div class="questionBox">${esc(q.question)}</div><div class="choiceGrid">${choices}</div>`;}}
+ document.getElementById('overlay').innerHTML=`<div class="board ${profile}"><div class="topInfo questionHeader"><div class="left">${left}</div><div class="mid">${teams}</div><div class="right">${right}</div></div>${content}<div class="bottomBanner">${reveal?'Correct answer highlighted':'Answer on your phone before time runs out.'}</div></div>`;fitAll(state);}
+function renderRouletteWager(state){const q=state.question;setBackground(assetsFor(state).roulette);const profile=state?.network?.show_profile||'standard';const left=state.timer_running?Math.ceil(state.timer_remaining):q.wager_seconds;const teams=teamStatus(state,'wager');const right=state.all_wagers_in?'âœ“ ALL IN':'WAGER';document.getElementById('overlay').innerHTML=`<div class="board ${profile}"><div class="topInfo rouletteHeader"><div class="left">${left}</div><div class="mid">${teams}</div><div class="right">${right}</div></div><div class="questionBox" data-kind="hint">${esc(q.hint)}</div><div class="rouletteGrid"><div class="rouletteChoice">0%</div><div class="rouletteChoice">50%</div><div class="rouletteChoice">100%</div></div><div class="bottomBanner">Choose A, B, or C on your phone before the question appears.</div></div>`;fitAll(state);}
+function renderScores(state,title,sub){setBackground(assetsFor(state).category);document.getElementById('overlay').innerHTML=`<div class="scoreWrap"><div class="scoreTitle">${title}</div>${sub?`<div class="scoreSub">${sub}</div>`:''}<div class="scoreList">${scoreRows(state.scoreboard)}</div></div>`;}
+function renderSpeedBonus(state){setBackground(assetsFor(state).category);const rows=(state.speed_bonus_winners||[]).map(w=>`<div class="speedRow"><div>#${w.rank}</div><div>${esc(w.name)}</div><div>+${w.bonus} BONUS</div></div>`).join('');document.getElementById('overlay').innerHTML=`<div class="speedWrap"><div class="speedTitle">SPEED BONUS</div><div class="smallMsg">Fastest correct teams earn extra points.</div><div class="speedList">${rows||'<div class="smallMsg">No bonus winners this time.</div>'}</div></div>`;}
+function formatNetworkClock(iso){try{return new Date(iso).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}catch(e){return '';}}
+function formatCountdown(seconds){const s=Math.max(0,Math.floor(Number(seconds||0)));const m=Math.floor(s/60),r=s%60;return `${m}:${String(r).padStart(2,'0')}`;}
+function formatLongCountdown(s){const m=Math.max(0,Math.floor(Number(s||0)/60));return m>=60?Math.floor(m/60)+' HR '+(m%60)+' MIN':m+' MIN';}
+function networkNextLine(network){const n=network?.next_event;if(!n)return 'More Elite programming coming up.';return `NEXT: ${esc(n.title||'')} â€¢ ${formatNetworkClock(n.start_iso)}`;}
+function setShowBug(state){const el=document.getElementById('showBug');const n=state.network||{};if(!n.game_active){el.className='showBug hidden';el.textContent='';return;}const profile=n.show_profile||'standard';const title=n.show_title||'ELITE BLITZ';el.className=`showBug ${profile}`;el.textContent=title;}
+function renderMiniGame(state){
+ const n=state.network||{},m=n.mini_game||{},q=m.question||{};
+ const gameType=m.game_type||'quick_3';
+ const phase=m.phase||'intro';
+ const next=networkNextLine(n);
+ let html='';
+
+ // ==========================================================
+ // SKEE-BALL
+ // ==========================================================
+
+ if(gameType==='skee_ball'){
+
+   setBackground(null);
+
+   const overlay=document.getElementById('overlay');
+
+   // Do NOT rebuild the iframe on every /api/state poll.
+   // Rebuilding it reloads Three.js and causes visible blinking.
+   if(!document.getElementById('eliteSkeeBallFrame')){
+
+     overlay.innerHTML=`
+       <iframe
+         id="eliteSkeeBallFrame"
+         src="/mini-games/skee-ball/"
+         style="
+           position:absolute;
+           inset:0;
+           width:100%;
+           height:100%;
+           border:0;
+           margin:0;
+           padding:0;
+           background:#000;
+         "
+         allow="fullscreen"
+       ></iframe>
+     `;
+   }
+
+   return;
+ }
+
+
+ // ==========================================================
+ // REACTION RUSH
+ // ==========================================================
+
+ if(gameType==='reaction_rush'){
+   setBackground('/assets/quick_3_bg.png');
+
+   if(phase==='intro'){
+     html=`
+       <div class="networkShell miniGameShell">
+         <div class="miniWrap">
+           <div class="networkKicker">ELITE NETWORK MINI-GAME</div>
+           <div class="miniTitle">ELITE REACTION RUSH</div>
+           <div class="miniSub">FASTEST FINGER WINS</div>
+           <div class="networkNext">Watch the screen. Do not tap early.</div>
+         </div>
+       </div>
+     `;
+   }
+
+   else if(phase==='waiting'){
+     html=`
+       <div class="networkShell miniGameShell">
+         <div class="miniWrap">
+           <div class="networkKicker">ELITE REACTION RUSH</div>
+           <div class="miniTitle" style="font-size:86px">WAIT...</div>
+           <div class="miniSub">DON'T TAP YET</div>
+         </div>
+       </div>
+     `;
+   }
+
+   else if(phase==='question'){
+     html=`
+       <div class="networkShell miniGameShell">
+         <div class="miniWrap">
+           <div class="networkKicker">ELITE REACTION RUSH</div>
+           <div class="miniTitle" style="font-size:120px">GO!</div>
+           <div class="miniSub">TAP NOW ON YOUR PHONE</div>
+           <div class="miniProgress">
+             ${Number(m.response_count||0)} REACTIONS LOCKED
+           </div>
+         </div>
+       </div>
+     `;
+   }
+
+   else if(phase==='reveal'){
+     const leaders=(m.leaderboard||[])
+       .slice(0,5)
+       .map((r,i)=>`
+         <div style="
+           display:flex;
+           justify-content:center;
+           gap:28px;
+           font-size:34px;
+           font-weight:900;
+           margin:8px 0;
+         ">
+           <span>#${i+1}</span>
+           <span>${Number(r.reaction_seconds||0).toFixed(3)} SEC</span>
+         </div>
+       `)
+       .join('');
+
+     html=`
+       <div class="networkShell miniGameShell">
+         <div class="miniWrap">
+           <div class="networkKicker">ELITE REACTION RUSH</div>
+           <div class="miniTitle">FASTEST REACTIONS</div>
+           ${leaders||'<div class="miniSub">No reactions recorded.</div>'}
+           <div class="miniProgress">
+             ${Number(m.response_count||0)} TOTAL REACTIONS
+           </div>
+         </div>
+       </div>
+     `;
+   }
+
+   else{
+     html=`
+       <div class="networkShell miniGameShell">
+         <div class="miniWrap">
+           <div class="networkKicker">ELITE REACTION RUSH</div>
+           <div class="miniTitle">REACTION RUSH COMPLETE</div>
+           <div class="miniSub">How fast were you?</div>
+           <div class="networkNext">${next}</div>
+         </div>
+       </div>
+     `;
+   }
+
+   document.getElementById('overlay').innerHTML=html;
+   return;
+ }
+
+ // ==========================================================
+ // QUICK 3
+ // ==========================================================
+
+ setBackground('/assets/quick_3_bg.png');
+
+ if(phase==='intro'){
+   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">Elite Quick 3</div><div class="miniSub">3 QUESTIONS â€¢ 12 SECONDS EACH</div><div class="networkNext">Play along from your table.</div></div></div>`;
+ }
+
+ else if(phase==='outro'){
+   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE QUICK 3</div><div class="miniTitle">3 Down.</div><div class="miniSub">How many did you get?</div><div class="networkNext">${next}</div></div></div>`;
+ }
+
+ else{
+   const reveal=phase==='reveal';
+
+   const choices=(q.choices||[])
+     .map((c,i)=>`
+       <div class="miniChoice ${reveal&&i===q.correct_index?'correct':''}">
+         ${String.fromCharCode(65+i)}. ${esc(c)}
+       </div>
+     `)
+     .join('');
+
+   const answer=reveal
+     ?`<div class="miniAnswer">ANSWER: ${esc(q.answer_display||((q.choices||[])[q.correct_index]||''))}</div>`
+     :'';
+
+   html=`
+     <div class="networkShell miniGameShell">
+       <div class="miniWrap">
+         <div class="miniTimer">${Math.ceil(m.seconds_remaining||0)}</div>
+         <div class="miniCategory">${esc(q.category||'TRIVIA')}</div>
+         <div class="miniQuestion">${esc(q.question||'')}</div>
+         <div class="miniChoices">${choices}</div>
+         ${answer}
+         <div class="miniProgress">
+           QUESTION ${m.question_number||1} OF ${m.question_count||3}
+           â€¢ ${reveal?'ANSWER REVEAL':'MAKE YOUR PICK'}
+         </div>
+       </div>
+     </div>
+   `;
+ }
+
+ document.getElementById('overlay').innerHTML=html;
+}
+
+function guideMarkup(network){const rows=(network.today_guide||[]);if(!rows.length)return '<div class="main">Schedule loadingâ€¦</div>';return `<div class="guideGrid">${rows.map(r=>`<div class="guideItem"><div class="guideTime">${formatNetworkClock(r.start_iso)}</div><div class="guideTitle">${esc(r.title||'')}</div></div>`).join('')}</div>`;}
+function renderChannel(state){
+ const n=state.network||{};
+ const type=n.filler_type||'did_you_know';
+ const item=n.content_item||null;
+ const overlay=document.getElementById('overlay');
+
+ function showChannelImage(url){
+  setBackground(null);
+
+  const existing=
+   document.getElementById('channelMediaImage');
+
+  if(
+   existing&&
+   existing.dataset.src===url
+  ){
+   return;
+  }
+
+  overlay.innerHTML=`
+   <div style="
+    position:absolute;
+    inset:0;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+   ">
+    <img src="${esc(url)}" alt="" aria-hidden="true" style="position:absolute;inset:-5%;width:110%;height:110%;object-fit:cover;filter:blur(28px) brightness(.35);pointer-events:none;">
+    <img
+     id="channelMediaImage"
+     data-src="${esc(url)}"
+     src="${esc(url)}"
+     style="
+      position:relative;width:96%;height:94%;object-fit:contain;border:3px solid rgba(99,223,255,.9);border-radius:12px;box-shadow:0 0 28px rgba(99,223,255,.35),0 18px 45px rgba(0,0,0,.75);
+     "
+    >
+   </div>
+  `;
+ }
+
+ if(type==='off_air'){
+  setBackground(null);
+
+  overlay.innerHTML=`
+   <div class="networkShell">
+    <div class="channelCard">
+     <div class="label">ELITE NETWORK</div>
+     <div class="main">PROGRAMMING RETURNS AT 11 AM</div>
+     <div class="small">
+      Sports â€¢ Elite Blitz â€¢ After Dark â€¢ Mini-Games
+     </div>
+    </div>
+   </div>
+  `;
+
+  return;
+ }
+
+ if(type==='did_you_know'){
+  setBackground(
+   '/assets/did_you_know_bg.png'
+  );
+
+  overlay.innerHTML=`
+   <div style="
+    position:absolute;
+    left:11%;
+    right:11%;
+    top:53.5%;
+    transform:translateY(-50%);
+    height:auto;
+    min-height:27%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:1.5% 3%;
+    font-size:48px;
+    font-weight:950;
+    line-height:1.16;
+    text-shadow:0 3px 14px rgba(0,0,0,.9);
+    white-space:normal;
+    overflow-wrap:anywhere;
+    background:rgba(3,10,23,.86);
+    border:3px solid rgba(99,223,255,.85);
+    border-radius:22px;
+    box-shadow:0 0 24px rgba(99,223,255,.25);
+    overflow:visible;
+   ">
+    ${esc(
+     n.did_you_know||
+     'Elite facts are loading.'
+    )}
+   </div>
+  `;
+
+  return;
+ }
+
+ if(type==='sponsor'){
+  if(item){
+   showChannelImage(item.url);
+   return;
+  }
+
+  setBackground(
+   '/assets/sponsor_spotlight_slide.png'
+  );
+
+  overlay.innerHTML=`
+   <div style="
+    position:absolute;
+    left:17%;
+    right:17%;
+    top:36%;
+    height:31%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:2% 4%;
+    font-size:50px;
+    font-weight:1000;
+    line-height:1.08;
+    text-shadow:0 4px 16px rgba(0,0,0,.9);
+   ">
+    YOUR BUSINESS COULD BE HERE
+   </div>
+  `;
+
+  return;
+ }
+
+ if(
+  (type==='live_event'||type==='promo')
+  &&
+  item
+ ){
+  showChannelImage(item.url);
+  return;
+ }
+
+ if(type==='funny_clip'&&item){
+  setBackground(null);
+
+  const existing=
+   document.getElementById(
+    'channelFunnyClip'
+   );
+
+  if(
+   existing&&
+   existing.dataset.src===item.url
+  ){
+   return;
+  }
+
+  overlay.innerHTML=`
+   <div style="
+    position:absolute;
+    inset:0;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+   ">
+    <video
+     id="channelFunnyClip"
+     data-src="${esc(item.url)}"
+     src="${esc(item.url)}"
+     autoplay
+     playsinline
+     style="
+      width:100%;
+      height:100%;
+      object-fit:contain;
+     "
+    ></video>
+   </div>
+  `;
+
+  const video=
+   document.getElementById(
+    'channelFunnyClip'
+   );
+
+  if(video){
+
+   video.addEventListener(
+    'ended',
+    ()=>{
+     fetch(
+      '/api/channel-content-finished',
+      {
+       method:'POST',
+       headers:{
+        'Content-Type':
+         'application/json'
+       },
+       body:JSON.stringify({})
+      }
+     ).catch(
+      err=>{
+       console.warn(
+        'Funny clip completion error:',
+        err
+       );
+      }
+     );
+    },
+    {once:true}
+   );
+
+   const attempt=video.play();
+
+   if(attempt&&attempt.catch){
+    attempt.catch(()=>{
+     video.muted=true;
+     video.play().catch(()=>{});
+    });
+   }
+  }
+
+  return;
+ }
+
+ if(type==='tv_guide'){
+  setBackground(
+   '/assets/tv_guide_slide.png'
+  );
+
+  overlay.innerHTML='';
+  return;
+ }
+
+ setBackground(null);
+
+ const nx=n.next_event||{};
+
+ const body=`
+  <div class="channelCard">
+   <div class="label">
+    COMING UP ON ELITE
+   </div>
+
+   <div class="main">
+    ${esc(
+     nx.title||
+     'ELITE CHANNEL'
+    )}
+   </div>
+
+   ${
+    nx.seconds_until!=null
+    ?`<div class="comingTime">
+       ${formatLongCountdown(nx.seconds_until)}
+      </div>`
+    :''
+   }
+
+   <div class="small">
+    ${
+     nx.start_iso
+     ?`Starts at ${
+       formatNetworkClock(
+        nx.start_iso
+       )
+      }`
+     :'More Elite programming coming up.'
+    }
+   </div>
+  </div>
+ `;
+
+ overlay.innerHTML=`
+  <div class="networkShell">
+   <div class="channelClock">
+    ${esc(n.now_display||'')}
+   </div>
+   ${body}
+  </div>
+ `;
+}
+
+function renderNetworkProgram(state){
+ const n=state.network||{};
+ const p=n.program||{};
+ const kind=p.kind||'channel';
+
+ if(n.game_active)return false;
+  if(n.lead_in_phase==='join'||n.lead_in_phase==='teams_ready'){
+  const nx=n.lead_in_next_event||n.next_event||{};
+  const klass=
+   nx.kind==='sports_blitz'?'sports':
+   nx.kind==='after_dark'?'afterdark':'';
+
+  document.getElementById('screen').style.backgroundImage='none';
+
+  document.getElementById('overlay').innerHTML=`
+   <div class="networkShell ${klass}">
+    <div style="display:flex;align-items:center;justify-content:center;gap:60px;width:90%;margin:auto">
+
+     <div style="text-align:center">
+      <div class="networkKicker">ELITE NETWORK</div>
+
+      <div class="networkTitle">
+       ${n.lead_in_phase==="teams_ready"?"TEAMS READY":"JOIN THE GAME"}
+      </div>
+
+      <div class="networkSub">
+       ${esc(nx.title||'ELITE BLITZ')}
+      </div>
+
+      <div class="comingTime">
+       ${formatCountdown(nx.seconds_until||0)}
+      </div>
+
+      <div class="networkSub">
+       ${state.team_count||0} TEAM${state.team_count===1?'':'S'} REGISTERED
+      </div>
+
+      <div class="networkNext">
+       Scan the QR code with your phone
+      </div>
+     </div>
+
+     <div style="background:white;padding:18px;border-radius:18px">
+      <img
+       src="/join-qr.png"
+       style="width:300px;height:300px;display:block"
+       alt="Join Elite Trivia"
+      >
+     </div>
+
+    </div>
+   </div>
+  `;
+
+  return true;
+ }
+ if(n.lead_in_phase==='teams_ready'){
+  const nx=n.lead_in_next_event||n.next_event||{};
+  const klass=
+   nx.kind==='sports_blitz'?'sports':
+   nx.kind==='after_dark'?'afterdark':'';
+
+  document.getElementById('screen').style.backgroundImage='none';
+
+  document.getElementById('overlay').innerHTML=`
+   <div class="networkShell ${klass}">
+    <div>
+     <div class="networkKicker">ELITE NETWORK</div>
+
+     <div class="networkTitle">
+      TEAMS READY
+     </div>
+
+     <div class="networkSub">
+      ${esc(nx.title||'ELITE BLITZ')}
+     </div>
+
+     <div class="comingTime">
+      ${formatCountdown(nx.seconds_until||0)}
+     </div>
+
+     <div class="networkSub">
+      ${state.team_count||0} TEAM${state.team_count===1?'':'S'} REGISTERED
+     </div>
+
+     <div class="networkNext">
+      Final join window â€¢ Game starts automatically
+     </div>
+    </div>
+   </div>
+  `;
+
+  return true;
+ }
+
+ if(kind==='mini_game'){
+  renderMiniGame(state);
+  return true;
+ }
+
+ if(kind==='channel'){
+  renderChannel(state);
+  return true;
+ }
+
+ document.getElementById('screen').style.backgroundImage='none';
+
+ const klass=
+  kind==='sports_blitz'?'sports':
+  kind==='after_dark'?'afterdark':'';
+
+ document.getElementById('overlay').innerHTML=`
+  <div class="networkShell ${klass}">
+   <div>
+    <div class="networkKicker">ELITE NETWORK</div>
+    <div class="networkTitle">${esc(p.title||'ELITE BLITZ')}</div>
+    <div class="networkSub">Launching scheduled gameâ€¦</div>
+   </div>
+  </div>
+ `;
+
+ return true;
+}
+function render(state){const overlay=document.getElementById('overlay');document.getElementById('footer').textContent=footerText(state);setShowBug(state);if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
+let eliteWakeLock=null;
+async function keepEliteScreenAwake(){
+ try{
+  if('wakeLock' in navigator){eliteWakeLock=await navigator.wakeLock.request('screen');}
+ }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keepEliteScreenAwake();});
+keepEliteScreenAwake();
+
+const ELITE_TV_CLIENT_ID=(()=>{
+ try{
+  let id=localStorage.getItem('elite_tv_client_id');
+  if(!id){id='tv-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);localStorage.setItem('elite_tv_client_id',id);}
+  return id;
+ }catch(e){return 'tv-'+Date.now().toString(36);}
+})();
+const POLL_MS=1000;
+const FETCH_TIMEOUT_MS=5000;
+let LAST_RENDER_KEY='';
+
+async function fetchWithTimeout(url,options={}){
+ const controller=new AbortController();
+ const timer=setTimeout(()=>controller.abort(),FETCH_TIMEOUT_MS);
+ try{
+  return await fetch(url,{...options,signal:controller.signal});
+ }finally{
+  clearTimeout(timer);
+ }
+}
+
+async function sendEliteTvHeartbeat(){
+ try{
+  await fetchWithTimeout('/api/tv-heartbeat',{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   cache:'no-store',
+   keepalive:true,
+   body:JSON.stringify({
+    client_id:ELITE_TV_CLIENT_ID,
+    visibility:document.visibilityState,
+    path:location.pathname
+   })
+  });
+ }catch(e){}
+}
+sendEliteTvHeartbeat();
+setInterval(sendEliteTvHeartbeat,20000);
+
+function renderKey(state){
+ const n=state.network||{};
+ const p=n.program||{};
+ const m=n.mini_game||{};
+ const q=state.question||{};
+ const comingSecond=(n.filler_type==='coming_up'&&n.next_event)
+  ? Math.floor(Number(n.next_event.seconds_until||0))
+  : null;
+ const miniSecond=m.active?Math.ceil(Number(m.seconds_remaining||0)):null;
+ const leadInSecond=n.lead_in_next_event
+ ? Math.floor(Number(n.lead_in_next_event.seconds_until||0))
+ : null;
+ const gameSecond=state.timer_running?Number(state.timer_display_seconds||0):null;
+ return JSON.stringify([
+ n.lead_in_phase,
+ leadInSecond,
+  state.app_build,
+  state.version,
+  state.screen,
+  state.question_index,
+  q.id,
+  state.rule_slide_index,
+  state.rule_slide_key,
+  state.team_count,
+  state.answer_count,
+  state.wager_count,
+  state.all_answers_in,
+  state.all_wagers_in,
+  state.timer_running,
+  state.timer_phase,
+  gameSecond,
+  state.current_fastest_display,
+  state.speed_bonus_remaining,
+  n.clock_revision,
+  n.game_active,
+  n.show_profile,
+  n.show_title,
+  p.id,
+  p.kind,
+  n.filler_type,
+  n.did_you_know,
+  n.next_event?.id||'',
+  comingSecond,
+  m.active,
+  m.phase,
+  m.question_index,
+  miniSecond
+ ]);
+}
+
+async function poll(){
+ try{
+  const r=await fetchWithTimeout('/api/state',{cache:'no-store'});
+  if(!r.ok)throw new Error(`HTTP ${r.status}`);
+  const d=await r.json();
+  if(d.ok){
+   if(!ensureCurrentBuild(d.state.app_build))return;
+   const key=renderKey(d.state);
+   if(key!==LAST_RENDER_KEY){
+    LAST_RENDER_KEY=key;
+    render(d.state);
+   }
+  }
+ }catch(e){
+  document.getElementById('footer').textContent='Waiting for local Auto Elite serverâ€¦';
+ }
+ setTimeout(poll,POLL_MS);
+}
+poll();
+</script>
+</body>
+</html>

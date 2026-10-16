@@ -1,0 +1,55 @@
+ELITE NETWORK SHELL 1B - FULL CHANNEL TEST - 9/27/26
+
+PURPOSE
+This build is for proving the full unattended Elite Network loop before visual polishing.
+
+CURRENT SHOW FAMILY
+- ELITE BLITZ: SPORTS - 2:00 / 3:00 / 4:00 PM
+- ELITE BLITZ - 6:00 / 7:00 / 8:00 PM
+- ELITE BLITZ: AFTER DARK - 9:00 / 9:30 / 10:00 PM
+- All three currently reuse the same mock Blitz questions and the same working Blitz engine.
+- A small show badge identifies Sports / Standard / After Dark during the game. Final artwork comes later.
+
+CHANNEL MODE
+When no scheduled full Blitz game owns the TV, ELITE CHANNEL runs automatically.
+It rotates:
+- Did You Know
+- Sponsor placeholder
+- TODAY ON ELITE TV Guide (generated from network_schedule.json)
+- Coming Up countdown
+
+MINI-GAME
+ELITE QUICK 3 is a TV-only 3-question mini-game using existing mock questions.
+- Intro: 5 sec
+- Each question: 12 sec
+- Reveal: 5 sec
+- Outro: 6 sec
+- Then it returns automatically to ELITE CHANNEL.
+- Automatic mini-game slots are every 20 minutes at :10 / :30 / :50 when a scheduled show is not too close.
+- Host can force one instantly with RUN MINI-GAME NOW.
+
+SCHEDULER TESTS
+Use SIM TIME dropdown + JUMP.
+Suggested tests:
+1) 13:59:50 -> wait 10 sec -> ELITE BLITZ: SPORTS launches automatically.
+2) 17:49:50 -> wait 10 sec -> automatic ELITE QUICK 3 launches at 5:50 PM.
+3) 17:59:50 -> wait 10 sec -> ELITE BLITZ launches automatically at 6:00 PM.
+4) 20:59:50 -> wait 10 sec -> ELITE BLITZ: AFTER DARK launches automatically at 9:00 PM.
+5) Any Channel time -> RUN MINI-GAME NOW -> Quick 3 -> automatic return to Channel.
+6) LIVE TIME returns the scheduler to the real Central-time clock.
+
+IMPORTANT BEHAVIOR
+- A scheduled Blitz event launches the existing Full Auto game automatically.
+- The game owns the TV until the Blitz engine reaches GAME COMPLETE.
+- Once complete, the TV returns to ELITE CHANNEL even if a few minutes remain in that schedule slot.
+- The same scheduled event will not immediately restart after completing.
+- Jumping the simulated clock resets the test state so that time slot can be tested again.
+
+NOT DONE YET
+- Final Sports / After Dark artwork
+- Real Sports / After Dark question pools
+- Sourced Did You Know database integration
+- Sponsor backend
+- Supabase schedule/admin controls
+- Android auto-launch/kiosk/reboot hardening
+- Production outage/reconnect handling

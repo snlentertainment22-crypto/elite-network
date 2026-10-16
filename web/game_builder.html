@@ -1,0 +1,6692 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<title>Elite Network Game Builder</title>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    margin: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #07090e;
+
+    color: white;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+
+button {
+    font: inherit;
+}
+
+
+/* ==========================================================
+   MAIN ADMIN SHELL
+   ========================================================== */
+
+
+#app {
+
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+
+    grid-template-rows:
+        64px
+        1fr;
+
+    background:
+        linear-gradient(
+            145deg,
+            #090d14,
+            #05070b
+        );
+}
+
+
+#topBar {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding:
+        0
+        20px;
+
+    border-bottom:
+        1px solid #27303d;
+
+    background:
+        #0d1119;
+}
+
+
+#title {
+
+    font-size: 23px;
+
+    font-weight: 900;
+
+    letter-spacing: .04em;
+}
+
+
+#title span {
+
+    color: #63dfff;
+}
+
+
+#gameMeta {
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    color: #aeb9c8;
+
+    text-align: right;
+}
+
+
+#workspace {
+
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        350px
+        1fr;
+}
+
+
+/* ==========================================================
+   LEFT QUESTION LIST
+   ========================================================== */
+
+
+#questionPane {
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+    border-right:
+        1px solid
+        #27303d;
+
+    background:
+        #0b0f16;
+}
+
+
+.roundTitle {
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 5;
+
+    padding:
+        11px
+        14px;
+
+    background:
+        #151c27;
+
+    border-top:
+        1px solid
+        #263445;
+
+    border-bottom:
+        1px solid
+        #263445;
+
+    color:
+        #7eeaff;
+
+    font-size:
+        14px;
+
+    font-weight:
+        1000;
+
+    letter-spacing:
+        .08em;
+}
+
+
+.questionRow {
+
+    display: grid;
+
+    grid-template-columns:
+        58px
+        1fr;
+
+    gap:
+        10px;
+
+    width:
+        100%;
+
+    padding:
+        12px;
+
+    border:
+        0;
+
+    border-bottom:
+        1px solid
+        #1c2531;
+
+    background:
+        #0d131c;
+
+    color:
+        white;
+
+    text-align:
+        left;
+
+    cursor:
+        pointer;
+}
+
+
+.questionRow:hover {
+
+    background:
+        #151d29;
+}
+
+
+.questionRow.selected {
+
+    background:
+        #162938;
+
+    box-shadow:
+        inset 4px 0 0
+        #63dfff;
+}
+
+
+.slot {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    height:
+        35px;
+
+    border-radius:
+        7px;
+
+    background:
+        #1c2836;
+
+    color:
+        #7eeaff;
+
+    font-size:
+        13px;
+
+    font-weight:
+        1000;
+}
+
+
+.questionRow.roulette .slot {
+
+    color:
+        #ffd85a;
+}
+
+
+.questionRow.final .slot {
+
+    color:
+        #ff79df;
+}
+
+
+.rowCategory {
+
+    margin-bottom:
+        4px;
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+
+    color:
+        #9ca9ba;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .04em;
+}
+
+
+.rowQuestion {
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.25;
+}
+
+
+.rowStatus {
+
+    margin-top:
+        7px;
+
+    font-size:
+        10px;
+
+    font-weight:
+        900;
+
+    color:
+        #f4c95d;
+}
+
+
+.rowStatus.good {
+
+    color:
+        #69e7a5;
+}
+
+
+/* ==========================================================
+   RIGHT SIDE
+   ========================================================== */
+
+
+#editorPane {
+
+    min-width:
+        0;
+
+    min-height:
+        0;
+
+    overflow-y:
+        auto;
+
+    padding:
+        18px;
+
+    background:
+        #080b10;
+}
+
+
+#editorHeader {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        15px;
+
+    margin-bottom:
+        12px;
+}
+
+
+#selectedTitle {
+
+    font-size:
+        21px;
+
+    font-weight:
+        1000;
+}
+
+
+#selectedSub {
+
+    margin-top:
+        3px;
+
+    color:
+        #9eaabc;
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+}
+
+
+.previewButtons {
+
+    display:
+        flex;
+
+    gap:
+        7px;
+}
+
+
+.previewButton {
+
+    padding:
+        8px
+        12px;
+
+    border:
+        1px solid
+        #354255;
+
+    border-radius:
+        7px;
+
+    background:
+        #131a25;
+
+    color:
+        white;
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+}
+
+
+.previewButton.active {
+
+    border-color:
+        #63dfff;
+
+    color:
+        #63dfff;
+
+    background:
+        #172b36;
+}
+
+
+.previewButton.hidden {
+
+    display:
+        none;
+}
+
+
+/* ==========================================================
+   TV PREVIEW FRAME
+   ========================================================== */
+
+
+#previewCard {
+
+    padding:
+        12px;
+
+    border:
+        1px solid
+        #263343;
+
+    border-radius:
+        12px;
+
+    background:
+        #0d121a;
+}
+
+
+#previewOuter {
+
+    position:
+        relative;
+
+    width:
+        100%;
+
+    aspect-ratio:
+        16 / 9;
+
+    overflow:
+        hidden;
+
+    background:
+        #02040a;
+
+    border:
+        2px solid
+        #313d4d;
+
+    border-radius:
+        8px;
+}
+
+
+#previewOuter.overflowWarning {
+
+    border-color:
+        #ff6363;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(
+            255,
+            99,
+            99,
+            .18
+        );
+}
+
+
+/*
+    IMPORTANT:
+
+    The preview stage is a FIXED 1600 x 900 canvas.
+
+    We scale the whole thing down for the Admin UI.
+
+    That means the font sizes and coordinates below can
+    match the real TV renderer's 1600-wide reference scale.
+*/
+
+
+#tvStage {
+
+    position:
+        absolute;
+
+    left:
+        0;
+
+    top:
+        0;
+
+    width:
+        1600px;
+
+    height:
+        900px;
+
+    transform-origin:
+        top left;
+
+    overflow:
+        hidden;
+
+    background:
+        #04060b
+        center
+        /
+        100%
+        100%
+        no-repeat;
+
+    color:
+        white;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+
+.board {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+}
+
+
+/* ==========================================================
+   REAL TV HEADER COORDINATES
+   ========================================================== */
+
+
+.topInfo {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    font-weight:
+        900;
+
+    text-shadow:
+        0
+        2px
+        10px
+        rgba(
+            0,
+            0,
+            0,
+            .75
+        );
+}
+
+
+.topInfo .left,
+.topInfo .mid,
+.topInfo .right {
+
+    position:
+        absolute;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
+    overflow:
+        hidden;
+}
+
+
+.topInfo.questionHeader .left {
+
+    left:
+        11.55%;
+
+    width:
+        11.6%;
+
+    top:
+        4.45%;
+
+    height:
+        13%;
+
+    font-size:
+        64px;
+
+    line-height:
+        1;
+}
+
+
+.topInfo.questionHeader .mid {
+
+    left:
+        27.2%;
+
+    right:
+        26.2%;
+
+    top:
+        4.45%;
+
+    height:
+        13%;
+
+    font-size:
+        30px;
+
+    line-height:
+        1.02;
+
+    padding:
+        0
+        1.2%;
+}
+
+
+.topInfo.questionHeader .right {
+
+    right:
+        8.2%;
+
+    width:
+        15.6%;
+
+    top:
+        4.45%;
+
+    height:
+        13%;
+
+    font-size:
+        50px;
+
+    line-height:
+        1;
+
+    white-space:
+        nowrap;
+}
+
+
+.topInfo.rouletteHeader .left {
+
+    left:
+        10.45%;
+
+    width:
+        11.2%;
+
+    top:
+        3.55%;
+
+    height:
+        14.1%;
+
+    font-size:
+        64px;
+}
+
+
+.topInfo.rouletteHeader .mid {
+
+    left:
+        28%;
+
+    right:
+        29%;
+
+    top:
+        3.45%;
+
+    height:
+        13.6%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        0
+        1.2%;
+
+    font-size:
+        30px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(4,13,34,.94),
+            rgba(16,10,43,.94)
+        );
+
+    border-radius:
+        10px;
+}
+
+
+.topInfo.rouletteHeader .right {
+
+    right:
+        9.45%;
+
+    width:
+        16.6%;
+
+    top:
+        3.45%;
+
+    height:
+        13.6%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        48px;
+
+    white-space:
+        nowrap;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(13,11,39,.96),
+            rgba(7,20,45,.96)
+        );
+
+    border-radius:
+        10px;
+}
+
+
+/* ==========================================================
+   REAL TV QUESTION BOX
+   ========================================================== */
+
+
+.questionBox {
+
+    position:
+        absolute;
+
+    left:
+        10.8%;
+
+    right:
+        10.8%;
+
+    top:
+        22.4%;
+
+    height:
+        20.5%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        1.3%
+        4.2%;
+
+    text-align:
+        center;
+
+    font-size:
+        58px;
+
+    font-weight:
+        900;
+
+    line-height:
+        1.08;
+
+    text-shadow:
+        0
+        3px
+        12px
+        rgba(
+            0,
+            0,
+            0,
+            .85
+        );
+
+    overflow:
+        hidden;
+}
+
+
+/* ==========================================================
+   FOUR-ANSWER TV GRID
+   ========================================================== */
+
+
+.choiceGrid {
+
+    position:
+        absolute;
+
+    left:
+        10.1%;
+
+    right:
+        10.1%;
+
+    top:
+        47.4%;
+
+    height:
+        34.2%;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    grid-template-rows:
+        1fr
+        1fr;
+
+    gap:
+        8%
+        3.6%;
+}
+
+
+.choiceCell {
+
+    position:
+        relative;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        1.5%
+        8%
+        1.5%
+        13%;
+
+    text-align:
+        center;
+
+    font-size:
+        40px;
+
+    font-weight:
+        900;
+
+    line-height:
+        1.05;
+
+    text-shadow:
+        0
+        3px
+        12px
+        rgba(
+            0,
+            0,
+            0,
+            .9
+        );
+
+    overflow:
+        hidden;
+}
+
+
+.choiceCell span {
+
+    display:
+        block;
+
+    width:
+        100%;
+
+    max-height:
+        100%;
+
+    overflow:
+        hidden;
+}
+
+
+/* ==========================================================
+   SIX-ANSWER ROUND 4 TV GRID
+   ========================================================== */
+
+
+.sixMask {
+
+    position:
+        absolute;
+
+    left:
+        11.5%;
+
+    right:
+        8.5%;
+
+    top:
+        45.5%;
+
+    bottom:
+        5.5%;
+
+    background:
+        rgba(
+            3,
+            8,
+            18,
+            .88
+        );
+
+    border-radius:
+        22px;
+
+    box-shadow:
+        inset
+        0
+        0
+        40px
+        rgba(
+            0,
+            0,
+            0,
+            .35
+        );
+}
+
+
+.sixGrid {
+
+    position:
+        absolute;
+
+    left:
+        13%;
+
+    right:
+        10%;
+
+    top:
+        47%;
+
+    height:
+        43%;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    grid-template-rows:
+        repeat(
+            3,
+            1fr
+        );
+
+    gap:
+        5.5%
+        3%;
+}
+
+
+.sixChoice {
+
+    position:
+        relative;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    padding:
+        1%
+        6%;
+
+    border:
+        4px solid
+        #35cfff;
+
+    border-radius:
+        18px;
+
+    background:
+        rgba(
+            3,
+            8,
+            18,
+            .62
+        );
+
+    text-align:
+        center;
+
+    font-size:
+        32px;
+
+    font-weight:
+        900;
+
+    line-height:
+        1.03;
+
+    text-shadow:
+        0
+        3px
+        12px
+        rgba(
+            0,
+            0,
+            0,
+            .9
+        );
+
+    overflow:
+        hidden;
+}
+
+
+.sixChoice:nth-child(2) {
+    border-color:
+        #ff9a21;
+}
+
+
+.sixChoice:nth-child(3) {
+    border-color:
+        #57ff2d;
+}
+
+
+.sixChoice:nth-child(4) {
+    border-color:
+        #ffe52e;
+}
+
+
+.sixChoice:nth-child(5) {
+    border-color:
+        #b96cff;
+}
+
+
+.sixChoice:nth-child(6) {
+    border-color:
+        #ff4f8f;
+}
+
+
+.sixChoice span {
+
+    display:
+        block;
+
+    width:
+        100%;
+
+    max-height:
+        100%;
+
+    overflow:
+        hidden;
+}
+
+
+/* ==========================================================
+   ROULETTE WAGER PREVIEW
+   ========================================================== */
+
+
+.rouletteGrid {
+
+    position:
+        absolute;
+
+    left:
+        20%;
+
+    right:
+        20%;
+
+    top:
+        43.2%;
+
+    height:
+        46.8%;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr;
+
+    grid-template-rows:
+        repeat(
+            3,
+            1fr
+        );
+
+    gap:
+        5.5%;
+}
+
+
+.rouletteChoice {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
+    font-size:
+        46px;
+
+    font-weight:
+        1000;
+
+    line-height:
+        1;
+
+    overflow:
+        hidden;
+}
+
+
+/* ==========================================================
+   FINAL WAGER
+   ========================================================== */
+
+
+.finalLabel {
+
+    position:
+        absolute;
+
+    left:
+        50%;
+
+    top:
+        17.5%;
+
+    transform:
+        translateX(-50%);
+
+    font-size:
+        38px;
+
+    font-weight:
+        1000;
+
+    text-shadow:
+        0
+        3px
+        12px
+        rgba(
+            0,
+            0,
+            0,
+            .8
+        );
+}
+
+
+.finalNote {
+
+    position:
+        absolute;
+
+    left:
+        13%;
+
+    right:
+        13%;
+
+    bottom:
+        12%;
+
+    text-align:
+        center;
+
+    font-size:
+        42px;
+
+    font-weight:
+        900;
+
+    line-height:
+        1.16;
+
+    text-shadow:
+        0
+        3px
+        12px
+        rgba(
+            0,
+            0,
+            0,
+            .85
+        );
+}
+
+
+.bottomBanner {
+
+    position:
+        absolute;
+
+    left:
+        18%;
+
+    right:
+        18%;
+
+    bottom:
+        3.4%;
+
+    text-align:
+        center;
+
+    font-size:
+        22px;
+
+    font-weight:
+        800;
+
+    text-shadow:
+        0
+        2px
+        10px
+        rgba(
+            0,
+            0,
+            0,
+            .8
+        );
+}
+
+
+/* ==========================================================
+   FIT STATUS
+   ========================================================== */
+
+
+#fitBar {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        8px;
+
+    margin-top:
+        10px;
+}
+
+
+.fitChip {
+
+    padding:
+        6px
+        9px;
+
+    border-radius:
+        6px;
+
+    background:
+        #15231d;
+
+    border:
+        1px solid
+        #275c44;
+
+    color:
+        #79e7aa;
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+}
+
+
+.fitChip.warn {
+
+    background:
+        #33280f;
+
+    border-color:
+        #7f6520;
+
+    color:
+        #ffd56e;
+}
+
+
+.fitChip.bad {
+
+    background:
+        #351717;
+
+    border-color:
+        #853636;
+
+    color:
+        #ff8c8c;
+}
+
+
+/* ==========================================================
+   QUESTION DETAILS
+   ========================================================== */
+
+
+#details {
+
+    margin-top:
+        12px;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr
+        1fr;
+
+    gap:
+        12px;
+}
+
+
+.detailBox {
+
+    padding:
+        13px;
+
+    border:
+        1px solid
+        #253142;
+
+    border-radius:
+        9px;
+
+    background:
+        #0e141d;
+}
+
+
+.detailTitle {
+
+    margin-bottom:
+        8px;
+
+    color:
+        #7eeaff;
+
+    font-size:
+        11px;
+
+    font-weight:
+        1000;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .06em;
+}
+
+
+.detailValue {
+
+    font-size:
+        14px;
+
+    font-weight:
+        800;
+
+    line-height:
+        1.4;
+}
+
+
+.answerLine {
+
+    margin:
+        5px
+        0;
+}
+
+
+.correctText {
+
+    color:
+        #70efa9;
+}
+
+
+.hintText {
+
+    color:
+        #ffd978;
+}
+
+
+.warningText {
+
+    color:
+        #ffc65d;
+}
+
+
+#error {
+
+    padding:
+        30px;
+
+    font-size:
+        18px;
+
+    color:
+        #ff8f8f;
+}
+
+
+@media (
+    max-width:
+    1150px
+) {
+
+    #workspace {
+
+        grid-template-columns:
+            300px
+            1fr;
+    }
+
+
+    #details {
+
+        grid-template-columns:
+            1fr;
+    }
+}
+
+
+/* ==========================================================
+   PRESENTATION EDITOR
+   ========================================================== */
+
+
+#presentationEditor {
+
+    margin-top:
+        12px;
+
+    padding:
+        14px;
+
+    border:
+        1px solid
+        #283648;
+
+    border-radius:
+        9px;
+
+    background:
+        #0b1119;
+}
+
+
+.presentationHeader {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        12px;
+
+    margin-bottom:
+        12px;
+}
+
+
+.presentationTitle {
+
+    color:
+        #7eeaff;
+
+    font-size:
+        12px;
+
+    font-weight:
+        1000;
+
+    letter-spacing:
+        .07em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.presentationGrid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr
+        180px
+        180px;
+
+    gap:
+        10px;
+
+    align-items:
+        end;
+}
+
+
+.editorField {
+
+    min-width:
+        0;
+}
+
+
+.editorLabel {
+
+    display:
+        block;
+
+    margin-bottom:
+        5px;
+
+    color:
+        #aab7c8;
+
+    font-size:
+        10px;
+
+    font-weight:
+        1000;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .05em;
+}
+
+
+.editorInput {
+
+    width:
+        100%;
+
+    min-width:
+        0;
+
+    padding:
+        9px
+        10px;
+
+    border:
+        1px solid
+        #34445a;
+
+    border-radius:
+        6px;
+
+    outline:
+        none;
+
+    background:
+        #111925;
+
+    color:
+        white;
+
+    font-size:
+        13px;
+
+    font-weight:
+        800;
+}
+
+
+.editorInput:focus {
+
+    border-color:
+        #63dfff;
+
+    box-shadow:
+        0 0 0 1px
+        rgba(
+            99,
+            223,
+            255,
+            .28
+        );
+}
+
+
+.backgroundButtons {
+
+    display:
+        flex;
+
+    flex-wrap:
+        wrap;
+
+    gap:
+        7px;
+
+    margin-top:
+        9px;
+}
+
+
+.smallEditorButton {
+
+    padding:
+        7px
+        9px;
+
+    border:
+        1px solid
+        #34445a;
+
+    border-radius:
+        6px;
+
+    background:
+        #141d29;
+
+    color:
+        #dce6f2;
+
+    font-size:
+        10px;
+
+    font-weight:
+        900;
+
+    cursor:
+        pointer;
+}
+
+
+.smallEditorButton:hover {
+
+    border-color:
+        #63dfff;
+
+    color:
+        #7eeaff;
+}
+
+
+#savePresentationButton {
+
+    padding:
+        9px
+        13px;
+
+    border:
+        1px solid
+        #38b9dc;
+
+    border-radius:
+        7px;
+
+    background:
+        #123444;
+
+    color:
+        #7eeaff;
+
+    font-size:
+        11px;
+
+    font-weight:
+        1000;
+
+    cursor:
+        pointer;
+}
+
+
+#savePresentationButton:hover {
+
+    background:
+        #174659;
+}
+
+
+#savePresentationButton:disabled {
+
+    opacity:
+        .5;
+
+    cursor:
+        default;
+}
+
+
+#presentationSaveStatus {
+
+    margin-top:
+        10px;
+
+    min-height:
+        16px;
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+
+    color:
+        #9daabd;
+}
+
+
+#presentationSaveStatus.dirty {
+
+    color:
+        #ffd46a;
+}
+
+
+#presentationSaveStatus.saving {
+
+    color:
+        #7eeaff;
+}
+
+
+#presentationSaveStatus.saved {
+
+    color:
+        #70efa9;
+}
+
+
+#presentationSaveStatus.error {
+
+    color:
+        #ff8d8d;
+}
+
+
+@media (
+    max-width:
+    1250px
+) {
+
+    .presentationGrid {
+
+        grid-template-columns:
+            1fr
+            150px
+            150px;
+    }
+}
+
+
+
+
+/* ==========================================================
+   GAME BUILDER EDITOR TABS
+   ========================================================== */
+
+.editorTabs {
+
+    display:
+        flex;
+
+    gap:
+        6px;
+
+    margin-top:
+        12px;
+}
+
+
+.editorTab {
+
+    padding:
+        8px 13px;
+
+    border:
+        1px solid #34445a;
+
+    border-radius:
+        7px 7px 0 0;
+
+    background:
+        #101721;
+
+    color:
+        #9fadc0;
+
+    font-size:
+        11px;
+
+    font-weight:
+        1000;
+
+    cursor:
+        pointer;
+}
+
+
+.editorTab.active {
+
+    color:
+        #7eeaff;
+
+    border-color:
+        #3a98b1;
+
+    background:
+        #112632;
+}
+
+
+.editorPanelHidden {
+
+    display:
+        none !important;
+}
+
+
+#contentEditor {
+
+    padding:
+        14px;
+
+    border:
+        1px solid #283648;
+
+    border-radius:
+        0 9px 9px 9px;
+
+    background:
+        #0b1119;
+}
+
+
+.contentGrid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 160px 160px;
+
+    gap:
+        10px;
+}
+
+
+.contentWide {
+
+    grid-column:
+        1 / -1;
+}
+
+
+.contentTwo {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        10px;
+}
+
+
+.contentTextarea {
+
+    width:
+        100%;
+
+    min-height:
+        72px;
+
+    resize:
+        vertical;
+
+    padding:
+        9px 10px;
+
+    border:
+        1px solid #34445a;
+
+    border-radius:
+        6px;
+
+    background:
+        #111925;
+
+    color:
+        white;
+
+    font:
+        800 13px Arial;
+
+    line-height:
+        1.35;
+}
+
+
+.answerEditorGrid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:
+        8px 10px;
+
+    margin-top:
+        8px;
+}
+
+
+#saveContentButton {
+
+    padding:
+        9px 13px;
+
+    border:
+        1px solid #42d28b;
+
+    border-radius:
+        7px;
+
+    background:
+        #123526;
+
+    color:
+        #7af0ae;
+
+    font-size:
+        11px;
+
+    font-weight:
+        1000;
+
+    cursor:
+        pointer;
+}
+
+
+#contentSaveStatus {
+
+    margin-top:
+        10px;
+
+    min-height:
+        16px;
+
+    color:
+        #a6b2c2;
+
+    font-size:
+        11px;
+
+    font-weight:
+        900;
+}
+
+
+#contentSaveStatus.dirty {
+    color: #ffd46a;
+}
+
+
+#contentSaveStatus.saved {
+    color: #70efa9;
+}
+
+
+#contentSaveStatus.error {
+    color: #ff8d8d;
+}
+
+
+@media (max-width: 1200px) {
+
+    .contentGrid {
+        grid-template-columns:
+            1fr 130px 130px;
+    }
+}
+
+
+
+
+/* ==========================================================
+   GAME REVIEW / APPROVAL
+   ========================================================== */
+
+
+.reviewActions {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+}
+
+
+#gameReviewStatus {
+
+    padding:
+        7px
+        9px;
+
+    border:
+        1px solid
+        #725d24;
+
+    border-radius:
+        6px;
+
+    background:
+        #2c2513;
+
+    color:
+        #ffd568;
+
+    font-size:
+        10px;
+
+    font-weight:
+        1000;
+
+    white-space:
+        nowrap;
+}
+
+
+#gameReviewStatus.approved {
+
+    border-color:
+        #2d7652;
+
+    background:
+        #142b21;
+
+    color:
+        #70efa9;
+}
+
+
+#approveGameQuestionButton {
+
+    padding:
+        9px
+        12px;
+
+    border:
+        1px solid
+        #42d28b;
+
+    border-radius:
+        7px;
+
+    background:
+        #123526;
+
+    color:
+        #7af0ae;
+
+    font-size:
+        10px;
+
+    font-weight:
+        1000;
+
+    cursor:
+        pointer;
+}
+
+
+#approveGameQuestionButton:hover {
+
+    background:
+        #184a34;
+}
+
+
+#approveGameQuestionButton:disabled {
+
+    opacity:
+        .45;
+
+    cursor:
+        default;
+}
+
+
+
+
+/* ==========================================================
+   AI PREP BUTTON
+   ========================================================== */
+
+
+#aiPrepButton {
+
+    padding:
+        9px
+        12px;
+
+    border:
+        1px solid
+        #9d6cff;
+
+    border-radius:
+        7px;
+
+    background:
+        #25183d;
+
+    color:
+        #caaeff;
+
+    font-size:
+        10px;
+
+    font-weight:
+        1000;
+
+    cursor:
+        pointer;
+}
+
+
+#aiPrepButton:hover {
+
+    background:
+        #342052;
+}
+
+
+#aiPrepButton:disabled {
+
+    opacity:
+        .65;
+
+    cursor:
+        default;
+}
+
+
+#aiPrepButton.prepared {
+
+    border-color:
+        #2d7652;
+
+    background:
+        #142b21;
+
+    color:
+        #70efa9;
+}
+
+
+#aiPrepStatus {
+
+    margin-top:
+        6px;
+
+    min-height:
+        14px;
+
+    color:
+        #9ca9ba;
+
+    font-size:
+        10px;
+
+    font-weight:
+        900;
+}
+
+
+#aiPrepStatus.working {
+
+    color:
+        #caaeff;
+}
+
+
+#aiPrepStatus.success {
+
+    color:
+        #70efa9;
+}
+
+
+#aiPrepStatus.error {
+
+    color:
+        #ff8d8d;
+}
+
+
+
+
+/* ==========================================================
+   AUTO GAME BUILDER
+   ========================================================== */
+
+.autoBuildPanel {
+    margin: 18px 0 22px;
+    padding: 18px;
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.045);
+}
+
+.autoBuildTitle {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.autoBuildSubtitle {
+    opacity: 0.76;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.autoBuildControls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: end;
+}
+
+.autoBuildField {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.autoBuildField label {
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.autoBuildField select,
+.autoBuildField input {
+    min-height: 42px;
+    padding: 0 12px;
+    border-radius: 9px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(0,0,0,0.32);
+    color: inherit;
+    font: inherit;
+}
+
+#autoBuildButton {
+    min-height: 42px;
+    padding: 0 20px;
+    border-radius: 9px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+#autoBuildButton:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+#autoBuildStatus {
+    margin-top: 14px;
+    min-height: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: pre-wrap;
+}
+
+#autoBuildStatus.success {
+    color: #7ee787;
+}
+
+#autoBuildStatus.error {
+    color: #ff7b72;
+}
+
+#autoBuildStatus.working {
+    opacity: 0.8;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="app">
+
+    <div id="topBar">
+
+        <div id="title">
+
+            ELITE NETWORK
+            <span>
+                GAME BUILDER
+            </span>
+
+        </div>
+
+        <div id="gameMeta">
+
+            Loading game...
+
+        </div>
+
+        
+
+
+    </div>
+
+<div class="autoBuildPanel">
+
+            <div class="autoBuildTitle">
+                BUILD AUTO GAMES
+            </div>
+
+            <div class="autoBuildSubtitle">
+                Build 9 games per day: 3 Sports, 3 Regular, 3 After Dark.
+                Games are created as DRAFT for review.
+            </div>
+
+            <div class="autoBuildControls">
+
+                <div class="autoBuildField">
+                    <label for="autoBuildDays">
+                        DAYS TO BUILD
+                    </label>
+
+                    <select id="autoBuildDays">
+                        <option value="1">1 Day</option>
+                        <option value="2">2 Days</option>
+                        <option value="3">3 Days</option>
+                        <option value="5">5 Days</option>
+                        <option value="7" selected>7 Days</option>
+                    </select>
+                </div>
+
+                <div class="autoBuildField">
+                    <label for="autoBuildStartDate">
+                        START DATE
+                    </label>
+
+                    <input
+                        id="autoBuildStartDate"
+                        type="date"
+                    >
+                </div>
+
+                <button
+                    id="autoBuildButton"
+                    type="button"
+                >
+                    BUILD AUTO GAMES
+                </button>
+
+                <div class="autoBuildField">
+                    <label for="reviewGameSelect">
+                        REVIEW GAME
+                    </label>
+
+                    <select id="reviewGameSelect">
+                        <option value="">
+                            Loading games...
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div id="autoBuildStatus"></div>
+
+        </div>
+
+
+
+
+    <div id="workspace">
+
+        <div id="questionPane"></div>
+
+
+        <div id="editorPane">
+
+            <div id="editorHeader">
+
+                <div>
+
+                    <div id="selectedTitle">
+                        Select a question
+                    </div>
+
+                    <div id="selectedSub"></div>
+
+                </div>
+
+
+                <div class="previewButtons">
+
+                    <button
+                        id="questionPreviewButton"
+                        class="previewButton active"
+                    >
+                        QUESTION
+                    </button>
+
+                    <button
+                        id="hintPreviewButton"
+                        class="previewButton hidden"
+                    >
+                        ROULETTE HINT
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div id="previewCard">
+
+                <div id="previewOuter">
+
+                    <div id="tvStage"></div>
+
+                </div>
+
+                <div id="fitBar"></div>
+
+
+
+                
+
+                <div class="editorTabs">
+
+                    <button
+                        id="contentTab"
+                        class="editorTab active"
+                        type="button"
+                    >
+                        CONTENT
+                    </button>
+
+                    <button
+                        id="presentationTab"
+                        class="editorTab"
+                        type="button"
+                    >
+                        PRESENTATION
+                    </button>
+
+                </div>
+
+
+                <div id="contentEditor">
+
+                    <div class="presentationHeader">
+
+                        <div class="presentationTitle">
+                            QUESTION CONTENT
+                        </div>
+
+
+                        <div class="reviewActions">
+
+                            <button
+                                id="aiPrepButton"
+                                type="button"
+                            >
+                                PREPARE WITH AI
+                            </button>
+
+                            <div id="gameReviewStatus">
+                                NEEDS REVIEW
+                            </div>
+
+                            <button
+                                id="approveGameQuestionButton"
+                                type="button"
+                            >
+                                APPROVE FOR THIS GAME
+                            </button>
+
+                            <button
+                                id="saveContentButton"
+                                type="button"
+                            >
+                                SAVE QUESTION
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="contentGrid">
+
+                        <div class="editorField">
+
+                            <label class="editorLabel">
+                                Category
+                            </label>
+
+                            <input
+                                id="editCategory"
+                                class="editorInput"
+                                type="text"
+                            >
+
+                        </div>
+
+
+                        <div class="editorField">
+
+                            <label class="editorLabel">
+                                Type
+                            </label>
+
+                            <select
+                                id="editQuestionType"
+                                class="editorInput"
+                            >
+                                <option value="normal">
+                                    Normal
+                                </option>
+
+                                <option value="roulette">
+                                    Roulette
+                                </option>
+
+                                <option value="final_wager">
+                                    Final Wager
+                                </option>
+                            </select>
+
+                        </div>
+
+
+                        <div class="editorField">
+
+                            <label class="editorLabel">
+                                Timer
+                            </label>
+
+                            <input
+                                id="editTimer"
+                                class="editorInput"
+                                type="number"
+                                min="1"
+                                max="600"
+                            >
+
+                        </div>
+
+
+                        <div class="contentWide">
+
+                            <label class="editorLabel">
+                                Question
+                            </label>
+
+                            <textarea
+                                id="editQuestion"
+                                class="contentTextarea"
+                            ></textarea>
+
+                        </div>
+
+
+                        <div class="contentTwo contentWide">
+
+                            <div>
+
+                                <label class="editorLabel">
+                                    Correct Answer
+                                </label>
+
+                                <input
+                                    id="editCorrectAnswer"
+                                    class="editorInput"
+                                    type="text"
+                                >
+
+                            </div>
+
+
+                            <div id="rouletteHintField">
+
+                                <label class="editorLabel">
+                                    Roulette Hint
+                                </label>
+
+                                <input
+                                    id="editRouletteHint"
+                                    class="editorInput"
+                                    type="text"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="contentWide">
+
+                            <label class="editorLabel">
+                                Wrong Answers
+                            </label>
+
+                            <div class="answerEditorGrid">
+
+                                <input
+                                    id="wrongAnswer1"
+                                    class="editorInput"
+                                    placeholder="Wrong answer 1"
+                                >
+
+                                <input
+                                    id="wrongAnswer2"
+                                    class="editorInput"
+                                    placeholder="Wrong answer 2"
+                                >
+
+                                <input
+                                    id="wrongAnswer3"
+                                    class="editorInput"
+                                    placeholder="Wrong answer 3"
+                                >
+
+                                <input
+                                    id="wrongAnswer4"
+                                    class="editorInput"
+                                    placeholder="Wrong answer 4"
+                                >
+
+                                <input
+                                    id="wrongAnswer5"
+                                    class="editorInput"
+                                    placeholder="Wrong answer 5"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="aiPrepStatus"></div>
+
+                    <div id="contentSaveStatus">
+                        Game-specific edits. Master question is unchanged.
+                    </div>
+
+                </div>
+
+
+<div id="presentationEditor" class="editorPanelHidden">
+
+                    <div class="presentationHeader">
+
+                        <div class="presentationTitle">
+                            TV PRESENTATION
+                        </div>
+
+                        <button
+                            id="savePresentationButton"
+                            type="button"
+                        >
+                            SAVE PRESENTATION
+                        </button>
+
+                    </div>
+
+
+                    <div class="presentationGrid">
+
+                        <div class="editorField">
+
+                            <label
+                                class="editorLabel"
+                                for="backgroundPath"
+                            >
+                                Background Image
+                            </label>
+
+                            <input
+                                id="backgroundPath"
+                                class="editorInput"
+                                type="text"
+                                placeholder="Default background"
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+                        <div class="editorField">
+
+                            <label
+                                class="editorLabel"
+                                for="questionFontOverride"
+                            >
+                                Question Font
+                            </label>
+
+                            <input
+                                id="questionFontOverride"
+                                class="editorInput"
+                                type="number"
+                                min="18"
+                                max="90"
+                                step="1"
+                                placeholder="AUTO"
+                            >
+
+                        </div>
+
+
+                        <div class="editorField">
+
+                            <label
+                                class="editorLabel"
+                                for="answerFontOverride"
+                            >
+                                Answer Font
+                            </label>
+
+                            <input
+                                id="answerFontOverride"
+                                class="editorInput"
+                                type="number"
+                                min="16"
+                                max="72"
+                                step="1"
+                                placeholder="AUTO"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="backgroundButtons">
+
+                        <button
+                            id="useDefaultBackground"
+                            class="smallEditorButton"
+                            type="button"
+                        >
+                            USE DEFAULT
+                        </button>
+
+                        <button
+                            id="useQuestionBackground"
+                            class="smallEditorButton"
+                            type="button"
+                        >
+                            QUESTION BG
+                        </button>
+
+                        <button
+                            id="useRouletteBackground"
+                            class="smallEditorButton"
+                            type="button"
+                        >
+                            ROULETTE BG
+                        </button>
+
+                        <button
+                            id="resetFontsAuto"
+                            class="smallEditorButton"
+                            type="button"
+                        >
+                            RESET FONTS TO AUTO
+                        </button>
+
+                    </div>
+
+
+                    <div id="presentationSaveStatus">
+                        Select a question to edit presentation.
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+
+            <div id="details"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+// ============================================================
+// ELITE NETWORK GAME BUILDER
+// READ-ONLY ADMIN PREVIEW
+// Build 1A
+// ============================================================
+
+
+let currentGameKey =
+    "regular-blitz-test-2022-001";
+
+
+let gameData = null;
+
+let selectedQuestion = null;
+
+let previewMode =
+    "question";
+
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+
+function esc(value) {
+
+    return String(
+        value ?? ""
+    ).replace(
+        /[&<>"']/g,
+        char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[char]
+    );
+}
+
+
+function questionPrepared(
+    q
+) {
+
+    if (
+        q.question_type ===
+        "final_wager"
+    ) {
+
+        return true;
+    }
+
+    if (
+        !Array.isArray(
+            q.wrong_answers
+        )
+        ||
+        q.wrong_answers.length < 5
+    ) {
+
+        return false;
+    }
+
+    if (
+        q.question_type ===
+        "roulette"
+        &&
+        !q.roulette_hint
+    ) {
+
+        return false;
+    }
+
+    return true;
+}
+
+
+// ============================================================
+// LOAD GAME
+// ============================================================
+
+
+async function loadGame() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/game-builder"
+                + "?game_key="
+                + encodeURIComponent(
+                    currentGameKey
+                ),
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            throw new Error(
+                data.error
+                ||
+                "Unable to load game."
+            );
+        }
+
+        gameData =
+            data.game;
+
+        renderGame();
+
+    }
+    catch (
+        error
+    ) {
+
+        document.getElementById(
+            "questionPane"
+        ).innerHTML =
+            `<div id="error">
+                ${esc(error.message)}
+            </div>`;
+
+        document.getElementById(
+            "gameMeta"
+        ).textContent =
+            "GAME BUILDER ERROR";
+    }
+}
+
+
+// ============================================================
+// GAME LIST
+// ============================================================
+
+
+function renderGame() {
+
+    document.getElementById(
+        "gameMeta"
+    ).innerHTML =
+        `${esc(gameData.title)}
+        &nbsp; • &nbsp;
+        ${esc(gameData.status)}
+        &nbsp; • &nbsp;
+        ${gameData.question_count}
+        QUESTIONS`;
+
+
+    const pane =
+        document.getElementById(
+            "questionPane"
+        );
+
+
+    let html = "";
+
+    let currentRound =
+        null;
+
+
+    for (
+        const q
+        of gameData.questions
+    ) {
+
+        if (
+            q.round_number
+            !== currentRound
+        ) {
+
+            currentRound =
+                q.round_number;
+
+            html +=
+                `<div class="roundTitle">
+                    ROUND ${currentRound}
+                </div>`;
+        }
+
+
+        let rowClass =
+            "questionRow";
+
+
+        if (
+            q.question_type ===
+            "roulette"
+        ) {
+
+            rowClass +=
+                " roulette";
+        }
+
+
+        if (
+            q.question_type ===
+            "final_wager"
+        ) {
+
+            rowClass +=
+                " final";
+        }
+
+
+        const prepared =
+            questionPrepared(
+                q
+            );
+
+
+        let prepText =
+            prepared
+            ?
+            "✓ PREPARED"
+            :
+            "⚠ NEEDS PREP";
+
+
+        if (
+            q.question_type ===
+            "roulette"
+            &&
+            q.roulette_hint
+        ) {
+
+            prepText +=
+                " • HINT ✓";
+        }
+
+
+        html +=
+            `<button
+                class="${rowClass}"
+                data-question-id="${q.game_question_id}"
+            >
+
+                <div class="slot">
+                    ${esc(q.slot_id)}
+                </div>
+
+                <div>
+
+                    <div class="rowCategory">
+                        ${esc(q.category)}
+                        •
+                        ${esc(q.question_type)}
+                    </div>
+
+                    <div class="rowQuestion">
+                        ${esc(q.question)}
+                    </div>
+
+                    <div
+                        class="
+                            rowStatus
+                            ${prepared ? "good" : ""}
+                        "
+                    >
+                        ${prepText}
+                    </div>
+
+                </div>
+
+            </button>`;
+    }
+
+
+    pane.innerHTML =
+        html;
+
+
+    pane.querySelectorAll(
+        ".questionRow"
+    ).forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const id =
+                        Number(
+                            button.dataset.questionId
+                        );
+
+                    const q =
+                        gameData.questions.find(
+                            item =>
+                                item.game_question_id
+                                === id
+                        );
+
+                    selectQuestion(
+                        q
+                    );
+                }
+            );
+        }
+    );
+
+
+    if (
+        gameData.questions.length
+    ) {
+
+        selectQuestion(
+            gameData.questions[0]
+        );
+    }
+}
+
+
+// ============================================================
+// SELECT QUESTION
+// ============================================================
+
+
+function selectQuestion(
+    q
+) {
+
+    selectedQuestion =
+        q;
+
+    previewMode =
+        "question";
+
+
+    document.querySelectorAll(
+        ".questionRow"
+    ).forEach(
+        element => {
+
+            element.classList.toggle(
+                "selected",
+                Number(
+                    element.dataset.questionId
+                )
+                ===
+                q.game_question_id
+            );
+        }
+    );
+
+
+    document.getElementById(
+        "selectedTitle"
+    ).textContent =
+        `${q.slot_id} — ${q.category}`;
+
+
+    document.getElementById(
+        "selectedSub"
+    ).textContent =
+        `${q.question_type}
+        •
+        Question ID ${q.question_id}
+        •
+        Fact checked ${q.fact_check_date || "—"}`;
+
+
+    const hintButton =
+        document.getElementById(
+            "hintPreviewButton"
+        );
+
+
+    hintButton.classList.toggle(
+        "hidden",
+        q.question_type !==
+        "roulette"
+    );
+
+
+    setPreviewButtons();
+
+    renderPreview();
+
+    renderDetails();
+
+    loadPresentationEditor();
+
+    loadContentEditor();
+
+    contentDirty = false;
+
+    renderGameReviewStatus();
+    }
+
+
+// ============================================================
+// PREVIEW BUTTONS
+// ============================================================
+
+
+function setPreviewButtons() {
+
+    document.getElementById(
+        "questionPreviewButton"
+    ).classList.toggle(
+        "active",
+        previewMode ===
+        "question"
+    );
+
+
+    document.getElementById(
+        "hintPreviewButton"
+    ).classList.toggle(
+        "active",
+        previewMode ===
+        "hint"
+    );
+}
+
+
+document.getElementById(
+    "questionPreviewButton"
+).addEventListener(
+    "click",
+    () => {
+
+        previewMode =
+            "question";
+
+        setPreviewButtons();
+
+        renderPreview();
+    }
+);
+
+
+document.getElementById(
+    "hintPreviewButton"
+).addEventListener(
+    "click",
+    () => {
+
+        if (
+            selectedQuestion?.question_type
+            !==
+            "roulette"
+        ) {
+
+            return;
+        }
+
+        previewMode =
+            "hint";
+
+        setPreviewButtons();
+
+        renderPreview();
+    }
+);
+
+
+// ============================================================
+// BUILD PREVIEW CHOICES
+// ============================================================
+
+
+function getPreviewChoices(
+    q
+) {
+
+    const expectedCount =
+        q.round_number === 4
+        ?
+        6
+        :
+        4;
+
+
+    if (
+        Array.isArray(
+            q.saved_choices
+        )
+        &&
+        q.saved_choices.length
+        >= expectedCount
+    ) {
+
+        return q.saved_choices.slice(
+            0,
+            expectedCount
+        );
+    }
+
+
+    const wrong =
+        Array.isArray(
+            q.wrong_answers
+        )
+        ?
+        q.wrong_answers.slice(
+            0,
+            expectedCount - 1
+        )
+        :
+        [];
+
+
+    const choices =
+        [...wrong];
+
+
+    const insertAt =
+        q.question_id
+        %
+        expectedCount;
+
+
+    choices.splice(
+        insertAt,
+        0,
+        q.correct_answer
+    );
+
+
+    while (
+        choices.length
+        <
+        expectedCount
+    ) {
+
+        choices.push(
+            "[ANSWER NOT PREPARED]"
+        );
+    }
+
+
+    return choices.slice(
+        0,
+        expectedCount
+    );
+}
+
+
+// ============================================================
+// TV PREVIEW
+// ============================================================
+
+
+function pointLabel(
+    q
+) {
+
+    if (
+        q.scoring_type ===
+        "roulette"
+    ) {
+
+        return "ROULETTE";
+    }
+
+
+    if (
+        q.question_type ===
+        "final_wager"
+    ) {
+
+        return "WAGER";
+    }
+
+
+    if (
+        q.max_points != null
+    ) {
+
+        return (
+            q.max_points
+            + " PTS"
+        );
+    }
+
+
+    return "POINTS";
+}
+
+
+function renderPreview() {
+
+    if (
+        !selectedQuestion
+    ) {
+
+        return;
+    }
+
+
+    const q =
+        selectedQuestion;
+
+
+    const stage =
+        document.getElementById(
+            "tvStage"
+        );
+
+
+    if (
+        previewMode ===
+        "hint"
+        &&
+        q.question_type ===
+        "roulette"
+    ) {
+
+        stage.style.backgroundImage =
+            `url('${getPreviewBackground(q)}')`;
+
+
+        stage.innerHTML =
+            `<div class="board">
+
+                <div
+                    class="
+                        topInfo
+                        rouletteHeader
+                    "
+                >
+
+                    <div class="left">
+                        ${q.wager_seconds ?? 45}
+                    </div>
+
+                    <div class="mid">
+                        PREVIEW • TEAMS WAGERING
+                    </div>
+
+                    <div class="right">
+                        WAGER
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="questionBox"
+                    data-fit-kind="hint"
+                >
+                    ${esc(
+                        q.roulette_hint
+                        ||
+                        "[ROULETTE HINT NOT PREPARED]"
+                    )}
+                </div>
+
+
+                <div class="rouletteGrid">
+
+                    <div class="rouletteChoice">
+                        0%
+                    </div>
+
+                    <div class="rouletteChoice">
+                        50%
+                    </div>
+
+                    <div class="rouletteChoice">
+                        100%
+                    </div>
+
+                </div>
+
+
+                <div class="bottomBanner">
+                    Choose your wager on your phone.
+                </div>
+
+            </div>`;
+
+    }
+
+    else {
+
+        stage.style.backgroundImage =
+            `url('${getPreviewBackground(q)}')`;
+
+
+        let content =
+            "";
+
+
+        if (
+            q.question_type ===
+            "final_wager"
+        ) {
+
+            content =
+                `<div class="finalLabel">
+                    ELITE WAGER
+                </div>
+
+                <div class="questionBox">
+                    ${esc(q.question)}
+                </div>
+
+                <div class="finalNote">
+                    Teams choose
+                    ALL IN
+                    or
+                    SAVE MY POINTS
+                    on their phones.
+                </div>`;
+
+        }
+
+        else {
+
+            const choices =
+                getPreviewChoices(
+                    q
+                );
+
+
+            if (
+                choices.length > 4
+            ) {
+
+                const choiceHtml =
+                    choices.map(
+                        choice =>
+                            `<div class="sixChoice">
+                                <span>
+                                    ${esc(choice)}
+                                </span>
+                            </div>`
+                    ).join("");
+
+
+                content =
+                    `<div class="questionBox">
+                        ${esc(q.question)}
+                    </div>
+
+                    <div class="sixMask">
+                    </div>
+
+                    <div class="sixGrid">
+                        ${choiceHtml}
+                    </div>`;
+
+            }
+
+            else {
+
+                const choiceHtml =
+                    choices.map(
+                        choice =>
+                            `<div class="choiceCell">
+                                <span>
+                                    ${esc(choice)}
+                                </span>
+                            </div>`
+                    ).join("");
+
+
+                content =
+                    `<div class="questionBox">
+                        ${esc(q.question)}
+                    </div>
+
+                    <div class="choiceGrid">
+                        ${choiceHtml}
+                    </div>`;
+            }
+        }
+
+
+        stage.innerHTML =
+            `<div class="board">
+
+                <div
+                    class="
+                        topInfo
+                        questionHeader
+                    "
+                >
+
+                    <div class="left">
+                        ${q.timer_seconds ?? "--"}
+                    </div>
+
+                    <div class="mid">
+                        PREVIEW • ${esc(q.slot_id)}
+                    </div>
+
+                    <div class="right">
+                        ${esc(pointLabel(q))}
+                    </div>
+
+                </div>
+
+                ${content}
+
+                <div class="bottomBanner">
+                    Answer on your phone before time runs out.
+                </div>
+
+            </div>`;
+    }
+
+
+    scalePreview();
+
+
+    requestAnimationFrame(
+        () => {
+
+            fitPreview();
+        }
+    );
+}
+
+
+// ============================================================
+// SCALE WHOLE TV STAGE
+// ============================================================
+
+
+function scalePreview() {
+
+    const outer =
+        document.getElementById(
+            "previewOuter"
+        );
+
+
+    const stage =
+        document.getElementById(
+            "tvStage"
+        );
+
+
+    const scale =
+        outer.clientWidth
+        /
+        1600;
+
+
+    stage.style.transform =
+        `scale(${scale})`;
+}
+
+
+window.addEventListener(
+    "resize",
+    scalePreview
+);
+
+
+// ============================================================
+// TRUE TEXT FITTING
+// ============================================================
+
+
+function hasOverflow(
+    element
+) {
+
+    return (
+        element.scrollHeight
+        >
+        element.clientHeight + 1
+
+        ||
+
+        element.scrollWidth
+        >
+        element.clientWidth + 1
+    );
+}
+
+
+function fitElement(
+    element,
+    maxPx,
+    minPx,
+    overridePx = null
+) {
+
+    if (
+        !element
+    ) {
+
+        return null;
+    }
+
+
+    let size;
+
+
+    const hasOverride =
+        overridePx != null
+        &&
+        Number(overridePx) > 0;
+
+
+    if (
+        hasOverride
+    ) {
+
+        size =
+            Number(
+                overridePx
+            );
+
+        element.style.fontSize =
+            size + "px";
+
+    }
+
+    else {
+
+        size =
+            maxPx;
+
+        element.style.fontSize =
+            size + "px";
+
+
+        let guard =
+            0;
+
+
+        while (
+            size > minPx
+            &&
+            hasOverflow(
+                element
+            )
+            &&
+            guard < 150
+        ) {
+
+            size -= 1;
+
+            element.style.fontSize =
+                size + "px";
+
+            guard += 1;
+        }
+    }
+
+
+    return {
+        size:
+            size,
+
+        min:
+            minPx,
+
+        overflow:
+            hasOverflow(
+                element
+            ),
+
+        manual:
+            hasOverride
+    };
+}
+
+
+// ============================================================
+// FIT ENTIRE PREVIEW
+// ============================================================
+
+
+function fitPreview() {
+
+    const q =
+        selectedQuestion;
+
+
+    if (
+        !q
+    ) {
+
+        return;
+    }
+
+
+    const results =
+        [];
+
+
+    const questionBox =
+        document.querySelector(
+            "#tvStage .questionBox"
+        );
+
+
+    if (
+        questionBox
+    ) {
+
+        const isHint =
+            questionBox.dataset.fitKind
+            ===
+            "hint";
+
+
+        results.push({
+            label:
+                isHint
+                ?
+                "HINT"
+                :
+                "QUESTION",
+
+            result:
+                fitElement(
+                    questionBox,
+
+                    isHint
+                    ?
+                    54
+                    :
+                    58,
+
+                    isHint
+                    ?
+                    24
+                    :
+                    26,
+
+                    isHint
+                    ?
+                    null
+                    :
+                    q.question_font_override
+                )
+        });
+    }
+
+
+    const fourChoices =
+        [
+            ...document.querySelectorAll(
+                "#tvStage .choiceCell"
+            )
+        ];
+
+
+    if (
+        fourChoices.length
+    ) {
+
+        const fitResults =
+            fourChoices.map(
+                element =>
+                    fitElement(
+                        element,
+                        40,
+                        20,
+                        q.answer_font_override
+                    )
+            );
+
+
+        results.push({
+            label:
+                "ANSWERS",
+
+            result:
+                {
+                    size:
+                        Math.min(
+                            ...fitResults.map(
+                                item =>
+                                    item.size
+                            )
+                        ),
+
+                    min:
+                        20,
+
+                    overflow:
+                        fitResults.some(
+                            item =>
+                                item.overflow
+                        ),
+
+                    manual:
+                        fitResults.some(
+                            item =>
+                                item.manual
+                        )
+                }
+        });
+    }
+
+
+    const sixChoices =
+        [
+            ...document.querySelectorAll(
+                "#tvStage .sixChoice"
+            )
+        ];
+
+
+    if (
+        sixChoices.length
+    ) {
+
+        const fitResults =
+            sixChoices.map(
+                element =>
+                    fitElement(
+                        element,
+                        32,
+                        18,
+                        q.answer_font_override
+                    )
+            );
+
+
+        results.push({
+            label:
+                "ANSWERS",
+
+            result:
+                {
+                    size:
+                        Math.min(
+                            ...fitResults.map(
+                                item =>
+                                    item.size
+                            )
+                        ),
+
+                    min:
+                        18,
+
+                    overflow:
+                        fitResults.some(
+                            item =>
+                                item.overflow
+                        ),
+
+                    manual:
+                        fitResults.some(
+                            item =>
+                                item.manual
+                        )
+                }
+        });
+    }
+
+
+    const fitBar =
+        document.getElementById(
+            "fitBar"
+        );
+
+
+    let anyOverflow =
+        false;
+
+
+    fitBar.innerHTML =
+        results.map(
+            item => {
+
+                const r =
+                    item.result;
+
+
+                if (
+                    !r
+                ) {
+
+                    return "";
+                }
+
+
+                let className =
+                    "fitChip";
+
+
+                let status =
+                    "✓";
+
+
+                if (
+                    r.overflow
+                ) {
+
+                    className +=
+                        " bad";
+
+                    status =
+                        "OVERFLOW";
+
+                    anyOverflow =
+                        true;
+                }
+
+                else if (
+                    r.size
+                    <=
+                    r.min + 2
+                ) {
+
+                    className +=
+                        " warn";
+
+                    status =
+                        "REVIEW";
+                }
+
+
+                const mode =
+                    r.manual
+                    ?
+                    "MANUAL"
+                    :
+                    "AUTO";
+
+
+                return (
+                    `<div class="${className}">
+                        ${item.label}:
+                        ${mode}
+                        ${r.size}px
+                        •
+                        ${status}
+                    </div>`
+                );
+            }
+        ).join("");
+
+
+    const outer =
+        document.getElementById(
+            "previewOuter"
+        );
+
+
+    outer.classList.toggle(
+        "overflowWarning",
+        anyOverflow
+    );
+
+
+    if (
+        !anyOverflow
+        &&
+        results.length
+    ) {
+
+        fitBar.innerHTML +=
+            `<div class="fitChip">
+                SAFE AREA: PASSED ✓
+            </div>`;
+    }
+}
+
+
+
+
+// ============================================================
+// PRESENTATION EDITOR
+// ============================================================
+
+
+function getPreviewBackground(
+    q
+) {
+
+    const overrides =
+        q?.presentation_overrides
+        &&
+        typeof q.presentation_overrides
+        === "object"
+        ?
+        q.presentation_overrides
+        :
+        {};
+
+
+    const custom =
+        String(
+            overrides.background_image
+            ||
+            ""
+        ).trim();
+
+
+    if (
+        custom
+    ) {
+
+        return custom;
+    }
+
+
+    if (
+        previewMode === "hint"
+        &&
+        q?.question_type === "roulette"
+    ) {
+
+        return "/assets/slides/roulette_bg.png";
+    }
+
+
+    return "/assets/slides/question_bg.png";
+}
+
+
+function optionalNumberFromInput(
+    id
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (
+        !element
+    ) {
+
+        return null;
+    }
+
+
+    const raw =
+        element.value.trim();
+
+
+    if (
+        raw === ""
+    ) {
+
+        return null;
+    }
+
+
+    const number =
+        Number(
+            raw
+        );
+
+
+    if (
+        !Number.isFinite(
+            number
+        )
+    ) {
+
+        return null;
+    }
+
+
+    return Math.round(
+        number
+    );
+}
+
+
+function setPresentationStatus(
+    text,
+    className = ""
+) {
+
+    const element =
+        document.getElementById(
+            "presentationSaveStatus"
+        );
+
+
+    if (
+        !element
+    ) {
+
+        return;
+    }
+
+
+    element.textContent =
+        text;
+
+
+    element.className =
+        className;
+}
+
+
+function loadPresentationEditor() {
+
+    if (
+        !selectedQuestion
+    ) {
+
+        return;
+    }
+
+
+    const q =
+        selectedQuestion;
+
+
+    const overrides =
+        q.presentation_overrides
+        &&
+        typeof q.presentation_overrides
+        === "object"
+        ?
+        q.presentation_overrides
+        :
+        {};
+
+
+    document.getElementById(
+        "backgroundPath"
+    ).value =
+        overrides.background_image
+        ||
+        "";
+
+
+    document.getElementById(
+        "questionFontOverride"
+    ).value =
+        q.question_font_override
+        ??
+        "";
+
+
+    document.getElementById(
+        "answerFontOverride"
+    ).value =
+        q.answer_font_override
+        ??
+        "";
+
+
+    setPresentationStatus(
+        "AUTO settings are used when a field is blank."
+    );
+}
+
+
+function applyPresentationDraft() {
+
+    if (
+        !selectedQuestion
+    ) {
+
+        return;
+    }
+
+
+    const q =
+        selectedQuestion;
+
+
+    if (
+        !q.presentation_overrides
+        ||
+        typeof q.presentation_overrides
+        !== "object"
+    ) {
+
+        q.presentation_overrides =
+            {};
+    }
+
+
+    const background =
+        document.getElementById(
+            "backgroundPath"
+        ).value.trim();
+
+
+    if (
+        background
+    ) {
+
+        q.presentation_overrides.background_image =
+            background;
+    }
+
+    else {
+
+        delete q.presentation_overrides.background_image;
+    }
+
+
+    q.question_font_override =
+        optionalNumberFromInput(
+            "questionFontOverride"
+        );
+
+
+    q.answer_font_override =
+        optionalNumberFromInput(
+            "answerFontOverride"
+        );
+
+
+    renderPreview();
+
+
+    setPresentationStatus(
+        "UNSAVED PRESENTATION CHANGES",
+        "dirty"
+    );
+}
+
+
+function useBackgroundPreset(
+    value
+) {
+
+    const input =
+        document.getElementById(
+            "backgroundPath"
+        );
+
+
+    input.value =
+        value;
+
+
+    applyPresentationDraft();
+}
+
+
+async function savePresentation() {
+
+    if (
+        !selectedQuestion
+        ||
+        !gameData
+    ) {
+
+        return;
+    }
+
+
+    const q =
+        selectedQuestion;
+
+
+    applyPresentationDraft();
+
+
+    const saveButton =
+        document.getElementById(
+            "savePresentationButton"
+        );
+
+
+    saveButton.disabled =
+        true;
+
+
+    setPresentationStatus(
+        "SAVING...",
+        "saving"
+    );
+
+
+    const backgroundImage =
+        document.getElementById(
+            "backgroundPath"
+        ).value.trim();
+
+
+    const payload = {
+
+        game_key:
+            gameData.game_key,
+
+        slot_id:
+            q.slot_id,
+
+        category:
+            q.category,
+
+        question:
+            q.question,
+
+        correct_answer:
+            q.correct_answer,
+
+        wrong_answers:
+            Array.isArray(
+                q.wrong_answers
+            )
+            ?
+            q.wrong_answers
+            :
+            [],
+
+        roulette_hint:
+            q.roulette_hint
+            ||
+            "",
+
+        question_type:
+            q.question_type,
+
+        timer_seconds:
+            q.timer_seconds,
+
+        wager_seconds:
+            q.wager_seconds,
+
+        max_points:
+            q.max_points,
+
+        min_points:
+            q.min_points,
+
+        background_image:
+            backgroundImage,
+
+        question_font_override:
+            optionalNumberFromInput(
+                "questionFontOverride"
+            ),
+
+        answer_font_override:
+            optionalNumberFromInput(
+                "answerFontOverride"
+            )
+    };
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/game-builder/save",
+                {
+                    method:
+                        "POST",
+
+                    headers:
+                        {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            throw new Error(
+                data.error
+                ||
+                "Unable to save presentation."
+            );
+        }
+
+
+        const result =
+            data.result
+            ||
+            {};
+
+
+        if (
+            !q.presentation_overrides
+            ||
+            typeof q.presentation_overrides
+            !== "object"
+        ) {
+
+            q.presentation_overrides =
+                {};
+        }
+
+
+        if (
+            result.background_image
+        ) {
+
+            q.presentation_overrides.background_image =
+                result.background_image;
+        }
+
+        else {
+
+            delete q.presentation_overrides.background_image;
+        }
+
+
+        q.question_font_override =
+            result.question_font_override
+            ??
+            null;
+
+
+        q.answer_font_override =
+            result.answer_font_override
+            ??
+            null;
+
+
+        renderPreview();
+
+
+        setPresentationStatus(
+            "SAVED ✓",
+            "saved"
+        );
+
+    }
+
+    catch (
+        error
+    ) {
+
+        setPresentationStatus(
+            "SAVE ERROR: "
+            +
+            error.message,
+            "error"
+        );
+
+    }
+
+    finally {
+
+        saveButton.disabled =
+            false;
+    }
+}
+
+
+// ============================================================
+// PRESENTATION EDITOR EVENTS
+// ============================================================
+
+
+document.getElementById(
+    "backgroundPath"
+).addEventListener(
+    "input",
+    applyPresentationDraft
+);
+
+
+document.getElementById(
+    "questionFontOverride"
+).addEventListener(
+    "input",
+    applyPresentationDraft
+);
+
+
+document.getElementById(
+    "answerFontOverride"
+).addEventListener(
+    "input",
+    applyPresentationDraft
+);
+
+
+document.getElementById(
+    "useDefaultBackground"
+).addEventListener(
+    "click",
+    () => {
+
+        useBackgroundPreset(
+            ""
+        );
+    }
+);
+
+
+document.getElementById(
+    "useQuestionBackground"
+).addEventListener(
+    "click",
+    () => {
+
+        useBackgroundPreset(
+            "/assets/slides/question_bg.png"
+        );
+    }
+);
+
+
+document.getElementById(
+    "useRouletteBackground"
+).addEventListener(
+    "click",
+    () => {
+
+        useBackgroundPreset(
+            "/assets/slides/roulette_bg.png"
+        );
+    }
+);
+
+
+document.getElementById(
+    "resetFontsAuto"
+).addEventListener(
+    "click",
+    () => {
+
+        document.getElementById(
+            "questionFontOverride"
+        ).value =
+            "";
+
+
+        document.getElementById(
+            "answerFontOverride"
+        ).value =
+            "";
+
+
+        applyPresentationDraft();
+    }
+);
+
+
+document.getElementById(
+    "savePresentationButton"
+).addEventListener(
+    "click",
+    savePresentation
+);
+
+
+
+
+
+// ============================================================
+// CONTENT EDITOR
+// ============================================================
+
+
+let activeEditorTab =
+    "content";
+
+
+function setEditorTab(
+    tab
+) {
+
+    activeEditorTab =
+        tab;
+
+
+    document.getElementById(
+        "contentTab"
+    ).classList.toggle(
+        "active",
+        tab === "content"
+    );
+
+
+    document.getElementById(
+        "presentationTab"
+    ).classList.toggle(
+        "active",
+        tab === "presentation"
+    );
+
+
+    document.getElementById(
+        "contentEditor"
+    ).classList.toggle(
+        "editorPanelHidden",
+        tab !== "content"
+    );
+
+
+    document.getElementById(
+        "presentationEditor"
+    ).classList.toggle(
+        "editorPanelHidden",
+        tab !== "presentation"
+    );
+}
+
+
+function setContentStatus(
+    text,
+    className = ""
+) {
+
+    const el =
+        document.getElementById(
+            "contentSaveStatus"
+        );
+
+
+    el.textContent =
+        text;
+
+    el.className =
+        className;
+}
+
+
+function loadContentEditor() {
+
+    if (
+        !selectedQuestion
+    ) {
+        return;
+    }
+
+
+    const q =
+        selectedQuestion;
+
+
+    document.getElementById(
+        "editCategory"
+    ).value =
+        q.category || "";
+
+
+    document.getElementById(
+        "editQuestion"
+    ).value =
+        q.question || "";
+
+
+    document.getElementById(
+        "editCorrectAnswer"
+    ).value =
+        q.correct_answer || "";
+
+
+    document.getElementById(
+        "editQuestionType"
+    ).value =
+        q.question_type || "normal";
+
+
+    document.getElementById(
+        "editTimer"
+    ).value =
+        q.timer_seconds ?? "";
+
+
+    document.getElementById(
+        "editRouletteHint"
+    ).value =
+        q.roulette_hint || "";
+
+
+    const wrong =
+        Array.isArray(
+            q.wrong_answers
+        )
+        ?
+        q.wrong_answers
+        :
+        [];
+
+
+    for (
+        let i = 1;
+        i <= 5;
+        i += 1
+    ) {
+
+        document.getElementById(
+            "wrongAnswer" + i
+        ).value =
+            wrong[i - 1]
+            ||
+            "";
+    }
+
+
+    updateContentVisibility();
+
+
+    setContentStatus(
+        "Game-specific edits. Master question is unchanged."
+    );
+}
+
+
+function collectWrongAnswers() {
+
+    const answers =
+        [];
+
+
+    for (
+        let i = 1;
+        i <= 5;
+        i += 1
+    ) {
+
+        const value =
+            document.getElementById(
+                "wrongAnswer" + i
+            ).value.trim();
+
+
+        if (
+            value
+        ) {
+            answers.push(
+                value
+            );
+        }
+    }
+
+
+    return answers;
+}
+
+
+function updateContentVisibility() {
+
+    const type =
+        document.getElementById(
+            "editQuestionType"
+        ).value;
+
+
+    document.getElementById(
+        "rouletteHintField"
+    ).style.display =
+        type === "roulette"
+        ?
+        ""
+        :
+        "none";
+}
+
+
+function applyContentDraft() {
+
+    if (
+        !selectedQuestion
+    ) {
+        return;
+    }
+
+
+    const q =
+        selectedQuestion;
+
+
+    q.category =
+        document.getElementById(
+            "editCategory"
+        ).value.trim();
+
+
+    q.question =
+        document.getElementById(
+            "editQuestion"
+        ).value.trim();
+
+
+    q.correct_answer =
+        document.getElementById(
+            "editCorrectAnswer"
+        ).value.trim();
+
+
+    q.question_type =
+        document.getElementById(
+            "editQuestionType"
+        ).value;
+
+
+    const timerRaw =
+        document.getElementById(
+            "editTimer"
+        ).value.trim();
+
+
+    q.timer_seconds =
+        timerRaw === ""
+        ?
+        null
+        :
+        Number(timerRaw);
+
+
+    q.wrong_answers =
+        collectWrongAnswers();
+
+
+    q.roulette_hint =
+        document.getElementById(
+            "editRouletteHint"
+        ).value.trim();
+
+
+    updateContentVisibility();
+
+    renderPreview();
+
+    renderDetails();
+
+
+    contentDirty =
+        true;
+
+    selectedQuestion.game_review_status =
+        "NEEDS_REVIEW";
+
+    renderGameReviewStatus();
+
+    setContentStatus(
+        "UNSAVED GAME-SPECIFIC CHANGES",
+        "dirty"
+    );
+}
+
+
+async function saveContent() {
+
+    if (
+        !selectedQuestion
+        ||
+        !gameData
+    ) {
+        return;
+    }
+
+
+    applyContentDraft();
+
+
+    const q =
+        selectedQuestion;
+
+
+    const button =
+        document.getElementById(
+            "saveContentButton"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    setContentStatus(
+        "SAVING..."
+    );
+
+
+    const payload = {
+
+        save_scope:
+            "content",
+
+        game_key:
+            gameData.game_key,
+
+        slot_id:
+            q.slot_id,
+
+        category:
+            q.category,
+
+        question:
+            q.question,
+
+        correct_answer:
+            q.correct_answer,
+
+        wrong_answers:
+            q.wrong_answers,
+
+        roulette_hint:
+            q.roulette_hint,
+
+        question_type:
+            q.question_type,
+
+        timer_seconds:
+            q.timer_seconds,
+
+        wager_seconds:
+            q.wager_seconds,
+
+        max_points:
+            q.max_points,
+
+        min_points:
+            q.min_points
+    };
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/game-builder/save",
+                {
+                    method:
+                        "POST",
+
+                    headers:
+                        {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            throw new Error(
+                data.error
+                ||
+                "Unable to save question."
+            );
+        }
+
+
+        contentDirty =
+            false;
+
+        selectedQuestion.game_review_status =
+            "NEEDS_REVIEW";
+
+        renderGameReviewStatus();
+
+        setContentStatus(
+            "SAVED TO THIS GAME ✓ — REVIEW REQUIRED",
+            "saved"
+        );
+
+
+        renderPreview();
+
+        renderDetails();
+
+    }
+
+    catch (
+        error
+    ) {
+
+        setContentStatus(
+            "SAVE ERROR: "
+            +
+            error.message,
+            "error"
+        );
+
+    }
+
+    finally {
+
+        button.disabled =
+            false;
+    }
+}
+
+
+document.getElementById(
+    "contentTab"
+).addEventListener(
+    "click",
+    () => {
+        setEditorTab(
+            "content"
+        );
+    }
+);
+
+
+document.getElementById(
+    "presentationTab"
+).addEventListener(
+    "click",
+    () => {
+        setEditorTab(
+            "presentation"
+        );
+    }
+);
+
+
+document.getElementById(
+    "saveContentButton"
+).addEventListener(
+    "click",
+    saveContent
+);
+
+
+[
+    "editCategory",
+    "editQuestion",
+    "editCorrectAnswer",
+    "editQuestionType",
+    "editTimer",
+    "editRouletteHint",
+    "wrongAnswer1",
+    "wrongAnswer2",
+    "wrongAnswer3",
+    "wrongAnswer4",
+    "wrongAnswer5"
+].forEach(
+    id => {
+
+        document.getElementById(
+            id
+        ).addEventListener(
+            "input",
+            applyContentDraft
+        );
+    }
+);
+
+
+document.getElementById(
+    "editQuestionType"
+).addEventListener(
+    "change",
+    applyContentDraft
+);
+
+
+setEditorTab(
+    "content"
+);
+
+
+
+
+
+// ============================================================
+// GAME REVIEW / APPROVAL
+// ============================================================
+
+
+let contentDirty =
+    false;
+
+
+function renderGameReviewStatus() {
+
+    if (
+        !selectedQuestion
+    ) {
+        return;
+    }
+
+
+    const status =
+        selectedQuestion.game_review_status
+        ||
+        "NEEDS_REVIEW";
+
+
+    const statusElement =
+        document.getElementById(
+            "gameReviewStatus"
+        );
+
+
+    const button =
+        document.getElementById(
+            "approveGameQuestionButton"
+        );
+
+
+    const approved =
+        status ===
+        "APPROVED";
+
+
+    statusElement.textContent =
+        approved
+        ?
+        "✓ APPROVED"
+        :
+        "NEEDS REVIEW";
+
+
+    statusElement.classList.toggle(
+        "approved",
+        approved
+    );
+
+
+    if (
+        approved
+    ) {
+
+        button.textContent =
+            "APPROVED";
+
+        button.disabled =
+            true;
+
+    }
+
+    else {
+
+        button.textContent =
+            "APPROVE FOR THIS GAME";
+
+        button.disabled =
+            false;
+    }
+}
+
+
+async function approveCurrentQuestion() {
+
+    if (
+        !selectedQuestion
+        ||
+        !gameData
+    ) {
+        return;
+    }
+
+
+    if (
+        contentDirty
+    ) {
+
+        setContentStatus(
+            "SAVE QUESTION BEFORE APPROVING.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const button =
+        document.getElementById(
+            "approveGameQuestionButton"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    setContentStatus(
+        "CHECKING QUESTION..."
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/game-builder/review",
+                {
+                    method:
+                        "POST",
+
+                    headers:
+                        {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                    body:
+                        JSON.stringify(
+                            {
+                                action:
+                                    "approve",
+
+                                game_key:
+                                    gameData.game_key,
+
+                                slot_id:
+                                    selectedQuestion.slot_id
+                            }
+                        )
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            throw new Error(
+                data.error
+                ||
+                "Unable to approve question."
+            );
+        }
+
+
+        const result =
+            data.result
+            ||
+            {};
+
+
+        if (
+            result.approved
+        ) {
+
+            selectedQuestion.game_review_status =
+                "APPROVED";
+
+
+            selectedQuestion.game_review_approved_at =
+                result.approved_at
+                ||
+                "";
+
+
+            renderGameReviewStatus();
+
+
+            setContentStatus(
+                "APPROVED FOR THIS GAME ✓",
+                "saved"
+            );
+
+
+            return;
+        }
+
+
+        const issues =
+            Array.isArray(
+                result.issues
+            )
+            ?
+            result.issues
+            :
+            [];
+
+
+        selectedQuestion.game_review_status =
+            "NEEDS_REVIEW";
+
+
+        renderGameReviewStatus();
+
+
+        setContentStatus(
+            issues.length
+            ?
+            "CANNOT APPROVE: "
+            +
+            issues.join(
+                " • "
+            )
+            :
+            "QUESTION IS NOT READY FOR APPROVAL.",
+            "error"
+        );
+
+    }
+
+    catch (
+        error
+    ) {
+
+        setContentStatus(
+            "APPROVAL ERROR: "
+            +
+            error.message,
+            "error"
+        );
+
+
+        button.disabled =
+            false;
+    }
+}
+
+
+document.getElementById(
+    "approveGameQuestionButton"
+).addEventListener(
+    "click",
+    approveCurrentQuestion
+);
+
+
+
+
+
+// ============================================================
+// AI PREP UI
+// ============================================================
+
+
+function questionNeedsAiPrep(
+    q
+) {
+
+    if (
+        !q
+    ) {
+
+        return false;
+    }
+
+
+    if (
+        q.question_type ===
+        "final_wager"
+    ) {
+
+        return false;
+    }
+
+
+    const hasFiveDistractors =
+        Array.isArray(
+            q.wrong_answers
+        )
+        &&
+        q.wrong_answers.length === 5;
+
+
+    if (
+        !hasFiveDistractors
+    ) {
+
+        return true;
+    }
+
+
+    if (
+        q.question_type ===
+        "roulette"
+    ) {
+
+        const hasHint =
+            String(
+                q.roulette_hint
+                ||
+                ""
+            ).trim() !== "";
+
+
+        const hintBlocked =
+            q.roulette_hint_status ===
+            "NEEDS_HINT"
+            ||
+            q.roulette_hint_status ===
+            "NEEDS_MANUAL_HINT";
+
+
+        if (
+            !hasHint
+            ||
+            hintBlocked
+        ) {
+
+            return true;
+        }
+    }
+
+
+    return false;
+}
+
+
+function renderAiPrepButton() {
+
+    const button =
+        document.getElementById(
+            "aiPrepButton"
+        );
+
+
+    const status =
+        document.getElementById(
+            "aiPrepStatus"
+        );
+
+
+    if (
+        !button
+        ||
+        !status
+        ||
+        !selectedQuestion
+    ) {
+
+        return;
+    }
+
+
+    const q =
+        selectedQuestion;
+
+
+    button.classList.remove(
+        "prepared"
+    );
+
+
+    if (
+        q.question_type ===
+        "final_wager"
+    ) {
+
+        button.textContent =
+            "AI PREP NOT NEEDED";
+
+        button.disabled =
+            true;
+
+        button.classList.add(
+            "prepared"
+        );
+
+
+        status.textContent =
+            "Final Wager uses a typed answer.";
+
+        status.className =
+            "";
+
+        return;
+    }
+
+
+    if (
+        !questionNeedsAiPrep(
+            q
+        )
+    ) {
+
+        button.textContent =
+            "AI PREPARED ✓";
+
+        button.disabled =
+            true;
+
+        button.classList.add(
+            "prepared"
+        );
+
+
+        status.textContent =
+            "Saved AI prep will be reused. No new call needed.";
+
+        status.className =
+            "success";
+
+        return;
+    }
+
+
+    button.textContent =
+        "PREPARE WITH AI";
+
+    button.disabled =
+        false;
+
+
+    status.textContent =
+        "Hard limit: 2 attempts. Existing prep is reused.";
+
+    status.className =
+        "";
+}
+
+
+async function reloadSelectedGameData() {
+
+    const currentSlot =
+        selectedQuestion
+        ?
+        selectedQuestion.slot_id
+        :
+        null;
+
+
+    const response =
+        await fetch(
+            "/api/admin/game-builder"
+            +
+            "?game_key="
+            +
+            encodeURIComponent(
+                gameData.game_key
+            ),
+            {
+                cache:
+                    "no-store"
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if (
+        !response.ok
+        ||
+        !data.ok
+    ) {
+
+        throw new Error(
+            data.error
+            ||
+            "Unable to reload game."
+        );
+    }
+
+
+    gameData =
+        data.game;
+
+
+    const refreshed =
+        gameData.questions.find(
+            q =>
+                q.slot_id
+                ===
+                currentSlot
+        );
+
+
+    renderGame();
+
+
+    if (
+        refreshed
+    ) {
+
+        selectQuestion(
+            refreshed
+        );
+    }
+}
+
+
+async function prepareSelectedQuestionWithAi() {
+
+    if (
+        !selectedQuestion
+        ||
+        !gameData
+    ) {
+
+        return;
+    }
+
+
+    if (
+        contentDirty
+    ) {
+
+        const status =
+            document.getElementById(
+                "aiPrepStatus"
+            );
+
+
+        status.textContent =
+            "SAVE YOUR GAME-SPECIFIC EDITS FIRST.";
+
+        status.className =
+            "error";
+
+        return;
+    }
+
+
+    const button =
+        document.getElementById(
+            "aiPrepButton"
+        );
+
+
+    const status =
+        document.getElementById(
+            "aiPrepStatus"
+        );
+
+
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "PREPARING...";
+
+
+    status.textContent =
+        "AI prep running — hard retry limit is active.";
+
+    status.className =
+        "working";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/game-builder/ai-prep",
+                {
+                    method:
+                        "POST",
+
+                    headers:
+                        {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                    body:
+                        JSON.stringify(
+                            {
+                                game_key:
+                                    gameData.game_key,
+
+                                slot_id:
+                                    selectedQuestion.slot_id
+                            }
+                        )
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            throw new Error(
+                data.error
+                ||
+                "AI preparation failed."
+            );
+        }
+
+
+        const result =
+            data.result
+            ||
+            {};
+
+
+        if (
+            !result.ok
+        ) {
+
+            let message =
+                result.reason
+                ||
+                "AI preparation stopped.";
+
+
+            if (
+                result.reason ===
+                "GAME_SPECIFIC_CONTENT_EDIT"
+            ) {
+
+                message =
+                    "AI PREP STOPPED: THIS SLOT HAS "
+                    +
+                    "GAME-SPECIFIC WORDING. "
+                    +
+                    "MASTER PREP WAS NOT CHANGED.";
+            }
+
+
+            status.textContent =
+                message
+                +
+                " • API calls: "
+                +
+                (
+                    result.api_calls
+                    ??
+                    0
+                );
+
+
+            status.className =
+                "error";
+
+
+            renderAiPrepButton();
+
+            return;
+        }
+
+
+        const calls =
+            result.api_calls
+            ??
+            0;
+
+
+        await reloadSelectedGameData();
+
+
+        const newStatus =
+            document.getElementById(
+                "aiPrepStatus"
+            );
+
+
+        newStatus.textContent =
+            "AI PREP COMPLETE ✓ • API calls used: "
+            +
+            calls
+            +
+            " • Human review still required.";
+
+
+        newStatus.className =
+            "success";
+
+
+        selectedQuestion.game_review_status =
+            "NEEDS_REVIEW";
+
+
+        renderGameReviewStatus();
+
+    }
+
+    catch (
+        error
+    ) {
+
+        status.textContent =
+            "AI PREP ERROR: "
+            +
+            error.message;
+
+
+        status.className =
+            "error";
+
+
+        renderAiPrepButton();
+    }
+}
+
+
+document.getElementById(
+    "aiPrepButton"
+).addEventListener(
+    "click",
+    prepareSelectedQuestionWithAi
+);
+
+
+
+// ============================================================
+// DETAILS
+// ============================================================
+
+
+function renderDetails() {
+
+    const q =
+        selectedQuestion;
+
+
+    if (
+        !q
+    ) {
+
+        return;
+    }
+
+
+    const wrongAnswers =
+        Array.isArray(
+            q.wrong_answers
+        )
+        ?
+        q.wrong_answers
+        :
+        [];
+
+
+    const answersHtml =
+        wrongAnswers.length
+        ?
+        wrongAnswers.map(
+            (
+                answer,
+                index
+            ) =>
+                `<div class="answerLine">
+                    ${index + 1}.
+                    ${esc(answer)}
+                </div>`
+        ).join("")
+        :
+        `<div class="warningText">
+            No distractors prepared yet.
+        </div>`;
+
+
+    const warnings =
+        Array.isArray(
+            q.warnings
+        )
+        ?
+        q.warnings
+        :
+        [];
+
+
+    const warningHtml =
+        warnings.length
+        ?
+        warnings.map(
+            warning =>
+                `<div class="warningText">
+                    ⚠ ${esc(warning)}
+                </div>`
+        ).join("")
+        :
+        `<div class="correctText">
+            ✓ READY
+        </div>`;
+
+
+    let hintHtml =
+        "";
+
+
+    if (
+        q.question_type ===
+        "roulette"
+    ) {
+
+        hintHtml =
+            `<div class="detailBox">
+
+                <div class="detailTitle">
+                    Roulette Hint
+                </div>
+
+                <div
+                    class="
+                        detailValue
+                        hintText
+                    "
+                >
+                    ${esc(
+                        q.roulette_hint
+                        ||
+                        "[NOT PREPARED]"
+                    )}
+                </div>
+
+                <div
+                    class="detailValue"
+                    style="margin-top:8px"
+                >
+                    Status:
+                    ${esc(
+                        q.roulette_hint_status
+                    )}
+                </div>
+
+            </div>`;
+    }
+
+
+    document.getElementById(
+        "details"
+    ).innerHTML =
+        `<div class="detailBox">
+
+            <div class="detailTitle">
+                Question / Correct Answer
+            </div>
+
+            <div class="detailValue">
+                ${esc(q.question)}
+            </div>
+
+            <div
+                class="
+                    detailValue
+                    correctText
+                "
+                style="margin-top:9px"
+            >
+                CORRECT:
+                ${esc(q.correct_answer)}
+            </div>
+
+        </div>
+
+
+        <div class="detailBox">
+
+            <div class="detailTitle">
+                Saved Distractors
+            </div>
+
+            <div class="detailValue">
+                ${answersHtml}
+            </div>
+
+        </div>
+
+
+        ${hintHtml}
+
+
+        <div class="detailBox">
+
+            <div class="detailTitle">
+                Review Flags
+            </div>
+
+            <div class="detailValue">
+                ${warningHtml}
+            </div>
+
+        </div>`;
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+
+loadGame();
+
+
+
+
+
+// ============================================================
+// REVIEW GAME SELECTOR
+// ============================================================
+
+async function loadReviewGames(
+    preferredGameKey = null
+) {
+
+    const select =
+        document.getElementById(
+            "reviewGameSelect"
+        );
+
+    if (!select) {
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/game-builder/games",
+                {
+                    cache:
+                        "no-store"
+                }
+            );
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            throw new Error(
+                data.error
+                ||
+                "Unable to load review games."
+            );
+        }
+
+
+        const games =
+            Array.isArray(
+                data.games
+            )
+            ?
+            data.games
+            :
+            [];
+
+
+        select.innerHTML = "";
+
+
+        if (!games.length) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value = "";
+
+            option.textContent =
+                "No scheduled games";
+
+            select.appendChild(
+                option
+            );
+
+            return;
+        }
+
+
+        for (const game of games) {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                game.game_key;
+
+            option.textContent =
+                game.title
+                + " | "
+                + game.status;
+
+            select.appendChild(
+                option
+            );
+        }
+
+
+        let targetKey =
+            preferredGameKey;
+
+
+        if (
+            !targetKey
+            ||
+            !games.some(
+                game =>
+                    game.game_key
+                    === targetKey
+            )
+        ) {
+
+            targetKey =
+                games[0].game_key;
+        }
+
+
+        select.value =
+            targetKey;
+
+        currentGameKey =
+            targetKey;
+
+        await loadGame();
+
+
+    } catch (error) {
+
+        select.innerHTML = "";
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value = "";
+
+        option.textContent =
+            "Game list error";
+
+        select.appendChild(
+            option
+        );
+
+        console.error(
+            error
+        );
+    }
+}
+
+
+function installReviewGameSelector() {
+
+    const select =
+        document.getElementById(
+            "reviewGameSelect"
+        );
+
+    if (!select) {
+        return;
+    }
+
+
+    select.addEventListener(
+        "change",
+        async () => {
+
+            if (!select.value) {
+                return;
+            }
+
+            currentGameKey =
+                select.value;
+
+            selectedQuestion =
+                null;
+
+            await loadGame();
+        }
+    );
+
+
+    loadReviewGames();
+}
+
+
+window.addEventListener(
+    "DOMContentLoaded",
+    installReviewGameSelector
+);
+
+// ============================================================
+// AUTO GAME BUILDER
+// ============================================================
+
+function setDefaultAutoBuildDate() {
+
+    const input =
+        document.getElementById(
+            "autoBuildStartDate"
+        );
+
+    if (!input || input.value) {
+        return;
+    }
+
+    const tomorrow =
+        new Date();
+
+    tomorrow.setDate(
+        tomorrow.getDate() + 1
+    );
+
+    const year =
+        tomorrow.getFullYear();
+
+    const month =
+        String(
+            tomorrow.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const day =
+        String(
+            tomorrow.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    input.value =
+        `${year}-${month}-${day}`;
+}
+
+
+async function buildAutoGames() {
+
+    const button =
+        document.getElementById(
+            "autoBuildButton"
+        );
+
+    const daysSelect =
+        document.getElementById(
+            "autoBuildDays"
+        );
+
+    const dateInput =
+        document.getElementById(
+            "autoBuildStartDate"
+        );
+
+    const status =
+        document.getElementById(
+            "autoBuildStatus"
+        );
+
+    const days =
+        Number(
+            daysSelect.value
+        );
+
+    const startDate =
+        dateInput.value;
+
+
+    const gameCount =
+        days * 9;
+
+    const questionCount =
+        gameCount * 24;
+
+
+    const confirmed =
+        window.confirm(
+            `Build ${gameCount} games `
+            + `using ${questionCount} question slots?\n\n`
+            + `Start date: ${startDate}\n`
+            + `Days: ${days}\n\n`
+            + `Games will be saved as DRAFT.`
+        );
+
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    button.disabled = true;
+
+    status.className =
+        "working";
+
+    status.textContent =
+        "BUILDING AUTO GAMES...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/game-builder/auto-build",
+                {
+                    method:
+                        "POST",
+
+                    headers:
+                        {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                    body:
+                        JSON.stringify(
+                            {
+                                days:
+                                    days,
+
+                                start_date:
+                                    startDate
+                            }
+                        )
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !response.ok
+            ||
+            !data.ok
+        ) {
+
+            throw new Error(
+                data.error
+                ||
+                "Auto build failed."
+            );
+        }
+
+
+        const result =
+            data.result;
+
+
+        status.className =
+            "success";
+
+        status.textContent =
+            `READY FOR REVIEW: `
+            + `${result.games_created} games created, `
+            + `${result.questions_assigned} question slots assigned. `
+            + `${result.start_date} through ${result.end_date}.`;
+
+        if (
+            result.created
+            &&
+            result.created.length
+        ) {
+
+            await loadReviewGames(
+                result.created[0].game_key
+            );
+        }
+
+
+    } catch (error) {
+
+        status.className =
+            "error";
+
+        status.textContent =
+            "BUILD STOPPED: "
+            + error.message;
+
+
+    } finally {
+
+        button.disabled = false;
+    }
+}
+
+
+window.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        setDefaultAutoBuildDate();
+
+        const button =
+            document.getElementById(
+                "autoBuildButton"
+            );
+
+        if (button) {
+
+            button.addEventListener(
+                "click",
+                buildAutoGames
+            );
+        }
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

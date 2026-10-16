@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elite Skee-Ball</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div id="game"></div>
+
+  <div class="hud">
+
+    <div class="top-left">
+      <div class="elite-small">ELITE ARCADE</div>
+      <div class="elite-title">SKEE-BALL</div>
+    </div>
+
+    <div class="top-center">
+      <div class="player-label">PLAYER</div>
+      <div id="playerName" class="player-name">WAITING...</div>
+    </div>
+
+    <div class="top-right">
+      <div class="score-label">SCORE</div>
+      <div id="score" class="score">000</div>
+    </div>
+
+  </div>
+
+
+  <div class="shot-ui">
+
+    <div class="aim-panel">
+      <div class="ui-label">AIM</div>
+
+      <div class="aim-track">
+        <div class="aim-center"></div>
+        <div id="aimMarker" class="aim-marker"></div>
+      </div>
+
+      <div class="control-help">
+        A / D
+      </div>
+    </div>
+
+
+    <div class="power-panel">
+      <div class="ui-label">POWER</div>
+
+      <div class="power-track">
+        <div id="powerFill" class="power-fill"></div>
+        <div class="sweet-zone"></div>
+      </div>
+
+      <div class="control-help">
+        HOLD SPACE • RELEASE TO SHOOT
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="balls-left">
+    <div class="balls-label">BALLS</div>
+
+    <div id="ball1" class="ball-dot active"></div>
+    <div id="ball2" class="ball-dot active"></div>
+    <div id="ball3" class="ball-dot active"></div>
+  </div>
+
+
+  <div id="message" class="message">
+    READY
+  </div>
+
+
+  <div id="scorePopup" class="score-popup">
+    +50
+  </div>
+
+
+  <div id="gameOver" class="game-over">
+
+    <div class="game-over-small">
+      ELITE ARCADE
+    </div>
+
+    <div class="game-over-title">
+      ROUND COMPLETE
+    </div>
+
+    <div class="final-label">
+      FINAL SCORE
+    </div>
+
+    <div id="finalScore" class="final-score">
+      000
+    </div>
+
+    <button id="playAgain">
+      PLAY AGAIN
+    </button>
+
+  </div>
+
+
+  <script type="module" src="game.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Auto Elite Player</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#06080d;font-family:Arial,Helvetica,sans-serif;color:white}body{min-height:100vh;background:radial-gradient(circle at top,#11213b 0%,#080b12 48%,#040507 100%)}.wrap{width:min(720px,100%);margin:0 auto;min-height:100vh;padding:20px 16px 32px}.brand{text-align:center;font-size:30px;font-weight:900;letter-spacing:.05em;margin:6px 0 18px}.card{background:#111722;border:1px solid #334155;border-radius:18px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.35)}label{display:block;color:#b9c5d6;font-weight:700;margin-bottom:8px}input{width:100%;padding:15px 14px;font-size:20px;border-radius:12px;border:2px solid #3b4b63;background:#080b12;color:white;outline:none}button{width:100%;border:0;border-radius:14px;padding:16px;margin-top:12px;font-size:19px;font-weight:900;background:#35d17b;color:#07100b}button:disabled{opacity:.42}button.secondary{background:#293548;color:#e8eef7;border:1px solid #53647d}.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.team{font-weight:900;color:#7eeaff}.score{font-weight:900;color:#ffd85a}.timerrow{display:flex;justify-content:center;align-items:center;gap:14px;margin:10px auto 14px}.timer{width:90px;height:90px;margin:0;border-radius:50%;border:5px solid #35d9ff;display:grid;place-items:center;font-size:38px;font-weight:900;background:#0b111a}.pointbox{min-width:118px;height:90px;border-radius:16px;border:3px solid #ffd85a;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#15120a;color:#ffd85a;font-weight:900}.pointbox .value{font-size:31px;line-height:1}.pointbox .label{font-size:12px;margin-top:5px;letter-spacing:.05em}.category{text-align:center;color:#7eeaff;font-weight:900;text-transform:uppercase;font-size:20px;margin-top:4px}.question{text-align:center;font-size:27px;line-height:1.18;font-weight:900;margin:14px 0 18px}.hint{text-align:center;font-size:24px;line-height:1.25;font-weight:900;margin:16px 0;color:#ffd85a}.answers,.wagers{display:grid;gap:10px}.answer,.wager{margin:0;text-align:left;background:#202b3d;color:white;border:2px solid #485a74;display:flex;gap:12px;align-items:center}.answer span{width:38px;height:38px;display:grid;place-items:center;border-radius:9px;background:#0b111a;color:#7eeaff}.answer.selected,.wager.selected{border-color:#ffd85a;background:#4a3d17}.answer.correct{border-color:#58ff9a;background:#194b31}.answer.wrong{border-color:#ff6363;background:#532121}.wager{justify-content:space-between;text-align:center}.wager .pct{color:#7eeaff;font-size:22px;min-width:72px}.message{text-align:center;min-height:46px;padding:12px 4px 0;color:#c8d2df;font-weight:700}.big{text-align:center;font-size:34px;font-weight:900;color:#7eeaff;margin:28px 0 10px}.rank{text-align:center;font-size:24px;font-weight:900;color:#ffd85a}.mode{text-align:center;font-size:16px;font-weight:900;color:#ffd85a;margin-top:4px}.hidden{display:none!important}.finalbox{display:grid;gap:12px}.finalbox input{margin:4px 0}.final-choice{background:#293548;color:#fff;border:2px solid #53647d}.final-choice.allin{border-color:#ffbf55;background:#4a3514;color:#fff}.locked{border:2px solid #5dff9e;border-radius:14px;padding:16px;text-align:center;font-weight:900;color:#5dff9e;background:#153324}.correct-answer{text-align:center;color:#5dff9e;font-size:25px;font-weight:900;margin:14px 0}.awayprompt{border:3px solid #ffd85a;border-radius:16px;padding:15px;margin:0 0 16px;background:#30260d;text-align:center}.awayprompt.inactive{border-color:#ff8c69;background:#321b14}.awayprompt .awaytitle{font-size:24px;font-weight:900;color:#ffd85a}.awayprompt.inactive .awaytitle{color:#ffab8f}.awayprompt .awaycopy{font-size:15px;line-height:1.35;color:#fff;margin:8px 0 12px}.awayprompt button{margin:0;background:#5dff9e;color:#07130b}
+
+.speedbonus-overlay{position:fixed;inset:0;z-index:1000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(2,5,10,.78);backdrop-filter:blur(4px)}.speedbonus-overlay.show{display:flex}.speedbonus-card{width:min(560px,92vw);border:4px solid #ffd85a;border-radius:24px;background:radial-gradient(circle at top,#2a2250 0%,#141729 45%,#090b12 100%);padding:30px 22px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.6)}.speedbonus-flash{font-size:54px;line-height:1;margin-bottom:8px}.speedbonus-title{font-size:34px;font-weight:1000;color:#ffd85a;letter-spacing:.04em}.speedbonus-place{font-size:23px;font-weight:900;color:#7eeaff;margin-top:12px}.speedbonus-points{font-size:54px;font-weight:1000;color:#5dff9e;margin-top:10px}.speedbonus-copy{font-size:16px;font-weight:800;color:#dbe6f3;margin-top:8px}
+
+body{background:
+  linear-gradient(rgba(2,5,12,.68),rgba(2,5,12,.78)),
+  url('/assets/slides/category_bg.png') center/cover fixed no-repeat,#040507}
+.card{background:rgba(9,14,24,.90);border-color:rgba(99,223,255,.42)}
+.brand{color:#fff;text-shadow:0 0 10px rgba(255,78,220,.55),0 0 18px rgba(99,223,255,.35)}
+</style>
+</head>
+<body>
+<div id="speedBonusOverlay" class="speedbonus-overlay" aria-live="assertive">
+  <div class="speedbonus-card">
+    <div class="speedbonus-flash">⚡</div>
+    <div class="speedbonus-title">SPEED BONUS!</div>
+    <div id="speedBonusPlace" class="speedbonus-place"></div>
+    <div id="speedBonusPoints" class="speedbonus-points"></div>
+    <div class="speedbonus-copy">Fastest correct answers earn extra points.</div>
+  </div>
+</div>
+<div class="wrap">
+  <div class="brand">AUTO ELITE</div>
+  <div id="buildBadge" style="text-align:center;color:#73839a;font-size:12px;font-weight:800;letter-spacing:.08em;margin:-10px 0 12px">ELITE BLITZ AUTO • SERVER BUILD __AUTO_ELITE_BUILD__</div>
+  <div id="joinCard" class="card">
+    <label for="teamName">Team name</label>
+    <input id="teamName" maxlength="40" autocomplete="off" placeholder="Enter team name">
+    <button id="joinBtn">JOIN GAME</button>
+    <button id="cancelTeamEditBtn" class="secondary hidden">CANCEL</button>
+    <div id="joinMessage" class="message"></div>
+  </div>
+  <div id="gameCard" class="card hidden">
+    <div id="stillPlayingPrompt" class="awayprompt hidden">
+      <div id="stillPlayingTitle" class="awaytitle">STILL PLAYING?</div>
+      <div id="stillPlayingCopy" class="awaycopy"></div>
+      <button id="stillPlayingBtn">YES — I'M STILL PLAYING</button>
+    </div>
+    <div class="topline"><div id="teamLabel" class="team"></div><div id="scoreLabel" class="score"></div></div>
+    <div id="category" class="category"></div>
+    <div id="mode" class="mode"></div>
+    <div class="timerrow"><div id="timer" class="timer">--</div><div id="pointBox" class="pointbox"><div id="pointValue" class="value">--</div><div id="pointLabel" class="label">POINTS</div></div></div>
+    <div id="content"></div>
+    <div id="message" class="message"></div>
+    <button id="changeTeamBtn" class="secondary">CHANGE TEAM NAME</button>
+  </div>
+</div>
+<script>
+const PAGE_BUILD='__AUTO_ELITE_BUILD__';
+const letters=['A','B','C','D','E','F'];
+let teamId=localStorage.getItem('autoEliteTeamId')||'';
+let joinedTeamName=localStorage.getItem('autoEliteTeamName')||'';
+let deviceToken=localStorage.getItem('autoEliteDeviceToken')||'';
+let serverSessionId=localStorage.getItem('autoEliteServerSessionId')||'';
+let clientId=localStorage.getItem('autoEliteClientId')||'';
+if(!clientId){clientId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():`player-${Date.now()}-${Math.random().toString(36).slice(2)}`;localStorage.setItem('autoEliteClientId',clientId);}
+let busy=false,editingTeamName=false,playerCanRename=true,identityEpoch=0,joinInProgress=false;
+let finalDraft='';
+let speedBonusOverlayKey='';
+let speedBonusOverlayTimer=null;
+const speedBonusOverlay=document.getElementById('speedBonusOverlay');
+const speedBonusPlace=document.getElementById('speedBonusPlace');
+const speedBonusPoints=document.getElementById('speedBonusPoints');
+
+function ordinalPlace(rank){
+  if(rank===1)return '1ST FASTEST CORRECT';
+  if(rank===2)return '2ND FASTEST CORRECT';
+  if(rank===3)return '3RD FASTEST CORRECT';
+  return `${rank}TH FASTEST CORRECT`;
+}
+function updateSpeedBonusOverlay(state,response){
+  const bonus=Number(response?.speed_bonus||0);
+  if(state.screen!=='speed_bonus'||bonus<=0){
+    speedBonusOverlay.classList.remove('show');
+    if(state.screen!=='speed_bonus'){
+      speedBonusOverlayKey='';
+      if(speedBonusOverlayTimer){clearTimeout(speedBonusOverlayTimer);speedBonusOverlayTimer=null;}
+    }
+    return;
+  }
+  const winner=(state.speed_bonus_winners||[]).find(item=>item.team_id===state.team.id);
+  if(!winner)return;
+  const key=`${state.question_index}:${winner.rank}:${bonus}`;
+  if(speedBonusOverlayKey===key)return;
+  speedBonusOverlayKey=key;
+  speedBonusPlace.textContent=ordinalPlace(Number(winner.rank||1));
+  speedBonusPoints.textContent=`+${bonus} BONUS POINTS`;
+  speedBonusOverlay.classList.add('show');
+  if(speedBonusOverlayTimer)clearTimeout(speedBonusOverlayTimer);
+  const seconds=Math.max(.5,Number(state.question.speed_bonus_phone_seconds||4));
+  speedBonusOverlayTimer=setTimeout(()=>{speedBonusOverlay.classList.remove('show');},seconds*1000);
+}
+
+function clearSavedTeamIdentity(currentServerSessionId=''){
+  const nextSessionId=currentServerSessionId||'';
+  const changed=!!teamId||!!deviceToken||serverSessionId!==nextSessionId;
+  teamId='';deviceToken='';serverSessionId=nextSessionId;editingTeamName=false;finalDraft='';
+  localStorage.removeItem('autoEliteTeamId');localStorage.removeItem('autoEliteDeviceToken');
+  if(serverSessionId)localStorage.setItem('autoEliteServerSessionId',serverSessionId);else localStorage.removeItem('autoEliteServerSessionId');
+  if(changed)identityEpoch+=1;
+}
+const joinCard=document.getElementById('joinCard'),gameCard=document.getElementById('gameCard'),joinBtn=document.getElementById('joinBtn'),teamNameInput=document.getElementById('teamName'),joinMessage=document.getElementById('joinMessage'),changeTeamBtn=document.getElementById('changeTeamBtn'),cancelTeamEditBtn=document.getElementById('cancelTeamEditBtn'),stillPlayingPrompt=document.getElementById('stillPlayingPrompt'),stillPlayingTitle=document.getElementById('stillPlayingTitle'),stillPlayingCopy=document.getElementById('stillPlayingCopy'),stillPlayingBtn=document.getElementById('stillPlayingBtn');
+if(joinedTeamName)teamNameInput.value=joinedTeamName;
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function isFinalWager(q){return !!q&&(q.scoring_type==='final_wager'||q.type==='final_wager');}
+function questionProgress(state,q){return `ROUND ${q.round} • QUESTION ${q.question_number} OF ${state.round_question_count} • GAME Q ${state.question_index+1}/${state.question_count}`;}
+function showJoin(msg=''){joinCard.classList.remove('hidden');gameCard.classList.add('hidden');joinMessage.textContent=msg;}
+function showGame(){joinCard.classList.add('hidden');gameCard.classList.remove('hidden');}
+
+joinBtn.addEventListener('click',async()=>{
+  const name=teamNameInput.value.trim();if(!name){joinMessage.textContent='Enter a team name.';return;}
+  joinBtn.disabled=true;joinInProgress=true;
+  try{
+    const endpoint=editingTeamName?'/api/team-name':'/api/join';
+    const payload=editingTeamName?{team_id:teamId,team_name:name,device_token:deviceToken,server_session_id:serverSessionId}:{team_name:name,client_id:clientId};
+    const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),cache:'no-store'});
+    const data=await res.json();if(!data.ok)throw new Error(data.error||(editingTeamName?'Could not change team name.':'Could not join.'));
+    teamId=data.team.id;joinedTeamName=data.team.name;identityEpoch+=1;if(data.team.device_token)deviceToken=data.team.device_token;if(data.server_session_id)serverSessionId=data.server_session_id;
+    localStorage.setItem('autoEliteTeamId',teamId);localStorage.setItem('autoEliteTeamName',joinedTeamName);localStorage.setItem('autoEliteDeviceToken',deviceToken);localStorage.setItem('autoEliteServerSessionId',serverSessionId);
+    editingTeamName=false;joinBtn.textContent='JOIN GAME';cancelTeamEditBtn.classList.add('hidden');joinMessage.textContent='';showGame();
+  }catch(e){joinMessage.textContent=e.message;}finally{joinInProgress=false;joinBtn.disabled=false;}
+});
+changeTeamBtn.addEventListener('click',()=>{if(!teamId||!playerCanRename)return;editingTeamName=true;teamNameInput.value=joinedTeamName;joinBtn.textContent='SAVE TEAM NAME';cancelTeamEditBtn.classList.remove('hidden');showJoin('Change the name below. Team number and score will stay the same.');teamNameInput.focus();teamNameInput.select();});
+cancelTeamEditBtn.addEventListener('click',()=>{editingTeamName=false;joinBtn.textContent='JOIN GAME';cancelTeamEditBtn.classList.add('hidden');joinMessage.textContent='';teamNameInput.value=joinedTeamName;showGame();});
+
+async function submitStillPlaying(){
+  if(busy||!teamId)return;
+  busy=true;stillPlayingBtn.disabled=true;
+  try{
+    const res=await fetch('/api/still-playing',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId,device_token:deviceToken,server_session_id:serverSessionId}),cache:'no-store'});
+    const data=await res.json();if(!data.ok)throw new Error(data.error||'Could not reactivate team.');
+  }catch(e){document.getElementById('message').textContent=e.message;}
+  finally{busy=false;stillPlayingBtn.disabled=false;pollOnce();}
+}
+stillPlayingBtn.addEventListener('click',submitStillPlaying);
+
+async function submitAnswer(index){
+  if(busy||!teamId)return;busy=true;const message=document.getElementById('message');
+  try{const res=await fetch('/api/answer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId,choice_index:index,device_token:deviceToken,server_session_id:serverSessionId}),cache:'no-store'});const data=await res.json();if(!data.ok)throw new Error(data.error||'Answer not accepted.');message.textContent='Answer locked in.';}catch(e){message.textContent=e.message;}finally{busy=false;pollOnce();}
+}
+async function submitMiniAnswer(index){
+  if(busy||!teamId)return;
+
+  busy=true;
+  const message=document.getElementById('message');
+
+  try{
+    const res=await fetch('/api/mini-answer',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        team_id:teamId,
+        choice_index:index,
+        device_token:deviceToken,
+        server_session_id:serverSessionId
+      }),
+      cache:'no-store'
+    });
+
+    const data=await res.json();
+
+    if(!data.ok){
+      throw new Error(
+        data.error||'Mini-game answer not accepted.'
+      );
+    }
+
+    message.textContent='Mini-game answer locked in.';
+
+  }catch(e){
+    message.textContent=e.message;
+
+  }finally{
+    busy=false;
+    pollOnce();
+  }
+}
+
+async function sendSkeeControl(action){
+
+  if(
+    busy||
+    !teamId
+  ){
+    return;
+  }
+
+  try{
+
+    const res=await fetch(
+      '/api/skee-control',
+      {
+        method:'POST',
+
+        headers:{
+          'Content-Type':
+            'application/json'
+        },
+
+        body:JSON.stringify({
+          team_id:teamId,
+          action:action,
+          device_token:deviceToken,
+          server_session_id:serverSessionId
+        }),
+
+        cache:'no-store'
+      }
+    );
+
+    const data=
+      await res.json();
+
+    if(!data.ok){
+      throw new Error(
+        data.error||
+        'Skee-Ball control failed.'
+      );
+    }
+
+  }catch(e){
+
+    const message=
+      document.getElementById(
+        'message'
+      );
+
+    if(message){
+      message.textContent=e.message;
+    }
+  }
+}
+
+
+function startSkeeCharge(event){
+
+  if(event){
+    event.preventDefault();
+  }
+
+  sendSkeeControl(
+    'charge_start'
+  );
+}
+
+
+function releaseSkeeCharge(event){
+
+  if(event){
+    event.preventDefault();
+  }
+
+  sendSkeeControl(
+    'throw'
+  );
+}
+
+
+async function submitWager(percent){
+  if(busy||!teamId)return;busy=true;const message=document.getElementById('message');
+  try{const res=await fetch('/api/wager',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId,percent,device_token:deviceToken,server_session_id:serverSessionId}),cache:'no-store'});const data=await res.json();if(!data.ok)throw new Error(data.error||'Wager not accepted.');message.textContent=`${percent}% wager locked in.`;}catch(e){message.textContent=e.message;}finally{busy=false;pollOnce();}
+}
+async function submitFinal(decision){
+  if(busy||!teamId)return;
+  const input=document.getElementById('finalAnswerInput');
+  if(input)finalDraft=input.value;
+  busy=true;const message=document.getElementById('message');
+  try{
+    const res=await fetch('/api/final',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({team_id:teamId,decision,answer_text:finalDraft,device_token:deviceToken,server_session_id:serverSessionId}),cache:'no-store'});
+    const data=await res.json();if(!data.ok)throw new Error(data.error||'Final Wager not accepted.');
+    message.textContent=decision==='all_in'?'ALL IN locked.':'SAVE MY POINTS locked.';
+  }catch(e){message.textContent=e.message;}finally{busy=false;pollOnce();}
+}
+function halfUp(n){return Math.floor(Number(n)+0.5);}
+function renderFinalQuestion(state,q,response,message){
+  const content=document.getElementById('content');
+  const progress=questionProgress(state,q);
+
+  if(response){
+    const decision=response.decision==='all_in'?'ALL IN':'SAVE MY POINTS';
+    content.innerHTML=`<div class="mode" style="font-size:14px">${progress}</div><div class="big">ELITE WAGER</div><div class="question">${esc(q.question)}</div><div class="locked">${decision} LOCKED<br><span style="color:#fff">${esc(response.answer_text||'No typed answer')}</span></div>`;
+    message.textContent='Final Wager locked. Waiting for the reveal.';
+    return;
+  }
+
+  // Preserve anything the player has already typed while the page polls.
+  const existingInput=document.getElementById('finalAnswerInput');
+  if(existingInput)finalDraft=existingInput.value;
+
+  if(!existingInput){
+    content.innerHTML=`<div class="mode" style="font-size:14px">${progress}</div><div class="big">ELITE WAGER</div><div class="question">${esc(q.question)}</div><div class="finalbox"><label for="finalAnswerInput">TYPE YOUR ANSWER</label><input id="finalAnswerInput" maxlength="100" autocomplete="off" autocapitalize="words" placeholder="Type answer here" value="${esc(finalDraft)}"><button class="final-choice" id="saveFinalBtn" onclick="submitFinal('save')">SAVE MY POINTS</button><button class="final-choice allin" id="allInFinalBtn" onclick="submitFinal('all_in')">ALL IN</button></div>`;
+    const input=document.getElementById('finalAnswerInput');
+    if(input)input.addEventListener('input',()=>{finalDraft=input.value;});
+  }
+
+  const closed=!state.timer_running||busy||state.team.active===false||state.team.eligible_for_current_question===false;
+  const saveBtn=document.getElementById('saveFinalBtn');
+  const allBtn=document.getElementById('allInFinalBtn');
+  if(saveBtn)saveBtn.disabled=closed;
+  if(allBtn)allBtn.disabled=closed;
+
+  message.textContent=state.timer_running
+    ?'Type your answer, then choose SAVE MY POINTS or ALL IN. ALL IN requires an answer.'
+    :'Final Wager ready. Wait for the host to start the timer.';
+}
+
+function render(state){
+  if(!state.team){clearSavedTeamIdentity(state.server_session_id||'');joinBtn.textContent='JOIN GAME';cancelTeamEditBtn.classList.add('hidden');showJoin('This phone needs to join the current local game.');return;}
+  joinedTeamName=state.team.name;localStorage.setItem('autoEliteTeamName',joinedTeamName);playerCanRename=!!state.player_can_rename;changeTeamBtn.classList.toggle('hidden',!playerCanRename);
+  if(!playerCanRename&&editingTeamName){editingTeamName=false;joinBtn.textContent='JOIN GAME';cancelTeamEditBtn.classList.add('hidden');teamNameInput.value=joinedTeamName;}
+  if(!editingTeamName)showGame();
+  const q=state.question,response=state.team_response,wager=state.team_wager;
+  updateSpeedBonusOverlay(state,response);
+  const teamActive=state.team.active!==false;
+  const teamEligible=state.team.eligible_for_current_question!==false;
+  const missed=Number(state.team.consecutive_missed_questions||0);
+  const needsCheckIn=!!state.team.needs_still_playing||!teamActive;
+  stillPlayingPrompt.classList.toggle('hidden',!needsCheckIn);
+  stillPlayingPrompt.classList.toggle('inactive',!teamActive);
+  if(needsCheckIn){
+    if(teamActive){
+      stillPlayingTitle.textContent='STILL PLAYING?';
+      stillPlayingCopy.textContent=`You missed ${missed} question${missed===1?'':'s'}. Tap below to stay active. Your score is safe.`;
+      stillPlayingBtn.textContent="YES — I'M STILL PLAYING";
+    }else{
+      stillPlayingTitle.textContent='TEAM PAUSED';
+      stillPlayingCopy.textContent=`Your team is inactive, but your ${state.team.score} points are saved. Tap below to return.`;
+      stillPlayingBtn.textContent='RETURN TO THE GAME';
+    }
+  }
+  document.getElementById('teamLabel').textContent=`#${state.team.number}  ${state.team.name}${teamActive?'':' • INACTIVE'}`;
+  document.getElementById('scoreLabel').textContent=`${state.team.score} pts`;
+    const mini=state.network&&state.network.mini_game;
+
+  if(mini&&mini.active){
+
+    const mq=mini.question||{};
+    const miniResponse=state.mini_team_response;
+    const phase=mini.phase||'idle';
+    const gameType=mini.game_type||'quick_3';
+
+    const content=document.getElementById('content');
+    const message=document.getElementById('message');
+
+    // ======================================================
+    // SKEE-BALL
+    // ======================================================
+
+    if(gameType==='skee_ball'){
+
+      const currentTeam=mini.current_team||{};
+      const myTeam=state.team||{};
+
+      const isMyTurn=
+        currentTeam.team_id===myTeam.id ||
+        currentTeam.id===myTeam.id;
+
+      const ballsRemaining=
+        Number(mini.balls_remaining||0);
+
+      const ballNumber=
+        Number(mini.ball_number||1);
+
+      document.getElementById('category').textContent=
+        'SKEE-BALL';
+
+      document.getElementById('mode').textContent=
+        'ELITE SKEE-BALL CHALLENGE';
+
+      document.getElementById('pointValue').textContent=
+        ballNumber;
+
+      document.getElementById('pointLabel').textContent=
+        'BALL';
+
+      document.getElementById('timer').textContent=
+        Math.ceil(mini.seconds_remaining||0);
+
+
+      if(phase==='intro'){
+
+        content.innerHTML=`
+          <div class="big">
+            ELITE SKEE-BALL
+          </div>
+
+          <div class="question">
+            Players are being selected.
+          </div>
+        `;
+
+        message.textContent=
+          'Skee-Ball Challenge starting.';
+
+        return;
+      }
+
+
+      if(phase==='between_turns'){
+
+        content.innerHTML=`
+          <div class="big">
+            NEXT PLAYER
+          </div>
+
+          <div class="question">
+            ${esc(currentTeam.name||'Next team')}
+          </div>
+        `;
+
+        message.textContent=
+          isMyTurn
+            ?'You are up next!'
+            :'Watch the TV for the next shooter.';
+
+        return;
+      }
+
+
+      if(phase==='turn'){
+
+        if(isMyTurn){
+
+          content.innerHTML=`
+            <div class="big">
+              YOU'RE UP!
+            </div>
+
+            <div class="question">
+              ${esc(myTeam.name||'Your Team')}
+            </div>
+
+            <div
+              class="locked"
+              style="font-size:28px"
+            >
+              BALL ${ballNumber} OF ${mini.balls_per_team||3}
+              <br>
+              ${ballsRemaining} BALL${ballsRemaining===1?'':'S'} REMAINING
+            </div>
+
+            <div
+              style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:12px;
+                margin-top:24px;
+              "
+            >
+              <button
+                class="answer"
+                onclick="sendSkeeControl('left')"
+                style="
+                  min-height:105px;
+                  font-size:34px;
+                  font-weight:1000;
+                "
+              >
+                ◀ LEFT
+              </button>
+
+              <button
+                class="answer"
+                onclick="sendSkeeControl('right')"
+                style="
+                  min-height:105px;
+                  font-size:34px;
+                  font-weight:1000;
+                "
+              >
+                RIGHT ▶
+              </button>
+            </div>
+
+            <button
+              class="answer"
+              onpointerdown="startSkeeCharge(event)"
+              onpointerup="releaseSkeeCharge(event)"
+              onpointercancel="releaseSkeeCharge(event)"
+              style="
+                width:100%;
+                min-height:155px;
+                margin-top:16px;
+                font-size:38px;
+                font-weight:1000;
+                touch-action:none;
+              "
+            >
+              HOLD FOR POWER
+              <br>
+              RELEASE TO THROW
+            </button>
+          `;
+
+          message.textContent=
+            'Your team controls the Skee-Ball machine.';
+
+        }else{
+
+          content.innerHTML=`
+            <div class="big">
+              SKEE-BALL
+            </div>
+
+            <div class="question">
+              NOW PLAYING:
+              <br>
+              <strong>${esc(currentTeam.name||'Another Team')}</strong>
+            </div>
+
+            <div class="locked">
+              WATCH THE TV
+            </div>
+          `;
+
+          message.textContent=
+            'Your turn will appear here if selected.';
+        }
+
+        return;
+      }
+
+
+      content.innerHTML=`
+        <div class="big">
+          SKEE-BALL COMPLETE
+        </div>
+
+        <div class="question">
+          Stay connected for more Elite games.
+        </div>
+      `;
+
+      message.textContent=
+        'Skee-Ball Challenge complete.';
+
+      return;
+    }
+
+
+    // ======================================================
+    // REACTION RUSH
+    // ======================================================
+
+    if(gameType==='reaction_rush'){
+
+      document.getElementById('category').textContent=
+        'REACTION RUSH';
+
+      document.getElementById('mode').textContent=
+        'ELITE REACTION RUSH';
+
+      document.getElementById('pointValue').textContent=
+        '';
+
+      document.getElementById('pointLabel').textContent=
+        '';
+
+      document.getElementById('timer').textContent=
+        phase==='question'
+          ?Math.ceil(mini.seconds_remaining||0)
+          :'';
+
+
+      if(phase==='intro'){
+
+        content.innerHTML=`
+          <div class="big">ELITE REACTION RUSH</div>
+          <div class="question">
+            Get ready.<br><br>
+            Wait for <strong>GO!</strong>
+          </div>
+        `;
+
+        message.textContent=
+          'Do not tap early.';
+
+        return;
+      }
+
+
+      if(phase==='waiting'){
+
+        content.innerHTML=`
+          <div class="big" style="font-size:48px">
+            WAIT...
+          </div>
+
+          <button
+            class="answer"
+            disabled
+            style="
+              width:100%;
+              min-height:180px;
+              margin-top:25px;
+              font-size:42px;
+              font-weight:1000;
+              opacity:.45;
+            "
+          >
+            WAIT FOR GO
+          </button>
+        `;
+
+        message.textContent=
+          'Hold it...';
+
+        return;
+      }
+
+
+      if(phase==='question'){
+
+        const disabled=
+          miniResponse||busy
+            ?'disabled'
+            :'';
+
+        content.innerHTML=`
+          <div
+            class="big"
+            style="font-size:58px"
+          >
+            GO!
+          </div>
+
+          <button
+            class="answer"
+            ${disabled}
+            onclick="submitMiniAnswer(0)"
+            style="
+              width:100%;
+              min-height:220px;
+              margin-top:20px;
+              font-size:58px;
+              font-weight:1000;
+            "
+          >
+            TAP NOW!
+          </button>
+        `;
+
+
+        if(miniResponse){
+
+          message.textContent=
+            `LOCKED — ${Number(
+              miniResponse.reaction_seconds||0
+            ).toFixed(3)} sec`;
+
+        }else{
+
+          message.textContent=
+            'TAP! TAP! TAP!';
+        }
+
+        return;
+      }
+
+
+      if(phase==='reveal'){
+
+        if(miniResponse){
+
+          content.innerHTML=`
+            <div class="big">
+              YOUR REACTION
+            </div>
+
+            <div
+              class="question"
+              style="font-size:52px"
+            >
+              ${Number(
+                miniResponse.reaction_seconds||0
+              ).toFixed(3)}
+              SECONDS
+            </div>
+
+            <div
+              class="locked"
+              style="font-size:30px"
+            >
+              RANK #${miniResponse.rank||'-'}
+            </div>
+          `;
+
+          message.textContent=
+            'Reaction locked in.';
+
+        }else{
+
+          content.innerHTML=`
+            <div class="big">
+              TOO LATE
+            </div>
+
+            <div class="question">
+              No reaction recorded.
+            </div>
+          `;
+
+          message.textContent=
+            'Reaction Rush complete.';
+        }
+
+        return;
+      }
+
+
+      content.innerHTML=`
+        <div class="big">
+          REACTION RUSH COMPLETE
+        </div>
+
+        <div class="question">
+          Stay connected. More Elite programming is coming up.
+        </div>
+      `;
+
+      message.textContent=
+        'No need to scan again.';
+
+      return;
+    }
+
+
+    // ======================================================
+    // QUICK 3
+    // ======================================================
+
+    const reveal=phase==='reveal';
+
+    document.getElementById('category').textContent=
+      mq.category||'QUICK 3';
+
+    document.getElementById('mode').textContent=
+      'ELITE QUICK 3';
+
+    document.getElementById('pointValue').textContent=
+      mini.question_number||1;
+
+    document.getElementById('pointLabel').textContent=
+      `OF ${mini.question_count||3}`;
+
+    document.getElementById('timer').textContent=
+      Math.ceil(mini.seconds_remaining||0);
+
+
+    if(phase==='intro'){
+
+      content.innerHTML=`
+        <div class="big">ELITE QUICK 3</div>
+        <div class="question">Get ready!</div>
+      `;
+
+      message.textContent=
+        'Mini-game starting.';
+
+      return;
+    }
+
+
+    if(phase==='outro'){
+
+      content.innerHTML=`
+        <div class="big">QUICK 3 COMPLETE</div>
+        <div class="question">Trivia starts soon.</div>
+      `;
+
+      message.textContent=
+        'Stay connected. No need to scan again.';
+
+      return;
+    }
+
+
+    const choices=(mq.choices||[]).map((text,i)=>{
+
+      let cls='answer';
+
+      if(
+        miniResponse&&
+        i===miniResponse.choice_index
+      ){
+        cls+=' selected';
+      }
+
+      if(
+        reveal&&
+        i===mq.correct_index
+      ){
+        cls+=' correct';
+      }
+
+      if(
+        reveal&&
+        miniResponse&&
+        i===miniResponse.choice_index&&
+        !miniResponse.correct
+      ){
+        cls+=' wrong';
+      }
+
+
+      const disabled=
+        phase!=='question'||
+        !!miniResponse||
+        busy
+          ?'disabled'
+          :'';
+
+
+      return `
+        <button
+          class="${cls}"
+          ${disabled}
+          onclick="submitMiniAnswer(${i})"
+        >
+          <span>${letters[i]}</span>${esc(text)}
+        </button>
+      `;
+    }).join('');
+
+
+    content.innerHTML=`
+      <div class="big">
+        QUICK 3 • ${mini.question_number||1}
+        OF ${mini.question_count||3}
+      </div>
+
+      <div class="question">
+        ${esc(mq.question||'')}
+      </div>
+
+      <div class="answers">
+        ${choices}
+      </div>
+    `;
+
+
+    if(reveal){
+
+      if(!miniResponse){
+
+        message.textContent=
+          'No answer submitted.';
+
+      }else if(miniResponse.correct){
+
+        message.textContent=
+          'Correct!';
+
+      }else{
+
+        message.textContent=
+          'Incorrect.';
+      }
+
+    }else if(miniResponse){
+
+      message.textContent=
+        'Answer locked in.';
+
+    }else{
+
+      message.textContent=
+        'Pick your answer.';
+    }
+
+    return;
+  }
+
+  document.getElementById('category').textContent=q.category;
+  const modeEl=document.getElementById('mode'),pointValue=document.getElementById('pointValue'),pointLabel=document.getElementById('pointLabel');
+  if(q.scoring_type==='fastest'){
+    const current=state.current_fastest_display==null?q.max_points:Number(state.current_fastest_display);
+    const bonusValues=Array.isArray(q.speed_bonus_points)?q.speed_bonus_points:[];
+    const bonusLabel=bonusValues.length?` • TOP 3 CORRECT BONUS ${bonusValues.map(v=>`+${v}`).join('/')}`:'';
+    modeEl.textContent=state.screen==='category'?`FASTEST ANSWER • ${q.min_points}–${q.max_points} POINTS${bonusLabel}`:'FASTEST ANSWER';pointValue.textContent=current;pointLabel.textContent='LIVE POINTS';
+  }else if(q.scoring_type==='roulette'){modeEl.textContent='ELITE ROULETTE';pointValue.textContent='WAGER';pointLabel.textContent='ROULETTE';}
+  else if(isFinalWager(q)){modeEl.textContent='ELITE WAGER';pointValue.textContent='WAGER';pointLabel.textContent='ALL IN / SAVE';}
+  else{modeEl.textContent=`${q.fixed_points} POINTS`;pointValue.textContent=q.fixed_points;pointLabel.textContent='POINTS';}
+  const timer=document.getElementById('timer');timer.textContent=state.timer_running?Math.ceil(state.timer_remaining):(state.screen==='question'?q.timer_seconds:(state.screen==='wager'?q.wager_seconds:'--'));
+  const content=document.getElementById('content'),message=document.getElementById('message');
+
+  if(state.screen==='pregame'){content.innerHTML=`<div class="big">TEAM REGISTERED</div><div class="question">Waiting for the game to start.</div>`;message.textContent='You can change your team name until the rules slides begin.';return;}
+  if(state.screen==='rules'){content.innerHTML=`<div class="big">GET READY</div><div class="question">The rules slides are playing on the TV.</div>`;message.textContent='Team names are now locked in.';return;}
+  if(state.screen==='sociable'){content.innerHTML=`<div class="big">BLITZ SOCIABLE!</div><div class="question">Every active team got that one right.</div>`;message.textContent='Cheers — on to the next question!';return;}
+  if(state.screen==='category'){
+    finalDraft='';
+    const bonusValues=Array.isArray(q.speed_bonus_points)?q.speed_bonus_points:[];
+    const fastestExtra=bonusValues.length
+      ?`<div class="mode" style="font-size:22px">FASTEST ANSWER • ${q.min_points}–${q.max_points} POINTS<br>TOP 3 CORRECT SPEED BONUS • ${bonusValues.map(v=>`+${v}`).join(' / ')}</div>`
+      :`<div class="mode" style="font-size:22px">FASTEST ANSWER • ${q.min_points}–${q.max_points} POINTS</div>`;
+    const extra=q.scoring_type==='roulette'?'<div class="mode" style="font-size:22px">ELITE ROULETTE</div>':(q.scoring_type==='fastest'?fastestExtra:(isFinalWager(q)?'<div class="mode" style="font-size:22px">ELITE WAGER • FINAL QUESTION</div>':''));
+    content.innerHTML=`<div class="big">${questionProgress(state,q)}</div><div class="question">${esc(q.category)}</div>${extra}`;
+    message.textContent=q.scoring_type==='roulette'?'The hint and wager screen comes next.':(isFinalWager(q)?'Final Wager question comes next.':'Get ready for the next question.');return;
+  }
+  if(state.screen==='wager'){
+    const score=Number(state.team.score)||0,half=halfUp(score*0.5),all=score;
+    const wagerButtons=[{pct:0,label:'SAVE MY POINTS',detail:'0 points at risk'},{pct:50,label:`WAGER ${half}`,detail:'50% of current score'},{pct:100,label:`ALL IN ${all}`,detail:'100% of current score'}].map(w=>`<button class="wager ${wager&&wager.percent===w.pct?'selected':''}" ${(!state.timer_running||!!wager||!teamActive||!teamEligible)?'disabled':''} onclick="submitWager(${w.pct})"><span class="pct">${w.pct}%</span><span>${esc(w.label)}<br><small>${esc(w.detail)}</small></span></button>`).join('');
+    content.innerHTML=`<div class="big">ELITE ROULETTE</div><div class="hint">HINT: ${esc(q.hint)}</div><div class="wagers">${wagerButtons}</div>`;
+    if(!teamActive)message.textContent='Team paused for inactivity. Tap RETURN TO THE GAME above.';
+    else if(!teamEligible)message.textContent="You're back! You can wager starting with the next question.";
+    else if(wager)message.textContent=state.all_wagers_in?`${wager.percent}% wager locked • All active teams wagered. Waiting for the question.`:`${wager.percent}% wager locked • ${wager.amount} point${wager.amount===1?'':'s'} at risk`;
+    else message.textContent=state.timer_running?'Choose 0%, 50%, or 100% now. The actual question comes after all active wagers are locked.':'Wager time is closed. If you did not choose, your wager defaults to 0%.';
+    return;
+  }
+  if(state.screen==='scores'){const me=state.scoreboard.find(r=>r.number===state.team.number);content.innerHTML=`<div class="big">SCORES</div><div class="rank">${me?`You are #${me.rank} of ${state.scoreboard.length}`:''}</div>`;message.textContent=`${state.team.score} total points`;return;}
+  if(state.screen==='round_complete'){const me=state.scoreboard.find(r=>r.number===state.team.number);content.innerHTML=`<div class="big">ROUND ${q.round} COMPLETE</div><div class="rank">${me?`You are #${me.rank} of ${state.scoreboard.length}`:''}</div>`;message.textContent=`${state.team.score} points after Round ${q.round}`;return;}
+  if(state.screen==='game_complete'){const me=state.scoreboard.find(r=>r.number===state.team.number);content.innerHTML=`<div class="big">GAME COMPLETE</div><div class="rank">${me?`FINAL: #${me.rank} OF ${state.scoreboard.length}`:''}</div>`;message.textContent=`${state.team.score} final points`;return;}
+
+  const reveal=state.screen==='reveal'||state.screen==='speed_bonus';
+  if(isFinalWager(q)){
+    if(reveal){
+      const decision=response?(response.decision==='all_in'?'ALL IN':'SAVE MY POINTS'):'SAVE MY POINTS (DEFAULT)';
+      const typed=response?.answer_text||'No answer submitted';
+      const delta=response&&Number.isInteger(response.score_delta)?response.score_delta:0;
+      content.innerHTML=`<div class="mode" style="font-size:14px">${questionProgress(state,q)}</div><div class="big">ELITE WAGER</div><div class="question">${esc(q.question)}</div><div class="correct-answer">ANSWER: ${esc(q.answer_display)}</div><div class="locked">${esc(decision)}<br><span style="color:#fff">${esc(typed)}</span></div>`;
+      if(!response)message.textContent=`No submission • SAVE MY POINTS default • ${state.team.score} total`;
+      else if(response.decision==='save')message.textContent=`Points saved • ${state.team.score} total`;
+      else if(response.correct)message.textContent=`Correct! +${delta} • ${state.team.score} total`;
+      else message.textContent=`Incorrect. ${delta} • ${state.team.score} total`;
+      return;
+    }
+    renderFinalQuestion(state,q,response,message);return;
+  }
+
+  const answers=q.choices.map((text,i)=>{let cls='answer';if(response&&i===response.choice_index)cls+=' selected';if(reveal&&i===q.correct_index)cls+=' correct';if(reveal&&response&&i===response.choice_index&&!response.correct)cls+=' wrong';const disabled=(!state.timer_running||!!response||!teamActive||!teamEligible)?'disabled':'';return `<button class="${cls}" ${disabled} onclick="submitAnswer(${i})"><span>${letters[i]}</span>${esc(text)}</button>`;}).join('');
+  content.innerHTML=`<div class="big">QUESTION ${q.question_number} OF ${state.round_question_count}</div><div class="question">${esc(q.question)}</div><div class="answers">${answers}</div>`;
+  if(reveal){
+    if(q.scoring_type==='roulette'){
+      const delta=response&&Number.isInteger(response.score_delta)?response.score_delta:((wager&&Number.isInteger(wager.score_delta))?wager.score_delta:0);
+      if(!response)message.textContent=(wager&&wager.percent>0)?`No answer. ${delta} points • ${state.team.score} total`:'No answer submitted. Score unchanged.';
+      else if(response.correct)message.textContent=`Correct! ${delta>=0?'+':''}${delta} points • ${state.team.score} total`;
+      else message.textContent=`Incorrect. ${delta} points • ${state.team.score} total`;
+    }else if(response){
+      const scored=Number.isInteger(response.score_delta)?response.score_delta:Number(response.points||0);
+      const speedBonus=Number(response.speed_bonus||0);
+      if(response.correct){
+        message.textContent=speedBonus>0
+          ?`Correct! +${scored} points total • includes +${speedBonus} SPEED BONUS • ${state.team.score} total`
+          :`Correct! +${scored} points • ${state.team.score} total`;
+      }else message.textContent='Incorrect. +0 points';
+    }
+    else message.textContent='No answer submitted.';
+    if(state.screen==='speed_bonus'&&Number(response?.speed_bonus||0)<=0){
+      message.textContent='Speed Bonus winners are being shown on the TV.';
+    }
+  }else if(!teamActive)message.textContent='Team paused for inactivity. Tap RETURN TO THE GAME above.';
+  else if(!teamEligible)message.textContent="You're back! Your score is saved. You can answer starting with the next question.";
+  else if(response)message.textContent='Answer locked in.';
+  else if(state.timer_running)message.textContent=q.scoring_type==='fastest'?`Answer now • Live value: ${Number(state.current_fastest_display)} points • ${state.outstanding_answer_teams.length} active team${state.outstanding_answer_teams.length===1?'':'s'} still answering`:`Answer now • ${q.fixed_points} points • ${state.outstanding_answer_teams.length} active team${state.outstanding_answer_teams.length===1?'':'s'} still answering`;
+  else message.textContent='Wait for the host to start the timer.';
+}
+
+async function pollOnce(){
+  if(joinInProgress)return;const requestEpoch=identityEpoch,requestTeamId=teamId,requestDeviceToken=deviceToken,requestServerSessionId=serverSessionId;
+  try{
+    const query=requestTeamId?`?team_id=${encodeURIComponent(requestTeamId)}&device_token=${encodeURIComponent(requestDeviceToken)}&server_session_id=${encodeURIComponent(requestServerSessionId)}`:'';
+    const res=await fetch(`/api/state${query}`,{cache:'no-store'}),data=await res.json();if(!data.ok)return;
+    if(data.state.app_build&&data.state.app_build!==PAGE_BUILD){const u=new URL(location.href);u.searchParams.set('build',data.state.app_build);u.searchParams.set('_reload',Date.now());location.replace(u.toString());return;}
+    if(requestEpoch!==identityEpoch||requestTeamId!==teamId||requestDeviceToken!==deviceToken||requestServerSessionId!==serverSessionId)return;
+    const liveSessionId=data.state.server_session_id||'';if(requestServerSessionId&&liveSessionId&&requestServerSessionId!==liveSessionId){clearSavedTeamIdentity(liveSessionId);showJoin('This phone needs to join the current local game.');return;}
+    render(data.state);
+  }catch(e){const target=teamId?document.getElementById('message'):joinMessage;target.textContent='Reconnecting to local Auto Elite server…';}
+}
+async function poll(){await pollOnce();setTimeout(poll,250);}
+showJoin(teamId?'Checking this phone team…':'');poll();
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elite Network | Weekend Monitor</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:#101521;color:#e9eef7}
+*{box-sizing:border-box}body{margin:0;padding:22px;max-width:1100px;margin-inline:auto}h1{font-size:26px;margin:0}h2{font-size:17px;margin:0 0 12px}.sub{color:#9cabc0;font-size:13px;margin:6px 0 24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px}.panel{background:#1a2232;border:1px solid #344156;border-radius:11px;padding:16px;margin-bottom:12px;min-width:0}
+.label{font-size:12px;color:#9cabc0;text-transform:uppercase;letter-spacing:.07em}.value{font-weight:750;font-size:21px;margin-top:6px;overflow-wrap:anywhere}.detail{font-size:13px;color:#c4cedd;margin-top:7px;overflow-wrap:anywhere}
+.ok{color:#70dfab}.bad{color:#ff9c99}.muted{color:#b3bfd0}pre{font-family:ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;font-size:12px;line-height:1.7;max-height:270px;overflow:auto}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.pill{border-radius:100px;padding:7px 12px;background:#29354b;font-weight:700;font-size:13px}
+small{color:#97a7bd}.events{list-style:none;padding:0;margin:0}.events li{font:12px/1.6 ui-monospace,Consolas,monospace;border-bottom:1px solid #30394c;padding:5px 0;overflow-wrap:anywhere}.events li:last-child{border-bottom:0}
+</style>
+</head>
+<body>
+<header class="header"><h1>ELITE NETWORK MONITOR</h1><div class="pill" id="connection">Connecting…</div></header>
+<p class="sub">Read-only local burn-in monitor · Refreshes every 10 seconds · No control buttons</p>
+<div class="grid">
+  <section class="panel"><div class="label">Network</div><div class="value" id="air">Checking…</div><div class="detail" id="channel">—</div></section>
+  <section class="panel"><div class="label">Server clock</div><div class="value" id="clock">—</div><div class="detail" id="sim">—</div></section>
+  <section class="panel"><div class="label">Now playing</div><div class="value" id="now">—</div><div class="detail" id="nowDetail">—</div></section>
+  <section class="panel"><div class="label">Next broadcast</div><div class="value" id="next">—</div><div class="detail" id="nextDetail">—</div></section>
+  <section class="panel"><div class="label">Mini-game</div><div class="value" id="mini">—</div><div class="detail" id="miniDetail">—</div></section>
+  <section class="panel"><div class="label">Game activity</div><div class="value" id="game">—</div><div class="detail" id="gameDetail">—</div></section>
+</div>
+<section class="panel"><h2>Recent Network Events</h2><ul id="events" class="events"><li>Waiting for state…</li></ul></section>
+<section class="panel"><h2>Upcoming Today's Shows</h2><div id="guide" class="detail">Waiting for schedule…</div></section>
+<p><small id="updated">Waiting for first update…</small></p>
+<script>
+'use strict';
+const el=id=>document.getElementById(id);
+const str=v=>v==null||v===''?'—':String(v);
+const clock=v=>{if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?str(v):d.toLocaleString('en-US',{weekday:'short',hour:'numeric',minute:'2-digit',timeZone:'America/Chicago'});};
+const set=(id,value)=>{el(id).textContent=str(value);};
+let failed=0;
+async function refresh(){
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),7000);
+  try{
+    const r=await fetch('/api/state',{cache:'no-store',signal:controller.signal});
+    if(!r.ok)throw Error('HTTP '+r.status);
+    const json=await r.json();
+    if(json.ok!==true||!json.state)throw Error('Unexpected API response');
+    const s=json.state,n=s.network||{},p=n.program||{},m=n.mini_game||{},nx=n.next_event||{};
+    failed=0;set('connection','SERVER RESPONDING');el('connection').className='pill ok';
+    set('air',n.network_on_air?'ON AIR':'STANDBY');
+    set('channel',n.network_on_air?'Broadcast window active':'Waiting for 11 AM Central');
+    set('clock',n.now_display||clock(n.now_iso));
+    set('sim',n.simulated?'⚠ SIMULATED CLOCK':'Real clock'+(n.timezone?' · '+n.timezone:''));
+    set('now',n.game_active?(n.show_title||p.title||'Trivia running'):(m.active?(m.title||m.game_type||'Mini-game'):p.title||'Elite Channel'));
+    set('nowDetail',n.game_active?'Trivia game active':m.active?('Mini-game phase: '+str(m.phase)):('Channel content: '+str(n.filler_type)));
+    set('next',nx.title||'No upcoming game');
+    set('nextDetail',nx.start_iso?clock(nx.start_iso)+(nx.game_key?' · '+nx.game_key:''):'—');
+    set('mini',m.active?(m.title||m.game_type||'Active'):'Idle');
+    set('miniDetail',m.active?'Phase: '+str(m.phase):'No mini-game running');
+    set('game',n.game_active?'ACTIVE':'No game active');
+    const events=Array.isArray(n.event_log)?n.event_log:[];
+    const loaded=[...events].reverse().find(x=>/LOAD GAME\s*->/i.test(x));
+    set('gameDetail',loaded?'Most recent: '+loaded:'Recent loaded game: not in current event log');
+    const e=el('events');e.replaceChildren();
+    if(!events.length){const li=document.createElement('li');li.textContent='No events yet.';e.append(li);}else for(const msg of [...events].reverse().slice(0,35)){const li=document.createElement('li');li.textContent=String(msg);if(/ERROR|FAILED|REVIEW REQUIRED|BACKUP/i.test(msg))li.className='bad';e.append(li);}
+    const g=el('guide');g.replaceChildren();
+    const rows=Array.isArray(n.today_guide)?n.today_guide:[];
+    if(!rows.length){g.textContent='No shows listed for today.';}else for(const item of rows){const div=document.createElement('div');div.style.padding='5px 0';div.textContent=clock(item.start_iso)+' — '+str(item.title)+(item.game_key?' · '+item.game_key:'');g.append(div);}
+    set('updated','Last successful poll: '+new Date().toLocaleTimeString()+' · Every 10 seconds');
+  }catch(err){failed++;el('connection').className='pill bad';set('connection','SERVER UNREACHABLE');set('updated','Last poll failed: '+str(err.message)+' · Retry in 10 seconds');}
+  finally{clearTimeout(timeout);}
+}
+refresh();setInterval(refresh,10000);
+</script>
+</body>
+</html>
