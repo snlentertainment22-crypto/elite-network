@@ -413,7 +413,7 @@ const FALLBACK_DISPLAY={
   timer_px:64,points_px:50
 };
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function ensureCurrentBuild(serverBuild){if(!serverBuild||serverBuild===PAGE_BUILD)return true;const u=new URL(location.href);u.searchParams.set('build',serverBuild);u.searchParams.set('_reload',Date.now());location.replace(u.toString());return false;}
+function ensureCurrentBuild(serverBuild,state){const n=state?.network||{};const mini=n.mini_game||{};const signup=n.standalone_mini_signup;const unsafe=typeof n.game_active!=="boolean"||typeof mini.active!=="boolean"||n.game_active||mini.active||!!n.lead_in_phase||(signup&&signup.seconds_until<=300);if(serverBuild!==PAGE_BUILD&&unsafe)return true;if(!serverBuild||serverBuild===PAGE_BUILD)return true;const u=new URL(location.href);u.searchParams.set('build',serverBuild);u.searchParams.set('_reload',Date.now());location.replace(u.toString());return false;}
 let CURRENT_BACKGROUND=null;
 function setBackground(url){
   const next=url||null;
@@ -1218,7 +1218,7 @@ async function poll(){
   if(!r.ok)throw new Error(`HTTP ${r.status}`);
   const d=await r.json();
   if(d.ok){
-   if(!ensureCurrentBuild(d.state.app_build))return;
+   if(!ensureCurrentBuild(d.state.app_build,d.state))return;
    const key=renderKey(d.state);
    if(key!==LAST_RENDER_KEY){
     LAST_RENDER_KEY=key;

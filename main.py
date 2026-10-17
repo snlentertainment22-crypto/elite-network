@@ -3841,7 +3841,7 @@ class GameEngine:
 
             return {
                 "version": self.version,
-                "app_build": APP_BUILD,
+                "app_build": APP_BUILD + "-" + os.environ.get("RENDER_GIT_COMMIT", "local")[:12],
                 "server_session_id": self.server_session_id,
                 "game_title": self.game_title,
                 "screen": self.screen,
@@ -5157,7 +5157,7 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
             if old_render_channel in text:
                 text = text.replace(old_render_channel, new_render_channel)
 
-        text = text.replace("__AUTO_ELITE_BUILD__", APP_BUILD)
+        text = text.replace("__AUTO_ELITE_BUILD__", APP_BUILD + "-" + os.environ.get("RENDER_GIT_COMMIT", "local")[:12])
         self._send_bytes(text.encode("utf-8"), "text/html; charset=utf-8")
 
     def do_GET(self):
@@ -5577,7 +5577,7 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
 
         if path == "/api/health":
             return self._send_json(
-                {"ok": True, "service": "Auto Elite Local", "app_build": APP_BUILD}
+                {"ok": True, "service": "Auto Elite Local", "app_build": APP_BUILD + "-" + os.environ.get("RENDER_GIT_COMMIT", "local")[:12], "deploy_commit": os.environ.get("RENDER_GIT_COMMIT", "local")}
             )
         if path == "/api/monitor":
             return self._send_json({"ok": True, "heartbeat": HEARTBEAT.snapshot()})
