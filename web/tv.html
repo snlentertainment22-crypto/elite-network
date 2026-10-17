@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -365,7 +365,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
     <div id="screen"></div>
     <div id="overlay" class="overlay"></div>
     <div id="showBug" class="showBug hidden"></div>
-    <div id="footer" class="debugFooter">Connectingâ€¦</div>
+    <div id="footer" class="debugFooter">Connecting...</div>
   </div>
 </div>
 <script>
@@ -421,13 +421,13 @@ function setBackground(url){
   CURRENT_BACKGROUND=next;
   document.getElementById('screen').style.backgroundImage=next?`url('${next}')`:'none';
 }
-function footerText(state){return `${state.status} â€¢ ${state.team_count} team${state.team_count===1?'':'s'} â€¢ Build ${state.app_build}`;}
+function footerText(state){return `${state.status}  -  ${state.team_count} team${state.team_count===1?'':'s'}  -  Build ${state.app_build}`;}
 function stageScale(){return Math.max(.45,document.getElementById('stage').clientWidth/1600);}
 function fitText(el,maxPx,minPx){if(!el)return;const scale=stageScale();let size=Math.max(minPx*scale,maxPx*scale);const floor=minPx*scale;el.style.fontSize=`${size}px`;let guard=0;while(size>floor&&(el.scrollHeight>el.clientHeight+1||el.scrollWidth>el.clientWidth+1)&&guard<120){size-=1;el.style.fontSize=`${size}px`;guard++;}}
 function fitAll(state){const d={...FALLBACK_DISPLAY,...(state.display_settings||{})};requestAnimationFrame(()=>{document.querySelectorAll('.categoryTitle').forEach(el=>fitText(el,d.category_max_px,d.category_min_px));document.querySelectorAll('.questionBox').forEach(el=>fitText(el,el.dataset.kind==='hint'?d.roulette_hint_max_px:d.question_max_px,el.dataset.kind==='hint'?d.roulette_hint_min_px:d.question_min_px));document.querySelectorAll('.choiceCell').forEach(el=>fitText(el,d.answer_max_px,d.answer_min_px));document.querySelectorAll('.sixChoice').forEach(el=>fitText(el,Math.min(d.answer_max_px,32),Math.min(d.answer_min_px,18)));document.querySelectorAll('.rouletteChoice').forEach(el=>fitText(el,48,28));document.querySelectorAll('.topInfo .mid').forEach(el=>fitText(el,d.team_status_max_px,d.team_status_min_px));const left=document.querySelector('.topInfo .left');if(left)left.style.fontSize=`${d.timer_px*stageScale()}px`;const right=document.querySelector('.topInfo .right');if(right)right.style.fontSize=`${d.points_px*stageScale()}px`;});}
 function pointLabel(q,state){if(q.scoring_type==='fastest'){const v=state.current_fastest_display==null?q.max_points:Number(state.current_fastest_display);return `${v} PTS`;}if(q.scoring_type==='roulette')return '--';if(q.scoring_type==='final_wager')return 'WAGER';return `${q.fixed_points} PTS`;}
 function scoreRows(rows){if(!rows.length)return '<div class="smallMsg">Waiting for teams.</div>';return rows.map(r=>`<div class="scoreRow"><div class="rank">#${r.rank}</div><div>${esc(r.name)}</div><div class="score">${r.score}</div></div>`).join('');}
-function teamStatus(state,phase){const rows=phase==='wager'?state.outstanding_wager_teams:state.outstanding_answer_teams;const done=phase==='wager'?state.all_wagers_in:state.all_answers_in;if(state.team_count===0)return 'NO TEAMS REGISTERED';if(done)return 'âœ“ ALL TEAMS IN';if(!rows||!rows.length)return `${state.team_count} TEAMS READY`;return rows.map(t=>`#${t.number} ${esc(t.name)}`).join(' â€¢ ');}
+function teamStatus(state,phase){const rows=phase==='wager'?state.outstanding_wager_teams:state.outstanding_answer_teams;const done=phase==='wager'?state.all_wagers_in:state.all_answers_in;if(state.team_count===0)return 'NO TEAMS REGISTERED';if(done)return ' ALL TEAMS IN';if(!rows||!rows.length)return `${state.team_count} TEAMS READY`;return rows.map(t=>`#${t.number} ${esc(t.name)}`).join('  -  ');}
 
 function renderCategory(state){
   const q=state.question;
@@ -444,7 +444,7 @@ function renderCategory(state){
       <div style="width:66%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-width:0">
 
         <div class="pill">
-          ROUND ${q.round} â€¢ QUESTION ${q.question_number} OF ${state.round_question_count}
+          ROUND ${q.round}  -  QUESTION ${q.question_number} OF ${state.round_question_count}
         </div>
 
         <div class="categoryTitle" style="width:100%;max-height:56%;font-size:145px;margin:4% 0 2%;overflow:hidden">
@@ -484,13 +484,13 @@ function renderQuestionBoard(state,reveal){const q=state.question;setBackground(
  if(isFinal){const answer=reveal&&q.answer_display?`<div class="finalNote" style="bottom:5.5%;color:#6cffaf">ANSWER: ${esc(q.answer_display)}</div>`:'';content=`<div class="finalLabel">ELITE WAGER</div><div class="questionBox">${esc(q.question)}</div><div class="finalNote">Teams choose <span style="color:#ff6de8">ALL IN</span> or <span style="color:#63dfff">SAVE MY POINTS</span> on their phones.</div>${answer}`;}
  else {const allChoices=(q.choices||[]);if(allChoices.length>4){const choices=allChoices.slice(0,6).map((txt,i)=>`<div class="sixChoice ${reveal&&i===q.correct_index?'correct':''}"><span>${esc(txt)}</span></div>`).join('');content=`<div class="questionBox">${esc(q.question)}</div><div class="sixMask"></div><div class="sixGrid">${choices}</div>`;}else{const choices=allChoices.slice(0,4).map((txt,i)=>`<div class="choiceCell ${reveal&&i===q.correct_index?'correct':''}"><span>${esc(txt)}</span></div>`).join('');content=`<div class="questionBox">${esc(q.question)}</div><div class="choiceGrid">${choices}</div>`;}}
  document.getElementById('overlay').innerHTML=`<div class="board ${profile}"><div class="topInfo questionHeader"><div class="left">${left}</div><div class="mid">${teams}</div><div class="right">${right}</div></div>${content}<div class="bottomBanner">${reveal?'Correct answer highlighted':'Answer on your phone before time runs out.'}</div></div>`;fitAll(state);}
-function renderRouletteWager(state){const q=state.question;setBackground(assetsFor(state).roulette);const profile=state?.network?.show_profile||'standard';const left=state.timer_running?Math.ceil(state.timer_remaining):q.wager_seconds;const teams=teamStatus(state,'wager');const right=state.all_wagers_in?'âœ“ ALL IN':'WAGER';document.getElementById('overlay').innerHTML=`<div class="board ${profile}"><div class="topInfo rouletteHeader"><div class="left">${left}</div><div class="mid">${teams}</div><div class="right">${right}</div></div><div class="questionBox" data-kind="hint">${esc(q.hint)}</div><div class="rouletteGrid"><div class="rouletteChoice">0%</div><div class="rouletteChoice">50%</div><div class="rouletteChoice">100%</div></div><div class="bottomBanner">Choose A, B, or C on your phone before the question appears.</div></div>`;fitAll(state);}
+function renderRouletteWager(state){const q=state.question;setBackground(assetsFor(state).roulette);const profile=state?.network?.show_profile||'standard';const left=state.timer_running?Math.ceil(state.timer_remaining):q.wager_seconds;const teams=teamStatus(state,'wager');const right='--';document.getElementById('overlay').innerHTML=`<div class="board ${profile}"><div class="topInfo rouletteHeader"><div class="left">${left}</div><div class="mid">${teams}</div><div class="right">${right}</div></div><div class="questionBox" data-kind="hint">${esc(q.hint)}</div><div class="rouletteGrid"><div class="rouletteChoice">0%</div><div class="rouletteChoice">50%</div><div class="rouletteChoice">100%</div></div><div class="bottomBanner">Choose A, B, or C on your phone before the question appears.</div></div>`;fitAll(state);}
 function renderScores(state,title,sub){setBackground(assetsFor(state).category);document.getElementById('overlay').innerHTML=`<div class="scoreWrap"><div class="scoreTitle">${title}</div>${sub?`<div class="scoreSub">${sub}</div>`:''}<div class="scoreList">${scoreRows(state.scoreboard)}</div></div>`;}
 function renderSpeedBonus(state){setBackground(assetsFor(state).category);const rows=(state.speed_bonus_winners||[]).map(w=>`<div class="speedRow"><div>#${w.rank}</div><div>${esc(w.name)}</div><div>+${w.bonus} BONUS</div></div>`).join('');document.getElementById('overlay').innerHTML=`<div class="speedWrap"><div class="speedTitle">SPEED BONUS</div><div class="smallMsg">Fastest correct teams earn extra points.</div><div class="speedList">${rows||'<div class="smallMsg">No bonus winners this time.</div>'}</div></div>`;}
 function formatNetworkClock(iso){try{return new Date(iso).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}catch(e){return '';}}
 function formatCountdown(seconds){const s=Math.max(0,Math.floor(Number(seconds||0)));const m=Math.floor(s/60),r=s%60;return `${m}:${String(r).padStart(2,'0')}`;}
 function formatLongCountdown(s){const m=Math.max(0,Math.floor(Number(s||0)/60));return m>=60?Math.floor(m/60)+' HR '+(m%60)+' MIN':m+' MIN';}
-function networkNextLine(network){const n=network?.next_event;if(!n)return 'More Elite programming coming up.';return `NEXT: ${esc(n.title||'')} â€¢ ${formatNetworkClock(n.start_iso)}`;}
+function networkNextLine(network){const n=network?.next_event;if(!n)return 'More Elite programming coming up.';return `NEXT: ${esc(n.title||'')}  -  ${formatNetworkClock(n.start_iso)}`;}
 function setShowBug(state){const el=document.getElementById('showBug');const n=state.network||{};if(!n.game_active){el.className='showBug hidden';el.textContent='';return;}const profile=n.show_profile||'standard';const title=n.show_title||'ELITE BLITZ';el.className=`showBug ${profile}`;el.textContent=title;}
 function renderMiniGame(state){
  const n=state.network||{},m=n.mini_game||{},q=m.question||{};
@@ -639,7 +639,7 @@ function renderMiniGame(state){
  setBackground('/assets/quick_3_bg.png');
 
  if(phase==='intro'){
-   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">Elite Quick 3</div><div class="miniSub">3 QUESTIONS â€¢ 12 SECONDS EACH</div><div class="networkNext">Play along from your table.</div></div></div>`;
+   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">Elite Quick 3</div><div class="miniSub">3 QUESTIONS  -  12 SECONDS EACH</div><div class="networkNext">Play along from your table.</div></div></div>`;
  }
 
  else if(phase==='outro'){
@@ -671,7 +671,7 @@ function renderMiniGame(state){
          ${answer}
          <div class="miniProgress">
            QUESTION ${m.question_number||1} OF ${m.question_count||3}
-           â€¢ ${reveal?'ANSWER REVEAL':'MAKE YOUR PICK'}
+            -  ${reveal?'ANSWER REVEAL':'MAKE YOUR PICK'}
          </div>
        </div>
      </div>
@@ -681,7 +681,7 @@ function renderMiniGame(state){
  document.getElementById('overlay').innerHTML=html;
 }
 
-function guideMarkup(network){const rows=(network.today_guide||[]);if(!rows.length)return '<div class="main">Schedule loadingâ€¦</div>';return `<div class="guideGrid">${rows.map(r=>`<div class="guideItem"><div class="guideTime">${formatNetworkClock(r.start_iso)}</div><div class="guideTitle">${esc(r.title||'')}</div></div>`).join('')}</div>`;}
+function guideMarkup(network){const rows=(network.today_guide||[]);if(!rows.length)return '<div class="main">Schedule loading...</div>';return `<div class="guideGrid">${rows.map(r=>`<div class="guideItem"><div class="guideTime">${formatNetworkClock(r.start_iso)}</div><div class="guideTitle">${esc(r.title||'')}</div></div>`).join('')}</div>`;}
 function renderChannel(state){
  const n=state.network||{};
  const type=n.filler_type||'did_you_know';
@@ -732,7 +732,7 @@ function renderChannel(state){
      <div class="label">ELITE NETWORK</div>
      <div class="main">PROGRAMMING RETURNS AT 11 AM</div>
      <div class="small">
-      Sports â€¢ Elite Blitz â€¢ After Dark â€¢ Mini-Games
+      Sports  -  Elite Blitz  -  After Dark  -  Mini-Games
      </div>
     </div>
    </div>
@@ -853,7 +853,7 @@ function renderChannel(state){
      id="channelFunnyClip"
      data-src="${esc(item.url)}"
      src="${esc(item.url)}"
-     autoplay
+     autoplay muted
      playsinline
      style="
       width:100%;
@@ -1053,7 +1053,7 @@ function renderNetworkProgram(state){
      </div>
 
      <div class="networkNext">
-      Final join window â€¢ Game starts automatically
+      Final join window  -  Game starts automatically
      </div>
     </div>
    </div>
@@ -1062,6 +1062,27 @@ function renderNetworkProgram(state){
   return true;
  }
 
+ if(n.standalone_mini_signup && n.standalone_mini_signup.seconds_until <= 300 && kind==='channel'){
+  const upcoming=n.standalone_mini_signup;
+  setBackground(null);
+  document.getElementById('overlay').innerHTML=`
+   <div class="networkShell">
+    <div style="display:flex;align-items:center;justify-content:center;gap:60px;width:90%;margin:auto">
+     <div style="text-align:center;max-width:65%">
+      <div class="networkKicker">ELITE NETWORK MINI-GAME</div>
+      <div class="networkTitle" style="font-size:66px">SCAN TO JOIN</div>
+      <div class="networkSub">${esc(upcoming.title||'ELITE MINI-GAME')}</div>
+      <div class="comingTime">${formatCountdown(upcoming.seconds_until||0)}</div>
+      <div class="networkSub">${state.team_count||0} TEAM${state.team_count===1?'':'S'} REGISTERED</div>
+      <div class="networkNext">Scan now to play when the countdown ends!</div>
+     </div>
+     <div style="background:white;padding:18px;border-radius:18px;flex-shrink:0">
+      <img src="/join-qr.png" alt="Scan to join Elite Network" style="width:300px;height:300px;display:block">
+     </div>
+    </div>
+   </div>`;
+  return true;
+ }
  if(kind==='mini_game'){
   renderMiniGame(state);
   return true;
@@ -1083,14 +1104,14 @@ function renderNetworkProgram(state){
    <div>
     <div class="networkKicker">ELITE NETWORK</div>
     <div class="networkTitle">${esc(p.title||'ELITE BLITZ')}</div>
-    <div class="networkSub">Launching scheduled gameâ€¦</div>
+    <div class="networkSub">Launching scheduled game...</div>
    </div>
   </div>
  `;
 
  return true;
 }
-function render(state){const overlay=document.getElementById('overlay');document.getElementById('footer').textContent=footerText(state);setShowBug(state);if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
+function render(state){const overlay=document.getElementById('overlay');document.getElementById('footer').textContent='WWW.ELITETRIVIAOFWISCONSIN.COM';setShowBug(state);if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
 let eliteWakeLock=null;
 async function keepEliteScreenAwake(){
  try{
@@ -1151,10 +1172,12 @@ function renderKey(state){
  const leadInSecond=n.lead_in_next_event
  ? Math.floor(Number(n.lead_in_next_event.seconds_until||0))
  : null;
- const gameSecond=state.timer_running?Number(state.timer_display_seconds||0):null;
+ const gameSecond=state.timer_running?Math.ceil(Number(state.timer_remaining||0)):null;
  return JSON.stringify([
- n.lead_in_phase,
- leadInSecond,
+  n.lead_in_phase,
+  leadInSecond,
+  n.standalone_mini_signup?.game_type||'',
+  n.standalone_mini_signup?.seconds_until??null,
   state.app_build,
   state.version,
   state.screen,
@@ -1203,7 +1226,7 @@ async function poll(){
    }
   }
  }catch(e){
-  document.getElementById('footer').textContent='Waiting for local Auto Elite serverâ€¦';
+  document.getElementById('footer').textContent='Waiting for local Auto Elite server...';
  }
  setTimeout(poll,POLL_MS);
 }

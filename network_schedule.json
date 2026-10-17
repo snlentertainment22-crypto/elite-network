@@ -1,315 +1,317 @@
 {
-  "timezone": "America/Chicago",
-  "default_program": {
-    "id": "elite_channel",
-    "kind": "channel",
-    "title": "ELITE CHANNEL",
-    "subtitle": "Mini-games â€¢ Did You Know â€¢ Sponsors â€¢ TV Guide"
-  },
-  "events": [
-    {
-      "id": "sports_1200",
-      "days": [
-        "MON",
-        "TUE",
-        "WED",
-        "THU"
-      ],
-      "start": "12:00",
-      "end": "12:28",
-      "kind": "sports_blitz",
-      "title": "ELITE BLITZ: SPORTS",
-      "game_key": "sports-blitz-20261006-2pm"
-    },
-    {
-      "id": "blitz_1800",
-      "days": [
-        "MON",
-        "TUE",
-        "WED",
-        "THU"
-      ],
-      "start": "18:00",
-      "end": "18:28",
-      "kind": "elite_blitz",
-      "title": "ELITE BLITZ",
-      "game_key": "regular-blitz-20261006-6pm"
-    },
-    {
-      "id": "blitz_1900",
-      "days": [
-        "MON",
-        "TUE",
-        "WED",
-        "THU"
-      ],
-      "start": "19:00",
-      "end": "19:28",
-      "kind": "elite_blitz",
-      "title": "ELITE BLITZ",
-      "game_key": "regular-blitz-20261006-7pm"
-    },
-    {
-      "id": "after_dark_2200",
-      "days": [
-        "MON",
-        "TUE",
-        "WED",
-        "THU"
-      ],
-      "start": "22:00",
-      "end": "22:28",
-      "kind": "after_dark",
-      "title": "ELITE BLITZ: AFTER DARK",
-      "game_key": "after-dark-20261006-10pm"
-    },
-    {
-      "id": "sports_1200_fri_20261016burnin",
-      "days": [
-        "FRI"
-      ],
-      "start": "12:00",
-      "end": "12:28",
-      "kind": "sports_blitz",
-      "title": "ELITE BLITZ: SPORTS",
-      "game_key": "sports-blitz-20261006-2pm"
-    },
-    {
-      "id": "blitz_1800_fri_20261016burnin",
-      "days": [
-        "FRI"
-      ],
-      "start": "18:00",
-      "end": "18:28",
-      "kind": "elite_blitz",
-      "title": "ELITE BLITZ",
-      "game_key": "regular-blitz-20261006-6pm"
-    },
-    {
-      "id": "blitz_1900_fri_20261016burnin",
-      "days": [
-        "FRI"
-      ],
-      "start": "19:00",
-      "end": "19:28",
-      "kind": "elite_blitz",
-      "title": "ELITE BLITZ",
-      "game_key": "regular-blitz-20261006-7pm"
-    },
-    {
-      "id": "after_dark_2200_fri_20261016burnin",
-      "days": [
-        "FRI"
-      ],
-      "start": "22:00",
-      "end": "22:28",
-      "kind": "after_dark",
-      "title": "ELITE BLITZ: AFTER DARK",
-      "game_key": "after-dark-20261006-9pm"
-    },
-    {
-      "id": "sports_1200_sat_20261016burnin",
-      "days": [
-        "SAT"
-      ],
-      "start": "12:00",
-      "end": "12:28",
-      "kind": "sports_blitz",
-      "title": "ELITE BLITZ: SPORTS",
-      "game_key": "sports-blitz-20261006-3pm"
-    },
-    {
-      "id": "blitz_1800_sat_20261016burnin",
-      "days": [
-        "SAT"
-      ],
-      "start": "18:00",
-      "end": "18:28",
-      "kind": "elite_blitz",
-      "title": "ELITE BLITZ",
-      "game_key": "regular-blitz-20261006-8pm"
-    },
-    {
-      "id": "blitz_1900_sat_20261016burnin",
-      "days": [
-        "SAT"
-      ],
-      "start": "19:00",
-      "end": "19:28",
-      "kind": "elite_blitz",
-      "title": "ELITE BLITZ",
-      "game_key": "regular-blitz-20261006-6pm"
-    },
-    {
-      "id": "after_dark_2200_sat_20261016burnin",
-      "days": [
-        "SAT"
-      ],
-      "start": "22:00",
-      "end": "22:28",
-      "kind": "after_dark",
-      "title": "ELITE BLITZ: AFTER DARK",
-      "game_key": "after-dark-20261006-10pm"
-    },
-    {
-      "id": "sports_1200_sun_20261016burnin",
-      "days": [
-        "SUN"
-      ],
-      "start": "12:00",
-      "end": "12:28",
-      "kind": "sports_blitz",
-      "title": "ELITE BLITZ: SPORTS",
-      "game_key": "sports-blitz-20261006-4pm"
-    },
-    {
-      "id": "blitz_1800_sun_20261016burnin",
-      "days": [
-        "SUN"
-      ],
-      "start": "18:00",
-      "end": "18:28",
-      "kind": "elite_blitz",
-      "title": "ELITE BLITZ",
-      "game_key": "regular-blitz-20261006-7pm"
-    },
-    {
-      "id": "blitz_1900_sun_20261016burnin",
-      "days": [
-        "SUN"
-      ],
-      "start": "19:00",
-      "end": "19:28",
-      "kind": "elite_blitz",
-      "title": "ELITE BLITZ",
-      "game_key": "regular-blitz-20261006-8pm"
-    },
-    {
-      "id": "after_dark_2200_sun_20261016burnin",
-      "days": [
-        "SUN"
-      ],
-      "start": "22:00",
-      "end": "22:28",
-      "kind": "after_dark",
-      "title": "ELITE BLITZ: AFTER DARK",
-      "game_key": "after-dark-20261006-11pm"
-    }
-  ],
-  "did_you_know": [
-    "Honey can remain edible for an extremely long time when it is sealed and kept dry.",
-    "Octopuses have three hearts.",
-    "A day on Venus is longer than a year on Venus.",
-    "Bananas are berries botanically, while strawberries are not true berries.",
-    "The Eiffel Tower can grow slightly taller in hot weather as the metal expands.",
-    "Sharks existed long before the first trees appeared on Earth.",
-    "The shortest war commonly recorded lasted less than an hour.",
-    "A group of flamingos is often called a flamboyance.",
-    "The human body has more than 600 skeletal muscles.",
-    "Lightning can heat the air around it to temperatures hotter than the surface of the Sun.",
-    "Wombat droppings are cube-shaped.",
-    "The Pacific Ocean is larger than all of Earth's land area combined.",
-    "Some turtles can breathe through specialized tissues near their rear end while underwater.",
-    "The dot over a lowercase i or j is called a tittle.",
-    "Scotland's national animal is the unicorn."
-  ],
-  "channel": {
-    "filler_seconds": 14,
-    "fact_seconds": 18,
-    "auto_mini_enabled": true,
-    "lead_in_enabled": true,
-    "join_before_mini_seconds": 600,
-    "mini_game_start_seconds": 120,
-    "teams_ready_seconds": 30,
-    "mini_game_every_minutes": 20,
-    "mini_game_offset_minute": 10,
-    "mini_game_min_gap_before_show_seconds": 180,
-    "network_start": "11:00",
-    "network_end": "01:00",
-    "content_rotation": [
-      "tv_guide",
-      "coming_up"
-    ],
-    "mini_windows": [
-      {
-        "start": "11:00",
-        "end": "11:45",
-        "every_minutes": 40,
-        "rotation": [
-          "reaction_rush",
-          "reaction_rush"
-        ]
-      },
-      {
-        "start": "12:40",
-        "end": "17:45",
-        "every_minutes": 60,
-        "rotation": [
-          "reaction_rush",
-          "skee_ball",
-          "quick_3",
-          "reaction_rush",
-          "skee_ball",
-          "reaction_rush"
-        ]
-      },
-      {
-        "start": "19:40",
-        "end": "21:45",
-        "every_minutes": 60,
-        "rotation": [
-          "reaction_rush",
-          "quick_3",
-          "skee_ball"
-        ]
-      },
-      {
-        "start": "22:40",
-        "end": "01:00",
-        "every_minutes": 60,
-        "rotation": [
-          "reaction_rush",
-          "skee_ball",
-          "reaction_rush",
-          "skee_ball"
-        ]
-      }
-    ],
-    "pre_blitz_mini_rotation": [
-      "reaction_rush",
-      "skee_ball"
-    ],
-    "skee_ball_fallback": "reaction_rush",
-    "content_folders": {
-      "sponsor": "assets/channel/sponsors",
-      "live_event": "assets/channel/live_events",
-      "promo": "assets/channel/promos",
-      "funny_clip": "assets/channel/funny_clips"
-    },
-    "funny_clip_seconds": 30,
-    "fact_daily_count": 3,
-    "fact_minutes_of_hour": [
-      6,
-      26,
-      46
-    ],
-    "funny_clip_minutes_of_hour": [
-      14,
-      44
-    ],
-    "sponsor_minutes_of_hour": [
-      3,
-      18,
-      33,
-      48
-    ],
-    "venue_minutes_of_hour": [
-      9,
-      39
-    ],
-    "promo_minutes_of_hour": [
-      24,
-      54
-    ]
-  }
+    "timezone":  "America/Chicago",
+    "default_program":  {
+                            "id":  "elite_channel",
+                            "kind":  "channel",
+                            "title":  "ELITE CHANNEL",
+                            "subtitle":  "Mini-games ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Did You Know ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Sponsors ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ TV Guide"
+                        },
+    "events":  [
+                   {
+                       "id":  "sports_1200",
+                       "days":  [
+                                    "MON",
+                                    "TUE",
+                                    "WED",
+                                    "THU"
+                                ],
+                       "start":  "12:00",
+                       "end":  "12:28",
+                       "kind":  "sports_blitz",
+                       "title":  "ELITE BLITZ: SPORTS",
+                       "game_key":  "sports-blitz-20261006-2pm"
+                   },
+                   {
+                       "id":  "blitz_1800",
+                       "days":  [
+                                    "MON",
+                                    "TUE",
+                                    "WED",
+                                    "THU"
+                                ],
+                       "start":  "18:00",
+                       "end":  "18:28",
+                       "kind":  "elite_blitz",
+                       "title":  "ELITE BLITZ",
+                       "game_key":  "regular-blitz-20261006-6pm"
+                   },
+                   {
+                       "id":  "blitz_1900",
+                       "days":  [
+                                    "MON",
+                                    "TUE",
+                                    "WED",
+                                    "THU"
+                                ],
+                       "start":  "19:00",
+                       "end":  "19:28",
+                       "kind":  "elite_blitz",
+                       "title":  "ELITE BLITZ",
+                       "game_key":  "regular-blitz-20261006-7pm"
+                   },
+                   {
+                       "id":  "after_dark_2200",
+                       "days":  [
+                                    "MON",
+                                    "TUE",
+                                    "WED",
+                                    "THU"
+                                ],
+                       "start":  "22:00",
+                       "end":  "22:28",
+                       "kind":  "after_dark",
+                       "title":  "ELITE BLITZ: AFTER DARK",
+                       "game_key":  "after-dark-20261006-10pm"
+                   },
+                   {
+                       "id":  "sports_1200_fri_20261016burnin",
+                       "days":  [
+                                    "FRI"
+                                ],
+                       "start":  "12:00",
+                       "end":  "12:28",
+                       "kind":  "sports_blitz",
+                       "title":  "ELITE BLITZ: SPORTS",
+                       "game_key":  "sports-blitz-20261006-2pm"
+                   },
+                   {
+                       "id":  "blitz_1800_fri_20261016burnin",
+                       "days":  [
+                                    "FRI"
+                                ],
+                       "start":  "18:00",
+                       "end":  "18:28",
+                       "kind":  "elite_blitz",
+                       "title":  "ELITE BLITZ",
+                       "game_key":  "regular-blitz-20261006-6pm"
+                   },
+                   {
+                       "id":  "blitz_1900_fri_20261016burnin",
+                       "days":  [
+                                    "FRI"
+                                ],
+                       "start":  "19:00",
+                       "end":  "19:28",
+                       "kind":  "elite_blitz",
+                       "title":  "ELITE BLITZ",
+                       "game_key":  "regular-blitz-20261006-7pm"
+                   },
+                   {
+                       "id":  "after_dark_2200_fri_20261016burnin",
+                       "days":  [
+                                    "FRI"
+                                ],
+                       "start":  "22:00",
+                       "end":  "22:28",
+                       "kind":  "after_dark",
+                       "title":  "ELITE BLITZ: AFTER DARK",
+                       "game_key":  "after-dark-20261006-9pm"
+                   },
+                   {
+                       "id":  "sports_1200_sat_20261016burnin",
+                       "days":  [
+                                    "SAT"
+                                ],
+                       "start":  "12:00",
+                       "end":  "12:28",
+                       "kind":  "sports_blitz",
+                       "title":  "ELITE BLITZ: SPORTS",
+                       "game_key":  "sports-blitz-20261006-3pm"
+                   },
+                   {
+                       "id":  "blitz_1800_sat_20261016burnin",
+                       "days":  [
+                                    "SAT"
+                                ],
+                       "start":  "18:00",
+                       "end":  "18:28",
+                       "kind":  "elite_blitz",
+                       "title":  "ELITE BLITZ",
+                       "game_key":  "regular-blitz-20261006-8pm"
+                   },
+                   {
+                       "id":  "blitz_1900_sat_20261016burnin",
+                       "days":  [
+                                    "SAT"
+                                ],
+                       "start":  "19:00",
+                       "end":  "19:28",
+                       "kind":  "elite_blitz",
+                       "title":  "ELITE BLITZ",
+                       "game_key":  "regular-blitz-20261006-6pm"
+                   },
+                   {
+                       "id":  "after_dark_2200_sat_20261016burnin",
+                       "days":  [
+                                    "SAT"
+                                ],
+                       "start":  "22:00",
+                       "end":  "22:28",
+                       "kind":  "after_dark",
+                       "title":  "ELITE BLITZ: AFTER DARK",
+                       "game_key":  "after-dark-20261006-10pm"
+                   },
+                   {
+                       "id":  "sports_1200_sun_20261016burnin",
+                       "days":  [
+                                    "SUN"
+                                ],
+                       "start":  "12:00",
+                       "end":  "12:28",
+                       "kind":  "sports_blitz",
+                       "title":  "ELITE BLITZ: SPORTS",
+                       "game_key":  "sports-blitz-20261006-4pm"
+                   },
+                   {
+                       "id":  "blitz_1800_sun_20261016burnin",
+                       "days":  [
+                                    "SUN"
+                                ],
+                       "start":  "18:00",
+                       "end":  "18:28",
+                       "kind":  "elite_blitz",
+                       "title":  "ELITE BLITZ",
+                       "game_key":  "regular-blitz-20261006-7pm"
+                   },
+                   {
+                       "id":  "blitz_1900_sun_20261016burnin",
+                       "days":  [
+                                    "SUN"
+                                ],
+                       "start":  "19:00",
+                       "end":  "19:28",
+                       "kind":  "elite_blitz",
+                       "title":  "ELITE BLITZ",
+                       "game_key":  "regular-blitz-20261006-8pm"
+                   },
+                   {
+                       "id":  "after_dark_2200_sun_20261016burnin",
+                       "days":  [
+                                    "SUN"
+                                ],
+                       "start":  "22:00",
+                       "end":  "22:28",
+                       "kind":  "after_dark",
+                       "title":  "ELITE BLITZ: AFTER DARK",
+                       "game_key":  "after-dark-20261006-11pm"
+                   }
+               ],
+    "did_you_know":  [
+                         "Honey can remain edible for an extremely long time when it is sealed and kept dry.",
+                         "Octopuses have three hearts.",
+                         "A day on Venus is longer than a year on Venus.",
+                         "Bananas are berries botanically, while strawberries are not true berries.",
+                         "The Eiffel Tower can grow slightly taller in hot weather as the metal expands.",
+                         "Sharks existed long before the first trees appeared on Earth.",
+                         "The shortest war commonly recorded lasted less than an hour.",
+                         "A group of flamingos is often called a flamboyance.",
+                         "The human body has more than 600 skeletal muscles.",
+                         "Lightning can heat the air around it to temperatures hotter than the surface of the Sun.",
+                         "Wombat droppings are cube-shaped.",
+                         "The Pacific Ocean is larger than all of Earth\u0027s land area combined.",
+                         "Some turtles can breathe through specialized tissues near their rear end while underwater.",
+                         "The dot over a lowercase i or j is called a tittle.",
+                         "Scotland\u0027s national animal is the unicorn."
+                     ],
+    "channel":  {
+                    "filler_seconds":  14,
+                    "fact_seconds":  18,
+                    "auto_mini_enabled":  true,
+                    "lead_in_enabled":  true,
+                    "join_before_mini_seconds":  600,
+                    "mini_game_start_seconds":  120,
+                    "teams_ready_seconds":  30,
+                    "mini_game_every_minutes":  20,
+                    "mini_game_offset_minute":  10,
+                    "mini_game_min_gap_before_show_seconds":  180,
+                    "network_start":  "11:00",
+                    "network_end":  "01:00",
+                    "content_rotation":  [
+                                             "tv_guide",
+                                             "coming_up"
+                                         ],
+                    "mini_windows":  [
+                                         {
+                                             "start":  "11:00",
+                                             "end":  "11:45",
+                                             "every_minutes":  20,
+                                             "rotation":  [
+                                                              "reaction_rush",
+                                                              "reaction_rush"
+                                                          ]
+                                         },
+                                         {
+                                             "start":  "12:40",
+                                             "end":  "17:45",
+                                             "every_minutes":  20,
+                                             "rotation":  [
+                                                              "reaction_rush",
+                                                              "skee_ball",
+                                                              "quick_3",
+                                                              "reaction_rush",
+                                                              "skee_ball",
+                                                              "reaction_rush"
+                                                          ]
+                                         },
+                                         {
+                                             "start":  "19:40",
+                                             "end":  "21:45",
+                                             "every_minutes":  20,
+                                             "rotation":  [
+                                                              "reaction_rush",
+                                                              "quick_3",
+                                                              "skee_ball"
+                                                          ]
+                                         },
+                                         {
+                                             "start":  "22:40",
+                                             "end":  "01:00",
+                                             "every_minutes":  20,
+                                             "rotation":  [
+                                                              "reaction_rush",
+                                                              "skee_ball",
+                                                              "reaction_rush",
+                                                              "skee_ball"
+                                                          ]
+                                         }
+                                     ],
+                    "pre_blitz_mini_rotation":  [
+                                                    "reaction_rush",
+                                                    "skee_ball"
+                                                ],
+                    "skee_ball_fallback":  "reaction_rush",
+                    "content_folders":  {
+                                            "sponsor":  "assets/channel/sponsors",
+                                            "live_event":  "assets/channel/live_events",
+                                            "promo":  "assets/channel/promos",
+                                            "funny_clip":  "assets/channel/funny_clips"
+                                        },
+                    "funny_clip_seconds":  30,
+                    "fact_daily_count":  3,
+                    "fact_minutes_of_hour":  [
+                                                 6,
+                                                 26,
+                                                 46
+                                             ],
+                    "funny_clip_minutes_of_hour":  [
+                                                       9,
+                                                       24,
+                                                       39,
+                                                       54
+                                                   ],
+                    "sponsor_minutes_of_hour":  [
+                                                    3,
+                                                    18,
+                                                    33,
+                                                    48
+                                                ],
+                    "venue_minutes_of_hour":  [
+                                                  9,
+                                                  39
+                                              ],
+                    "promo_minutes_of_hour":  [
+                                                  24,
+                                                  54
+                                              ]
+                }
 }

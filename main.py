@@ -66,6 +66,40 @@ APP_BUILD = "NETWORK-SHELL-1D-HEARTBEAT"
 
 
 
+def next_standalone_mini(now, config):
+    """Next configured long-break mini slot, including the 11:05 startup slot."""
+    windows = config.get("mini_windows", []) or []
+    candidates = []
+    for day_delta in (-1, 0, 1):
+        day = (now + timedelta(days=day_delta)).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        for window in windows:
+            try:
+                sh, sm = map(int, str(window["start"]).split(":"))
+                eh, em = map(int, str(window["end"]).split(":"))
+                begin = day + timedelta(hours=sh, minutes=sm)
+                end = day + timedelta(hours=eh, minutes=em)
+                if end <= begin:
+                    end += timedelta(days=1)
+                every = max(5, int(window.get("every_minutes", 20)))
+                rotation = window.get("rotation") or ["quick_3"]
+                slot_index = 0
+                cursor = begin
+                while cursor < end:
+                    # At 11 AM the channel has just emerged from standby.
+                    # Give the first mini an actual on-air QR window.
+                    when = cursor + (timedelta(minutes=5) if sh == 11 and sm == 0 and slot_index == 0 else timedelta())
+                    if 0 < (when - now).total_seconds() <= 3600:
+                        kind = rotation[slot_index % len(rotation)]
+                        title = {"quick_3":"ELITE QUICK 3", "reaction_rush":"ELITE REACTION RUSH", "skee_ball":"ELITE SKEE-BALL CHALLENGE"}.get(kind, "ELITE MINI-GAME")
+                        candidates.append({"game_type":kind, "title":title, "start_iso":when.isoformat(), "seconds_until":max(0,int((when-now).total_seconds()))})
+                    cursor += timedelta(minutes=every)
+                    slot_index += 1
+            except (KeyError, ValueError, TypeError, ZeroDivisionError):
+                continue
+    return min(candidates, key=lambda x:x["seconds_until"]) if candidates else None
+
 class NetworkScheduler:
     """Local schedule brain for the Elite Network channel shell."""
 
@@ -135,7 +169,7 @@ class NetworkScheduler:
             self.finished_hourly_funny_slot = None
             self.clock_revision += 1
             self._record_event_locked(
-                f"SIM CLOCK â†’ {self.sim_anchor_datetime.strftime('%I:%M:%S %p').lstrip('0')}"
+                f"SIM CLOCK  ->  {self.sim_anchor_datetime.strftime('%I:%M:%S %p').lstrip('0')}"
             )
             self.last_program_id = None
 
@@ -146,7 +180,7 @@ class NetworkScheduler:
             self.sim_anchor_datetime = None
             self.sim_anchor_monotonic = None
             self.clock_revision += 1
-            self._record_event_locked("SIM CLOCK OFF â†’ LIVE TIME")
+            self._record_event_locked("SIM CLOCK OFF  ->  LIVE TIME")
             self.last_program_id = None
 
     def _record_event_locked(self, message, now=None):
@@ -377,7 +411,7 @@ class NetworkScheduler:
 
             if program_id != self.last_program_id:
                 self._record_event_locked(
-                    f"SCHEDULE â†’ "
+                    f"SCHEDULE  ->  "
                     f"{program.get('title', program_id)}",
                     now,
                 )
@@ -898,7 +932,7 @@ class NetworkScheduler:
 
                 "now_display":
                     now.strftime(
-                        "%A â€¢ %I:%M:%S %p"
+                        "%A  -  %I:%M:%S %p"
                     ).replace(
                         " 0",
                         " ",
@@ -915,6 +949,11 @@ class NetworkScheduler:
 
                 "lead_in_next_event":
                     lead_in_next_event,
+
+                "standalone_mini_signup": (
+                    next_standalone_mini(now, channel_config)
+                    if network_on_air and not lead_in_phase else None
+                ),
 
                 "today_guide":
                     self._today_guide_locked(
@@ -4370,7 +4409,7 @@ class NetworkController:
             return
         self.completed_event_instances.add(self.active_event_instance)
         title = (self.active_event or {}).get("title", "ELITE BLITZ")
-        self.scheduler.record_event(f"COMPLETE â†’ {title} â€¢ RETURN TO CHANNEL")
+        self.scheduler.record_event(f"COMPLETE  ->  {title}  -  RETURN TO CHANNEL")
         self.active_event_instance = None
         self.active_event = None
         self.active_profile = None
@@ -4469,7 +4508,7 @@ class NetworkController:
 
                     self.mini_game.start(
                         reason
-                        + " â€¢ Skee fallback",
+                        + "  -  Skee fallback",
                         game_type=fallback,
                     )
 
@@ -4625,7 +4664,11 @@ class NetworkController:
         if elapsed < 0:
             elapsed += 1440
 
-        if elapsed % every != 0:
+        # First 11 AM mini is delayed five minutes to allow on-air joining.
+        startup_mini = (window_start == 11 * 60 and elapsed == 5)
+        if elapsed % every != 0 and not startup_mini:
+            return
+        if window_start == 11 * 60 and elapsed == 0:
             return
 
         # Polling happens several times a
@@ -4682,7 +4725,7 @@ class NetworkController:
         )
 
         slot_number = (
-            elapsed // every
+            0 if startup_mini else elapsed // every
         )
 
         game_type = rotation[
@@ -4803,6 +4846,16 @@ class NetworkController:
                 (self.active_event or {}).get("title", "ELITE BLITZ") if game_active else None
             )
             base["mini_game"] = mini
+            # Only offer standalone signup when no show or mini owns the TV.
+            if game_active or mini.get("active"):
+                base["standalone_mini_signup"] = None
+            else:
+                upcoming = base.get("standalone_mini_signup")
+                if upcoming:
+                    next_show = base.get("next_event") or {}
+                    gap = int(self.scheduler.schedule.get("channel", {}).get("mini_game_min_gap_before_show_seconds", 180))
+                    if next_show.get("seconds_until") is not None and int(next_show["seconds_until"]) - upcoming["seconds_until"] < gap:
+                        base["standalone_mini_signup"] = None
             return base
 
     def worker(self):
@@ -4810,7 +4863,7 @@ class NetworkController:
             try:
                 self.tick()
             except Exception as exc:
-                self.scheduler.record_event(f"NETWORK ERROR â†’ {exc}")
+                self.scheduler.record_event(f"NETWORK ERROR  ->  {exc}")
             time.sleep(0.10)
 
 
@@ -4977,7 +5030,7 @@ class EliteRequestHandler(BaseHTTPRequestHandler):
         # channel artwork into the page when it is served. This lets the host
         # replace only main.py while still using the new shared channel assets.
         if path.name.lower() == "tv.html":
-            old_render_channel = """function renderChannel(state){const n=state.network||{};const type=n.filler_type||'did_you_know';if(type==='did_you_know')setBackground('/assets/slides/did_you_know_bg.png');else document.getElementById('screen').style.backgroundImage='none';let body='';\n if(type==='did_you_know'){body=`<div class=\"channelCard\"><div class=\"label\">DID YOU KNOW?</div><div class=\"main\">${esc(n.did_you_know||'Elite facts are loading.')}</div><div class=\"small\">${networkNextLine(n)}</div></div>`;}\n else if(type==='sponsor'){body=`<div class=\"channelCard\"><div class=\"label\">ELITE NETWORK SPONSOR</div><div class=\"main\">YOUR BUSINESS COULD BE HERE</div><div class=\"small\">Local â€¢ Regional â€¢ Network-wide sponsor rotations<br>${networkNextLine(n)}</div></div>`;}\n else if(type==='tv_guide'){body=`<div class=\"channelCard\"><div class=\"label\">TODAY ON ELITE</div>${guideMarkup(n)}<div class=\"small\">Sports â€¢ Elite Blitz â€¢ After Dark â€¢ Mini-Games</div></div>`;}\n else {const nx=n.next_event||{};body=`<div class=\"channelCard\"><div class=\"label\">COMING UP ON ELITE</div><div class=\"main\">${esc(nx.title||'ELITE CHANNEL')}</div>${nx.seconds_until!=null?`<div class=\"comingTime\">${formatCountdown(nx.seconds_until)}</div>`:''}<div class=\"small\">${nx.start_iso?`Starts at ${formatNetworkClock(nx.start_iso)}`:'More Elite programming coming up.'}</div></div>`;}\n document.getElementById('overlay').innerHTML=`<div class=\"networkShell\"><div class=\"channelClock\">${esc(n.now_display||'')}</div>${body}</div>`;\n}"""
+            old_render_channel = """function renderChannel(state){const n=state.network||{};const type=n.filler_type||'did_you_know';if(type==='did_you_know')setBackground('/assets/slides/did_you_know_bg.png');else document.getElementById('screen').style.backgroundImage='none';let body='';\n if(type==='did_you_know'){body=`<div class=\"channelCard\"><div class=\"label\">DID YOU KNOW?</div><div class=\"main\">${esc(n.did_you_know||'Elite facts are loading.')}</div><div class=\"small\">${networkNextLine(n)}</div></div>`;}\n else if(type==='sponsor'){body=`<div class=\"channelCard\"><div class=\"label\">ELITE NETWORK SPONSOR</div><div class=\"main\">YOUR BUSINESS COULD BE HERE</div><div class=\"small\">Local  -  Regional  -  Network-wide sponsor rotations<br>${networkNextLine(n)}</div></div>`;}\n else if(type==='tv_guide'){body=`<div class=\"channelCard\"><div class=\"label\">TODAY ON ELITE</div>${guideMarkup(n)}<div class=\"small\">Sports  -  Elite Blitz  -  After Dark  -  Mini-Games</div></div>`;}\n else {const nx=n.next_event||{};body=`<div class=\"channelCard\"><div class=\"label\">COMING UP ON ELITE</div><div class=\"main\">${esc(nx.title||'ELITE CHANNEL')}</div>${nx.seconds_until!=null?`<div class=\"comingTime\">${formatCountdown(nx.seconds_until)}</div>`:''}<div class=\"small\">${nx.start_iso?`Starts at ${formatNetworkClock(nx.start_iso)}`:'More Elite programming coming up.'}</div></div>`;}\n document.getElementById('overlay').innerHTML=`<div class=\"networkShell\"><div class=\"channelClock\">${esc(n.now_display||'')}</div>${body}</div>`;\n}"""
             new_render_channel = """function renderChannel(state){
 const n=state.network||{};
 const type=n.filler_type||'did_you_know';
@@ -4993,7 +5046,7 @@ function showChannelImage(url){
 
 if(type==='off_air'){
   setBackground(null);
-  overlay.innerHTML=`<div class="networkShell"><div class="channelCard"><div class="label">ELITE NETWORK</div><div class="main">PROGRAMMING RETURNS AT 11 AM</div><div class="small">Sports â€¢ Elite Blitz â€¢ After Dark â€¢ Mini-Games</div></div></div>`;
+  overlay.innerHTML=`<div class="networkShell"><div class="channelCard"><div class="label">ELITE NETWORK</div><div class="main">PROGRAMMING RETURNS AT 11 AM</div><div class="small">Sports  -  Elite Blitz  -  After Dark  -  Mini-Games</div></div></div>`;
   return;
 }
 
@@ -5011,7 +5064,7 @@ if(type==='sponsor'){
 
   setBackground('/assets/sponsor_spotlight_slide.png');
 
-  overlay.innerHTML=`<div style="position:absolute;left:17%;right:17%;top:36%;height:31%;display:flex;align-items:center;justify-content:center;text-align:center;padding:2% 4%;font-size:50px;font-weight:1000;line-height:1.08;text-shadow:0 4px 16px rgba(0,0,0,.9)">YOUR BUSINESS COULD BE HERE</div><div style="position:absolute;left:22%;right:27%;bottom:8.8%;text-align:center;font-size:20px;font-weight:850;color:#dbe9ff;text-shadow:0 2px 8px rgba(0,0,0,.9)">Local â€¢ Regional â€¢ Network-wide sponsor rotations &nbsp; â€¢ &nbsp; ${networkNextLine(n)}</div>`;
+  overlay.innerHTML=`<div style="position:absolute;left:17%;right:17%;top:36%;height:31%;display:flex;align-items:center;justify-content:center;text-align:center;padding:2% 4%;font-size:50px;font-weight:1000;line-height:1.08;text-shadow:0 4px 16px rgba(0,0,0,.9)">YOUR BUSINESS COULD BE HERE</div><div style="position:absolute;left:22%;right:27%;bottom:8.8%;text-align:center;font-size:20px;font-weight:850;color:#dbe9ff;text-shadow:0 2px 8px rgba(0,0,0,.9)">Local  -  Regional  -  Network-wide sponsor rotations &nbsp;  -  &nbsp; ${networkNextLine(n)}</div>`;
 
   return;
 }
@@ -5085,7 +5138,7 @@ if(type==='tv_guide'){
       r=>`<div style="display:grid;grid-template-columns:28% 1fr;align-items:center;gap:2%;padding:1.2% 1.8%;border:2px solid rgba(99,223,255,.55);border-radius:12px;background:rgba(5,10,24,.88);min-height:60px"><div style="font-size:24px;font-weight:1000;color:#ffd85a">${formatNetworkClock(r.start_iso)}</div><div style="font-size:24px;font-weight:950;text-align:left">${esc(r.title||'')}</div></div>`
     ).join('');
 
-  overlay.innerHTML=`<div style="position:absolute;left:5%;right:5%;top:28%;bottom:12.5%;padding:1.4% 1.8%;border-radius:18px;background:rgba(2,7,18,.94);box-shadow:0 15px 45px rgba(0,0,0,.55);overflow:hidden"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;height:91%;align-content:start">${cards||'<div style="font-size:38px;font-weight:900">Schedule loadingâ€¦</div>'}</div><div style="position:absolute;left:0;right:0;bottom:1.5%;text-align:center;font-size:18px;font-weight:850;color:#cbd7ea">ELITE NETWORK â€¢ SPORTS â€¢ BLITZ â€¢ AFTER DARK â€¢ MINI-GAMES</div></div>`;
+  overlay.innerHTML=`<div style="position:absolute;left:5%;right:5%;top:28%;bottom:12.5%;padding:1.4% 1.8%;border-radius:18px;background:rgba(2,7,18,.94);box-shadow:0 15px 45px rgba(0,0,0,.55);overflow:hidden"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;height:91%;align-content:start">${cards||'<div style="font-size:38px;font-weight:900">Schedule loading...</div>'}</div><div style="position:absolute;left:0;right:0;bottom:1.5%;text-align:center;font-size:18px;font-weight:850;color:#cbd7ea">ELITE NETWORK  -  SPORTS  -  BLITZ  -  AFTER DARK  -  MINI-GAMES</div></div>`;
 
   return;
 }
@@ -5569,15 +5622,15 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
             payload = self._read_json_body()
 
             # ====================================================
-            # ELITE NETWORK GAME BUILDER â€” SAVE QUESTION
+            # ELITE NETWORK GAME BUILDER -- SAVE QUESTION
             # ====================================================
 
             # ====================================================
-            # ELITE NETWORK GAME BUILDER â€” REVIEW / APPROVAL
+            # ELITE NETWORK GAME BUILDER -- REVIEW / APPROVAL
             # ====================================================
 
             # ====================================================
-            # ELITE NETWORK GAME BUILDER â€” AI PREP
+            # ELITE NETWORK GAME BUILDER -- AI PREP
             # ====================================================
 
             if parsed.path == "/api/admin/game-builder/auto-build":
@@ -5960,7 +6013,7 @@ class HostApp:
     def _build_ui(self):
         tk.Label(
             self.root,
-            text=f"ELITE NETWORK SHELL - LOCAL HOST   â€¢   BUILD {APP_BUILD}",
+            text=f"ELITE NETWORK SHELL - LOCAL HOST    -    BUILD {APP_BUILD}",
             font=("Arial", 24, "bold"),
             fg="white",
             bg="black",
@@ -6215,7 +6268,7 @@ class HostApp:
         self.note_label = tk.Label(
             work,
             text=(
-                "Blitz Auto: full 4-round unattended flow â€¢ inactivity-safe progression â€¢ "
+                "Blitz Auto: full 4-round unattended flow  -  inactivity-safe progression  -  "
                 "presentation timing is controlled from game_data.json."
             ),
             font=("Arial", 10),
@@ -6335,7 +6388,7 @@ class HostApp:
 
         program = network.get("program", {})
         next_event = network.get("next_event") or {}
-        sim_tag = "  â€¢  SIMULATED" if network.get("simulated") else "  â€¢  LIVE"
+        sim_tag = "   -   SIMULATED" if network.get("simulated") else "   -   LIVE"
         self.network_clock_label.config(text=f"{network.get('now_display', '--')}{sim_tag}")
         self.network_now_label.config(text=f"NOW: {program.get('title', 'ELITE CHANNEL')}")
         if next_event:
@@ -6345,7 +6398,7 @@ class HostApp:
             except Exception:
                 next_clock = next_event.get("start", "--")
             self.network_next_label.config(
-                text=f"NEXT: {next_event.get('title', '--')}  â€¢  {next_clock}"
+                text=f"NEXT: {next_event.get('title', '--')}   -   {next_clock}"
             )
         else:
             self.network_next_label.config(text="NEXT: --")
@@ -6361,26 +6414,26 @@ class HostApp:
 
         scoring = q["scoring_type"].upper()
         if scoring == "FIXED":
-            mode_text = f"REGULAR â€¢ {q['fixed_points']} POINTS â€¢ {q['timer_seconds']} SEC"
+            mode_text = f"REGULAR  -  {q['fixed_points']} POINTS  -  {q['timer_seconds']} SEC"
         elif scoring == "FASTEST":
             bonus_values = q.get("speed_bonus_points", [])
             bonus_text = (
-                " â€¢ TOP 3 BONUS "
+                "  -  TOP 3 BONUS "
                 + "/".join(f"+{value}" for value in bonus_values)
                 if bonus_values
                 else ""
             )
             mode_text = (
-                f"FASTEST ANSWER â€¢ {q['max_points']}â†’{q['min_points']} POINTS â€¢ "
+                f"FASTEST ANSWER  -  {q['max_points']} -> {q['min_points']} POINTS  -  "
                 f"{q['timer_seconds']} SEC{bonus_text}"
             )
         elif scoring == "ROULETTE":
             mode_text = (
-                f"ELITE ROULETTE â€¢ WAGER {q['wager_seconds']} SEC â€¢ "
+                f"ELITE ROULETTE  -  WAGER {q['wager_seconds']} SEC  -  "
                 f"QUESTION {q['timer_seconds']} SEC"
             )
         else:
-            mode_text = f"ELITE WAGER â€¢ ALL IN OR SAVE â€¢ {q['timer_seconds']} SEC"
+            mode_text = f"ELITE WAGER  -  ALL IN OR SAVE  -  {q['timer_seconds']} SEC"
         self.mode_label.config(text=mode_text)
 
         self.category_label.config(text=f"CATEGORY: {q['category']}")
@@ -6388,7 +6441,7 @@ class HostApp:
             self.question_label.config(text=f"HINT: {q['hint']}")
         elif state["screen"] == "speed_bonus":
             winners = state.get("speed_bonus_winners", [])
-            winner_text = "   â€¢   ".join(
+            winner_text = "    -    ".join(
                 f"#{item['rank']} {item['name']} +{item['bonus']}" for item in winners
             )
             self.question_label.config(text=f"SPEED BONUS: {winner_text}")
@@ -6418,7 +6471,7 @@ class HostApp:
             self.timer_label.config(text=f"Timer: {timer_text}")
 
         auto_suffix = (
-            f"  |  FULL AUTO â€¢ NEXT {state.get('auto_next_transition_in', 0):.1f}s"
+            f"  |  FULL AUTO  -  NEXT {state.get('auto_next_transition_in', 0):.1f}s"
             if state.get("auto_game_running")
             else ""
         )

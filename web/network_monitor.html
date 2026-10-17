@@ -22,6 +22,7 @@ small{color:#97a7bd}.events{list-style:none;padding:0;margin:0}.events li{font:1
   <section class="panel"><div class="label">Server clock</div><div class="value" id="clock">—</div><div class="detail" id="sim">—</div></section>
   <section class="panel"><div class="label">Now playing</div><div class="value" id="now">—</div><div class="detail" id="nowDetail">—</div></section>
   <section class="panel"><div class="label">Next broadcast</div><div class="value" id="next">—</div><div class="detail" id="nextDetail">—</div></section>
+  <section class="panel"><div class="label">Next Mini-Game</div><div class="value" id="nextMini">—</div><div class="detail" id="nextMiniDetail">—</div></section>
   <section class="panel"><div class="label">Mini-game</div><div class="value" id="mini">—</div><div class="detail" id="miniDetail">—</div></section>
   <section class="panel"><div class="label">Game activity</div><div class="value" id="game">—</div><div class="detail" id="gameDetail">—</div></section>
 </div>
@@ -53,6 +54,7 @@ async function refresh(){
     set('nowDetail',n.game_active?'Trivia game active':m.active?('Mini-game phase: '+str(m.phase)):('Channel content: '+str(n.filler_type)));
     set('next',nx.title||'No upcoming game');
     set('nextDetail',nx.start_iso?clock(nx.start_iso)+(nx.game_key?' · '+nx.game_key:''):'—');
+    const upcoming=n.standalone_mini_signup||null; set('nextMini',upcoming?(upcoming.title||upcoming.game_type):'No mini-game scheduled'); set('nextMiniDetail',upcoming?(clock(upcoming.start_iso)+' | Starts in '+Math.ceil(upcoming.seconds_until/60)+' min'):'No upcoming mini-game in the next hour');
     set('mini',m.active?(m.title||m.game_type||'Active'):'Idle');
     set('miniDetail',m.active?'Phase: '+str(m.phase):'No mini-game running');
     set('game',n.game_active?'ACTIVE':'No game active');
