@@ -84,6 +84,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 .miniWrap{width:86%;max-width:1280px;margin:auto;padding:46px 56px;border-radius:30px;background:linear-gradient(145deg,rgba(14,35,67,.96),rgba(6,10,24,.96));border:3px solid rgba(126,234,255,.48);box-shadow:0 24px 70px rgba(0,0,0,.45)}
 .miniTitle{font-size:76px;font-weight:1000;text-transform:uppercase;line-height:1}.miniSub{font-size:27px;font-weight:900;color:#ffd85a;margin-top:16px}.miniCategory{font-size:24px;font-weight:1000;letter-spacing:.12em;color:#7eeaff;text-transform:uppercase;margin-bottom:14px}.miniQuestion{font-size:46px;font-weight:1000;line-height:1.12;margin:0 auto 24px;max-width:1100px}.miniChoices{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}.miniChoice{position:relative;padding:17px 20px;border-radius:16px;background:rgba(255,255,255,.075);border:2px solid rgba(255,255,255,.16);font-size:27px;font-weight:950;line-height:1.1}.miniChoice.correct{background:rgba(68,255,143,.19);border-color:#6cffaf;box-shadow:0 0 22px rgba(108,255,175,.22)}.miniTimer{position:absolute;right:4%;top:5%;font-size:56px;font-weight:1000;color:#fff}.miniProgress{font-size:21px;font-weight:900;color:#c9d5e8;margin-top:20px}.miniAnswer{font-size:26px;font-weight:950;color:#6cffaf;margin-top:15px}
 
+.quick3Panel{transform:translateY(-60px);padding-top:32px;padding-bottom:32px}
 /* =========================================================
    ELITE LIVE-DRAWN TRIVIA UI
    Background images are ART ONLY.
@@ -663,7 +664,7 @@ function renderMiniGame(state){
 
    html=`
      <div class="networkShell miniGameShell">
-       <div class="miniWrap">
+       <div class="miniWrap quick3Panel">
          <div class="miniTimer">${Math.ceil(m.seconds_remaining||0)}</div>
          <div class="miniCategory">${esc(q.category||'TRIVIA')}</div>
          <div class="miniQuestion">${esc(q.question||'')}</div>
