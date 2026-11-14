@@ -84,6 +84,41 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 .miniWrap{width:86%;max-width:1280px;margin:auto;padding:46px 56px;border-radius:30px;background:linear-gradient(145deg,rgba(14,35,67,.96),rgba(6,10,24,.96));border:3px solid rgba(126,234,255,.48);box-shadow:0 24px 70px rgba(0,0,0,.45)}
 .miniTitle{font-size:76px;font-weight:1000;text-transform:uppercase;line-height:1}.miniSub{font-size:27px;font-weight:900;color:#ffd85a;margin-top:16px}.miniCategory{font-size:24px;font-weight:1000;letter-spacing:.12em;color:#7eeaff;text-transform:uppercase;margin-bottom:14px}.miniQuestion{font-size:46px;font-weight:1000;line-height:1.12;margin:0 auto 24px;max-width:1100px}.miniChoices{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}.miniChoice{position:relative;padding:17px 20px;border-radius:16px;background:rgba(255,255,255,.075);border:2px solid rgba(255,255,255,.16);font-size:27px;font-weight:950;line-height:1.1}.miniChoice.correct{background:rgba(68,255,143,.19);border-color:#6cffaf;box-shadow:0 0 22px rgba(108,255,175,.22)}.miniTimer{position:absolute;right:4%;top:5%;font-size:56px;font-weight:1000;color:#fff}.miniProgress{font-size:21px;font-weight:900;color:#c9d5e8;margin-top:20px}.miniAnswer{font-size:26px;font-weight:950;color:#6cffaf;margin-top:15px}
 
+
+/* Elite Gibberish: TV-first layout with large, readable phrases. */
+.gibWrap{
+ width:95%;max-width:none;min-height:83%;padding:2.2% 3% 2%;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.gibKicker{font-size:30px;font-weight:1000;letter-spacing:.14em;color:#7eeaff}
+.gibRound{margin-top:8px;font-size:25px;font-weight:900;color:#ffd85a}
+.gibHud{display:flex;gap:26px;align-items:stretch;justify-content:center;margin-top:16px}
+.gibMetric{min-width:190px;padding:9px 22px;border:3px solid #6ae0ff;border-radius:17px;background:rgba(2,8,25,.88);box-shadow:0 0 18px rgba(106,224,255,.18)}
+.gibMetric.points{min-width:250px;border-color:#ffd85a;color:#ffd85a}
+.gibMetric .number{font-size:58px;font-weight:1000;line-height:1.04}
+.gibMetric .metricLabel{font-size:16px;font-weight:900;letter-spacing:.12em;margin-top:3px}
+.gibPhrase{
+ width:100%;min-height:170px;max-height:310px;display:flex;align-items:center;justify-content:center;
+ font-size:clamp(44px,6vw,110px);font-weight:1000;line-height:1.05;
+ text-align:center;letter-spacing:.02em;text-transform:uppercase;
+ text-shadow:0 5px 22px rgba(0,0,0,.88);overflow-wrap:break-word;overflow:hidden;
+ margin:18px 0 10px;padding:0 2%;
+}
+.gibInstruction{font-size:25px;font-weight:900;color:#e6edff;max-width:75%;line-height:1.17}
+.gibReveal{font-size:35px;font-weight:1000;color:#6cffaf;margin:6px 0 10px}
+.gibBottom{align-self:flex-start;width:calc(100% - 235px);font-size:21px;font-weight:900;color:#c9d5e8;margin-top:12px;text-align:center}
+.gibBottom .miniProgress{font-size:20px;margin-top:8px}
+/* Persistent QR: not recreated on each TV poll, so it cannot flash. */
+#gibJoinPanel{
+ position:absolute;right:2.8%;bottom:7%;z-index:25;width:192px;
+ text-align:center;padding:11px 10px 9px;border:2px solid #7eeaff;
+ border-radius:17px;background:rgba(3,10,23,.96);
+ box-shadow:0 8px 28px rgba(0,0,0,.6);pointer-events:none;
+}
+#gibJoinPanel .gibQrLabel{font-size:17px;font-weight:1000;letter-spacing:.05em;margin-bottom:8px}
+#gibJoinPanel img{display:block;width:164px;height:164px;margin:auto;padding:6px;background:#fff;border-radius:8px;object-fit:contain}
+#gibJoinPanel .gibQrSub{font-size:12px;font-weight:800;margin-top:8px;color:#d4e8f6}
+
 .quick3Panel{transform:translateY(-60px);padding-top:32px;padding-bottom:32px}
 /* =========================================================
    ELITE LIVE-DRAWN TRIVIA UI
@@ -366,6 +401,11 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
     <div id="screen"></div>
     <div id="overlay" class="overlay"></div>
     <div id="showBug" class="showBug hidden"></div>
+    <div id="gibJoinPanel" class="hidden" aria-label="Scan QR code to join Elite Gibberish">
+      <div class="gibQrLabel">SCAN TO JOIN</div>
+      <img src="/join-qr.png" alt="Scan with your phone to join Elite Network">
+      <div class="gibQrSub">PLAY ON YOUR PHONE</div>
+    </div>
     <div id="footer" class="debugFooter">Connecting...</div>
   </div>
 </div>
@@ -647,6 +687,57 @@ function renderMiniGame(state){
  const gib=gameType==='gibberish';
  const miniTitle=gib?(m.mode==='adult'?'ELITE GIBBERISH AFTER DARK':'ELITE GIBBERISH'):'ELITE QUICK 3';
  setBackground('/assets/quick_3_bg.png');
+
+ if(gib){
+   const seconds=Math.max(0,Number(m.seconds_remaining||0));
+   const showingAnswer=phase==='reveal';
+   // Match the server's FIRST-TRY point formula. Wrong guesses are
+   // penalized individually on phones and cannot share one TV value.
+   const possiblePoints=100+Math.floor(seconds*10);
+   const puzzleNumber=Number(m.question_number||1);
+   const puzzleCount=Number(m.question_count||3);
+   const difficulty=String(m.difficulty||'').toUpperCase();
+   if(phase==='intro'){
+     html=`<div class="networkShell miniGameShell"><div class="miniWrap gibWrap">
+       <div class="gibKicker">ELITE NETWORK MINI-GAME</div>
+       <div class="miniTitle">${esc(miniTitle)}</div>
+       <div class="miniSub">3 PHRASES · TYPE YOUR GUESS · 35 SECONDS EACH</div>
+       <div class="networkNext">SCAN THE QR CODE TO JOIN NOW</div>
+     </div></div>`;
+   }
+   else if(phase==='outro'){
+     html=`<div class="networkShell miniGameShell"><div class="miniWrap gibWrap">
+       <div class="gibKicker">${esc(miniTitle)}</div>
+       <div class="miniTitle">GIBBERISH COMPLETE!</div>
+       <div class="miniSub">FINAL TOP SCORES</div>
+       ${gibScoreboard(m)}<div class="networkNext">${next}</div>
+     </div></div>`;
+   }
+   else{
+     const label=showingAnswer?'ANSWER REVEAL':'SAY IT OUT LOUD!';
+     const answer=showingAnswer
+       ?`<div class="gibReveal">ANSWER: ${esc(q.answer_display||'')}</div>`
+       :`<div class="gibInstruction">TYPE THE REAL PHRASE ON YOUR PHONE · KEEP TRYING!</div>`;
+     const points=showingAnswer?'—':possiblePoints.toLocaleString('en-US');
+     html=`<div class="networkShell miniGameShell"><div class="miniWrap gibWrap">
+       <div class="gibKicker">${esc(miniTitle)}</div>
+       <div class="gibRound">PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
+       <div class="gibHud">
+         <div class="gibMetric"><div class="number">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
+         <div class="gibMetric points"><div class="number">${points}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div>
+       </div>
+       <div class="gibPhrase">${esc(q.question||'')}</div>
+       ${answer}
+       <div class="gibBottom">
+         <div>${label}${showingAnswer?'':' · WRONG GUESSES LOWER YOUR PERSONAL SCORE'}</div>
+         ${showingAnswer?gibScoreboard(m):''}
+       </div>
+     </div></div>`;
+   }
+   document.getElementById('overlay').innerHTML=html;
+   return;
+ }
+
 
  if(phase==='intro'){
    html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">${esc(miniTitle)}</div><div class="miniSub">${gib?'3 PHRASES  -  TYPE ANSWERS ON YOUR PHONE  -  35 SECONDS EACH!':'3 QUESTIONS  -  12 SECONDS EACH'}</div><div class="networkNext">Play along from your table.</div></div></div>`;
@@ -1124,7 +1215,7 @@ function renderNetworkProgram(state){
 
  return true;
 }
-function render(state){const overlay=document.getElementById('overlay');document.getElementById('footer').textContent='WWW.ELITETRIVIAOFWISCONSIN.COM';setShowBug(state);if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
+function render(state){const overlay=document.getElementById('overlay');document.getElementById('footer').textContent='WWW.ELITETRIVIAOFWISCONSIN.COM';setShowBug(state);const gibQr=document.getElementById('gibJoinPanel');if(gibQr){const mini=state?.network?.mini_game||{};gibQr.classList.toggle('hidden',!(mini.active&&mini.game_type==='gibberish'));}if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
 let eliteWakeLock=null;
 async function keepEliteScreenAwake(){
  try{
