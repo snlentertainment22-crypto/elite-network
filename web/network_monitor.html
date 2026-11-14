@@ -16,7 +16,7 @@ small{color:#97a7bd}.events{list-style:none;padding:0;margin:0}.events li{font:1
 </head>
 <body>
 <header class="header"><h1>ELITE NETWORK MONITOR</h1><div class="pill" id="connection">Connecting…</div></header>
-<p class="sub">Read-only local burn-in monitor · Refreshes every 10 seconds · No control buttons</p>
+<p class="sub">Read-only Network monitor · 10-second refresh during games, 30 seconds when idle · No control buttons</p>
 <div class="grid">
   <section class="panel"><div class="label">Network</div><div class="value" id="air">Checking…</div><div class="detail" id="channel">—</div></section>
   <section class="panel"><div class="label">Server clock</div><div class="value" id="clock">—</div><div class="detail" id="sim">—</div></section>
@@ -36,6 +36,7 @@ const str=v=>v==null||v===''?'—':String(v);
 const clock=v=>{if(!v)return '—';const d=new Date(v);return Number.isNaN(d.getTime())?str(v):d.toLocaleString('en-US',{weekday:'short',hour:'numeric',minute:'2-digit',timeZone:'America/Chicago'});};
 const set=(id,value)=>{el(id).textContent=str(value);};
 let failed=0;
+let monitorPollDelay=30000;
 async function refresh(){
   const controller=new AbortController();
   const timeout=setTimeout(()=>controller.abort(),7000);
@@ -45,6 +46,7 @@ async function refresh(){
     const json=await r.json();
     if(json.ok!==true||!json.state)throw Error('Unexpected API response');
     const s=json.state,n=s.network||{},p=n.program||{},m=n.mini_game||{},nx=n.next_event||{};
+    monitorPollDelay=(n.game_active||m.active||n.lead_in_phase||n.standalone_mini_signup?.seconds_until<=300)?10000:30000;
     failed=0;set('connection','SERVER RESPONDING');el('connection').className='pill ok';
     set('air',n.network_on_air?'ON AIR':'STANDBY');
     set('channel',n.network_on_air?'Broadcast window active':'Waiting for 11 AM Central');
@@ -66,11 +68,12 @@ async function refresh(){
     const g=el('guide');g.replaceChildren();
     const rows=Array.isArray(n.today_guide)?n.today_guide:[];
     if(!rows.length){g.textContent='No shows listed for today.';}else for(const item of rows){const div=document.createElement('div');div.style.padding='5px 0';div.textContent=clock(item.start_iso)+' — '+str(item.title)+(item.game_key?' · '+item.game_key:'');g.append(div);}
-    set('updated','Last successful poll: '+new Date().toLocaleTimeString()+' · Every 10 seconds');
-  }catch(err){failed++;el('connection').className='pill bad';set('connection','SERVER UNREACHABLE');set('updated','Last poll failed: '+str(err.message)+' · Retry in 10 seconds');}
+    set('updated','Last successful poll: '+new Date().toLocaleTimeString()+' · '+Math.round(monitorPollDelay/1000)+'-second interval');
+  }catch(err){failed++;el('connection').className='pill bad';set('connection','SERVER UNREACHABLE');set('updated','Last poll failed: '+str(err.message)+' · Retry in 10 seconds');monitorPollDelay=10000;}
   finally{clearTimeout(timeout);}
 }
-refresh();setInterval(refresh,10000);
+async function monitorLoop(){await refresh();setTimeout(monitorLoop,monitorPollDelay);}
+monitorLoop();
 </script>
 </body>
 </html>

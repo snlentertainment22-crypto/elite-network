@@ -334,7 +334,7 @@
     "Scotland's national animal is the unicorn."
   ],
   "channel": {
-    "filler_seconds": 14,
+    "filler_seconds": 30,
     "fact_seconds": 18,
     "auto_mini_enabled": true,
     "lead_in_enabled": true,
@@ -347,8 +347,7 @@
     "network_start": "11:00",
     "network_end": "01:00",
     "content_rotation": [
-      "tv_guide",
-      "coming_up"
+      "sponsor"
     ],
     "mini_windows": [
       {
@@ -408,28 +407,35 @@
     "fact_daily_count": 3,
     "fact_minutes_of_hour": [
       6,
-      26,
-      46
+      36
     ],
     "funny_clip_minutes_of_hour": [
-      9,
-      24,
-      39,
-      54
+      3,
+      13,
+      23,
+      43,
+      53
     ],
     "sponsor_minutes_of_hour": [
-      3,
-      18,
-      33,
-      48
+      9,
+      19,
+      39,
+      49
     ],
     "venue_minutes_of_hour": [
-      9,
-      39
+      16
     ],
     "promo_minutes_of_hour": [
-      24,
-      54
-    ]
+      46
+    ],
+    "tv_guide_minutes_of_hour": [
+      0,
+      30
+    ],
+    "tv_guide_seconds": 20,
+    "coming_up_minutes_of_hour": [
+      34
+    ],
+    "coming_up_seconds": 20
   }
 }

@@ -1,4 +1,6 @@
 import json
+import hashlib
+from functools import lru_cache
 import os
 import mimetypes
 import math
@@ -61,6 +63,20 @@ def get_public_base_url():
 
 def get_player_join_url():
     return get_public_base_url() + "/player"
+@lru_cache(maxsize=1024)
+def _media_file_hash(path_text, mtime_ns, size):
+    digest = hashlib.sha256()
+    with open(path_text, "rb") as source:
+        for block in iter(lambda: source.read(256 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()[:20]
+
+
+def media_file_version(path):
+    stat = path.stat()
+    return _media_file_hash(str(path), stat.st_mtime_ns, stat.st_size)
+
+
 POLL_MS = 250
 APP_BUILD = "NETWORK-SHELL-1F-GIBBERISH"
 
@@ -667,14 +683,15 @@ class NetworkScheduler:
             # of repeating in a 1-2 minute tight loop.
             available_rotation = []
             for kind in content_rotation:
-                if kind in {"tv_guide", "coming_up"}:
+                if kind in {"tv_guide", "coming_up", "sponsor"}:
+                    # The sponsor placeholder is valid even before paid ads exist.
                     available_rotation.append(kind)
-                elif kind in {"live_event", "promo", "sponsor"}:
+                elif kind in {"live_event", "promo"}:
                     if get_media_items(kind):
                         available_rotation.append(kind)
 
             if not available_rotation:
-                available_rotation = ["tv_guide", "coming_up"]
+                available_rotation = ["sponsor"]
 
 
             # Different content can have
@@ -682,7 +699,7 @@ class NetworkScheduler:
             def content_duration(kind):
 
                 if kind == "tv_guide":
-                    return 20
+                    return max(8, int(channel_config.get("tv_guide_seconds", 20)))
 
                 if kind == "did_you_know":
                     return fact_seconds
@@ -810,7 +827,7 @@ class NetworkScheduler:
                         (
                             f"/channel-content/"
                             f"{filler_type}/"
-                            f"{media_index}"
+                            f"{media_index}?v={media_file_version(media_file)}"
                         ),
                 }
 
@@ -822,6 +839,16 @@ class NetworkScheduler:
                 # When the Network is showing a trivia game or
                 # mini-game, those have display priority.
                 cues = [
+                    (
+                        "tv_guide",
+                        "tv_guide_minutes_of_hour",
+                        max(8, int(channel_config.get("tv_guide_seconds", 20))),
+                    ),
+                    (
+                        "coming_up",
+                        "coming_up_minutes_of_hour",
+                        max(8, int(channel_config.get("coming_up_seconds", 20))),
+                    ),
                     (
                         "sponsor",
                         "sponsor_minutes_of_hour",
@@ -899,7 +926,10 @@ class NetworkScheduler:
                                 if media_file.suffix.lower() in video_extensions
                                 else "image"
                             ),
-                            "url": f"/channel-content/{cue_kind}/{media_index}",
+                            "url": (
+                                f"/channel-content/{cue_kind}/{media_index}"
+                                f"?v={media_file_version(media_file)}"
+                            ),
                         }
 
                     if cue_kind == "funny_clip":
@@ -911,7 +941,34 @@ class NetworkScheduler:
                 filler_type = "off_air"
                 content_item = None
 
+            # Tell idle TVs when the next fixed hourly cue begins. This lets
+            # clients poll at most every 30s without missing a short promo.
+            next_cue_seconds = 30.0
+            if network_on_air:
+                all_cue_minutes = set()
+                for key in (
+                    "tv_guide_minutes_of_hour",
+                    "coming_up_minutes_of_hour",
+                    "sponsor_minutes_of_hour",
+                    "venue_minutes_of_hour",
+                    "promo_minutes_of_hour",
+                    "fact_minutes_of_hour",
+                    "funny_clip_minutes_of_hour",
+                ):
+                    for minute in channel_config.get(key, []):
+                        if isinstance(minute, int) and 0 <= minute <= 59:
+                            all_cue_minutes.add(minute)
+                for minutes_ahead in range(0, 61):
+                    at = (now + timedelta(minutes=minutes_ahead)).replace(
+                        second=0, microsecond=0
+                    )
+                    delta = (at - now).total_seconds()
+                    if delta > 0 and at.minute in all_cue_minutes:
+                        next_cue_seconds = min(30.0, delta)
+                        break
+
             return {
+                "next_channel_cue_seconds": next_cue_seconds,
                 "simulated":
                     self.simulated,
 
@@ -5326,7 +5383,93 @@ class EliteRequestHandler(BaseHTTPRequestHandler):
 
     def _send_json(self, payload, status=HTTPStatus.OK):
         data = json.dumps(payload).encode("utf-8")
+        # State responses repeat many times on phones. Compress large JSON,
+        # but never cache it: each player's answers and scores are live.
+        if len(data) >= 1024 and "gzip" in self.headers.get("Accept-Encoding", "").lower():
+            import gzip
+            compressed = gzip.compress(data, compresslevel=4)
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Encoding", "gzip")
+            self.send_header("Vary", "Accept-Encoding")
+            self.send_header("Content-Length", str(len(compressed)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(compressed)
+            return
         self._send_bytes(data, "application/json; charset=utf-8", status)
+
+    def _send_cached_media_file(self, file_path, content_type, request_version="", allow_build_version=False):
+        """Send assets without loading videos into RAM, with HTTP cache/Range support.
+
+        Versioned URLs may cache immutably; unversioned URLs revalidate via
+        ETag, so a replacement file is never stale after a deployment.
+        """
+        stat = file_path.stat()
+        version = media_file_version(file_path)
+        etag = '"' + version + '"'
+        immutable = bool(request_version) and request_version == version
+        # Images referenced by TV CSS can use a commit-keyed URL. Keep this
+        # shorter than immutable because local testing can edit assets.
+        build_version = APP_BUILD + "-" + os.environ.get("RENDER_GIT_COMMIT", "local")[:12]
+        build_cache = allow_build_version and request_version == build_version
+        cache = ("public, max-age=31536000, immutable" if immutable
+                 else "public, max-age=3600" if build_cache
+                 else "public, max-age=0, must-revalidate")
+        total = stat.st_size
+        range_header = self.headers.get("Range", "").strip()
+        if not range_header and self.headers.get("If-None-Match", "") == etag:
+            self.send_response(HTTPStatus.NOT_MODIFIED)
+            self.send_header("ETag", etag)
+            self.send_header("Cache-Control", cache)
+            self.end_headers()
+            return
+
+        start, end = 0, total - 1
+        partial = False
+        if range_header:
+            match = re.fullmatch(r"bytes=(\d*)-(\d*)", range_header)
+            if not match or (not match.group(1) and not match.group(2)):
+                self.send_response(HTTPStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
+                self.send_header("Content-Range", f"bytes */{total}")
+                self.end_headers()
+                return
+            a, b = match.groups()
+            if a:
+                start = int(a)
+                end = min(total - 1, int(b)) if b else total - 1
+            else:
+                suffix = int(b)
+                start = max(0, total - suffix)
+            if start >= total or start > end:
+                self.send_response(HTTPStatus.REQUESTED_RANGE_NOT_SATISFIABLE)
+                self.send_header("Content-Range", f"bytes */{total}")
+                self.end_headers()
+                return
+            partial = True
+
+        length = max(0, end - start + 1)
+        self.send_response(HTTPStatus.PARTIAL_CONTENT if partial else HTTPStatus.OK)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(length))
+        self.send_header("Cache-Control", cache)
+        self.send_header("ETag", etag)
+        self.send_header("Accept-Ranges", "bytes")
+        if partial:
+            self.send_header("Content-Range", f"bytes {start}-{end}/{total}")
+        self.end_headers()
+        try:
+            with file_path.open("rb") as media:
+                media.seek(start)
+                remaining = length
+                while remaining:
+                    block = media.read(min(64 * 1024, remaining))
+                    if not block:
+                        break
+                    self.wfile.write(block)
+                    remaining -= len(block)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # TV changed content or a video seek canceled the request.
 
     def _serve_html(self, path):
         try:
@@ -5674,9 +5817,10 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
                 "application/octet-stream"
             )
 
-            return self._send_bytes(
-                media_file.read_bytes(),
+            return self._send_cached_media_file(
+                media_file,
                 content_type,
+                query.get("v", [""])[0],
             )
 
 
@@ -5911,7 +6055,7 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
                     continue
                 if candidate.is_file():
                     content_type = mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
-                    return self._send_bytes(candidate.read_bytes(), content_type)
+                    return self._send_cached_media_file(candidate, content_type, query.get("v", [""])[0], allow_build_version=True)
 
             return self._send_json({"ok": False, "error": "Asset not found"}, HTTPStatus.NOT_FOUND)
 

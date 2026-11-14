@@ -1053,10 +1053,38 @@ async function pollOnce(){
     if(data.state.app_build&&data.state.app_build!==PAGE_BUILD){const u=new URL(location.href);u.searchParams.set('build',data.state.app_build);u.searchParams.set('_reload',Date.now());location.replace(u.toString());return;}
     if(requestEpoch!==identityEpoch||requestTeamId!==teamId||requestDeviceToken!==deviceToken||requestServerSessionId!==serverSessionId)return;
     const liveSessionId=data.state.server_session_id||'';if(requestServerSessionId&&liveSessionId&&requestServerSessionId!==liveSessionId){clearSavedTeamIdentity(liveSessionId);showJoin('This phone needs to join the current local game.');return;}
+    playerPollDelay=computePlayerPollDelay(data.state);
     render(data.state);
   }catch(e){const target=teamId?document.getElementById('message'):joinMessage;target.textContent='Reconnecting to local Auto Elite server…';}
 }
-async function poll(){await pollOnce();setTimeout(poll,250);}
+// Answers still POST instantly. These are only read-only state refreshes.
+// Keep registration responsive near a scheduled start and gameplay.
+let playerPollDelay = 30000;
+function computePlayerPollDelay(s){
+ const n=s?.network||{}, mini=n.mini_game||{};
+ if(mini.active)return 500;
+ if(n.game_active){
+  const seconds=Number(s.timer_remaining);
+  return s.timer_running&&Number.isFinite(seconds)&&seconds<=10?1000:1500;
+ }
+ if(n.lead_in_phase)return 2000;
+ const signup=n.standalone_mini_signup;
+ if(signup&&Number(signup.seconds_until)<=300)return 2000;
+ let delay=30000;
+ const untilEvent=Number(n.next_event?.seconds_until);
+ if(Number.isFinite(untilEvent)&&untilEvent>0){
+  if(untilEvent<=600)return 2000;
+  delay=Math.min(delay,Math.max(1000,(untilEvent-600)*1000+150));
+ }
+ if(signup){
+  const until=Number(signup.seconds_until);
+  if(Number.isFinite(until)&&until>300){
+   delay=Math.min(delay,Math.max(1000,(until-300)*1000+150));
+  }
+ }
+ return Math.max(1000,delay);
+}
+async function poll(){await pollOnce();setTimeout(poll,playerPollDelay);}
 showJoin(teamId?'Checking this phone team…':'');poll();
 </script>
 </body>
