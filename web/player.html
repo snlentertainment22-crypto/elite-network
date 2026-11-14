@@ -64,6 +64,10 @@ let serverSessionId=localStorage.getItem('autoEliteServerSessionId')||'';
 let clientId=localStorage.getItem('autoEliteClientId')||'';
 if(!clientId){clientId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():`player-${Date.now()}-${Math.random().toString(36).slice(2)}`;localStorage.setItem('autoEliteClientId',clientId);}
 let busy=false,editingTeamName=false,playerCanRename=true,identityEpoch=0,joinInProgress=false;
+let miniQuestionIndex=0;
+let gibDraft='';
+let gibFeedback='';
+let gibPuzzleKey='';
 let finalDraft='';
 let speedBonusOverlayKey='';
 let speedBonusOverlayTimer=null;
@@ -160,6 +164,7 @@ async function submitMiniAnswer(index){
       body:JSON.stringify({
         team_id:teamId,
         choice_index:index,
+        question_index:miniQuestionIndex,
         device_token:deviceToken,
         server_session_id:serverSessionId
       }),
@@ -181,6 +186,38 @@ async function submitMiniAnswer(index){
 
   }finally{
     busy=false;
+    pollOnce();
+  }
+}
+
+async function submitGibberishGuess(){
+  if(busy||!teamId)return;
+  const field=document.getElementById('gibTypedAnswer');
+  const guess=(field?.value||'').trim();
+  if(!guess){gibFeedback='Type a guess first!';document.getElementById('message').textContent=gibFeedback;return;}
+  busy=true;
+  gibDraft=guess;
+  try{
+    const res=await fetch('/api/mini-answer',{
+      method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',
+      body:JSON.stringify({team_id:teamId,answer_text:guess,question_index:miniQuestionIndex,
+        device_token:deviceToken,server_session_id:serverSessionId})
+    });
+    const data=await res.json();
+    if(!data.ok)throw new Error(data.error||'Guess not accepted.');
+    if(data.response?.correct){
+      gibFeedback=`CORRECT! +${Number(data.response.points||0)} points!`;
+      gibDraft='';
+    }else{
+      gibFeedback=`Not quite! Guess again. ${Number(data.response?.attempts||0)} incorrect.`;
+      gibDraft='';
+      if(field){field.value='';field.focus();}
+    }
+  }catch(error){
+    gibFeedback=error.message;
+  }finally{
+    busy=false;
+    document.getElementById('message').textContent=gibFeedback;
     pollOnce();
   }
 }
@@ -345,6 +382,7 @@ function render(state){
 
     const mq=mini.question||{};
     const miniResponse=state.mini_team_response;
+    miniQuestionIndex=Number(mini.question_index||0);
     const phase=mini.phase||'idle';
     const gameType=mini.game_type||'quick_3';
 
@@ -751,7 +789,7 @@ function render(state){
       mini.question_number||1;
 
     document.getElementById('pointLabel').textContent=
-      gib?'PUZZLE':`OF ${mini.question_count||3}`;
+      gib?`OF ${mini.question_count||3}`:`OF ${mini.question_count||3}`;
 
     document.getElementById('timer').textContent=
       Math.ceil(mini.seconds_remaining||0);
@@ -761,7 +799,7 @@ function render(state){
 
       content.innerHTML=`
         <div class="big">${miniTitle}</div>
-        <div class="question">${gib?'Say the nonsense words out loud!':'Get ready!'}</div>
+        <div class="question">${gib?'Three puzzles. Type your guesses. Keep trying until you solve each one!':'Get ready!'}</div>
       `;
 
       message.textContent=
@@ -775,7 +813,7 @@ function render(state){
 
       content.innerHTML=`
         <div class="big">${miniTitle} COMPLETE</div>
-        <div class="question">More Elite games are coming up.</div>
+        <div class="question">${gib?'Final scores are on the TV. Great game!':'More Elite games are coming up.'}</div>
       `;
 
       message.textContent=
@@ -784,6 +822,48 @@ function render(state){
       return;
     }
 
+
+    if(gib){
+      // Polling happens every 250ms; preserve input focus and caret while typing.
+      const key=`${mini.mode||'regular'}:${mini.question_index||0}:${mq.question||''}`;
+      if(gibPuzzleKey!==key){gibPuzzleKey=key;gibDraft='';gibFeedback='';}
+      const solved=!!miniResponse?.correct;
+      const templateKey=`${key}:${phase}:${solved}`;
+      const field=document.getElementById('gibTypedAnswer');
+      if(content.dataset.gibTemplate!==templateKey || (phase==='question'&&!solved&&!field)){
+        if(field)gibDraft=field.value;
+        if(phase==='question'&&!solved){
+          content.innerHTML=`
+            <div class="big">GIBBERISH • ${mini.question_number||1} OF ${mini.question_count||3}</div>
+            <div class="question">${esc(mq.question||'')}</div>
+            <input id="gibTypedAnswer" type="text" maxlength="120" autocomplete="off"
+              autocapitalize="sentences" spellcheck="false" placeholder="Type the real phrase"
+              aria-label="Your Gibberish answer"
+              oninput="gibDraft=this.value"
+              onkeydown="if(event.key==='Enter'){event.preventDefault();submitGibberishGuess();}">
+            <button id="gibSubmitButton" onclick="submitGibberishGuess()">SUBMIT GUESS</button>
+            <div class="mode">Keep trying until you get it right or time runs out.</div>
+          `;
+          document.getElementById('gibTypedAnswer').value=gibDraft;
+        }else if(solved){
+          content.innerHTML=`<div class="big">SOLVED!</div><div class="question">${esc(mq.question||'')}</div>
+            <div class="locked">+${Number(miniResponse.points||0)} POINTS • ${Number(miniResponse.attempts||1)} ATTEMPT(S)</div>`;
+        }else{
+          content.innerHTML=`<div class="big">ANSWER REVEAL</div><div class="question">${esc(mq.question||'')}</div>
+            <div class="correct-answer">${esc(mq.answer_display||'')}</div>`;
+        }
+        content.dataset.gibTemplate=templateKey;
+      }
+      document.getElementById('scoreLabel').textContent=`${Number(miniResponse?.total_points||0)} gibberish pts`;
+      if(phase==='reveal'){
+        message.textContent=solved?`Great job! +${Number(miniResponse.points||0)} points`:'Time! Next phrase coming.';
+      }else if(solved){
+        message.textContent=gibFeedback||'Correct! You are locked in.';
+      }else{
+        message.textContent=gibFeedback||((miniResponse?.attempts||0)>0?`Keep guessing! ${miniResponse.attempts} incorrect so far.`:'Sound it out. Type your answer.');
+      }
+      return;
+    }
 
     const choices=(mq.choices||[]).map((text,i)=>{
 
@@ -835,7 +915,7 @@ function render(state){
 
     content.innerHTML=`
       <div class="big">
-        ${gib?miniTitle:`QUICK 3 • ${mini.question_number||1} OF ${mini.question_count||3}`}
+        ${gib?`GIBBERISH • ${mini.question_number||1} OF ${mini.question_count||3}`:`QUICK 3 • ${mini.question_number||1} OF ${mini.question_count||3}`}
       </div>
 
       <div class="question">

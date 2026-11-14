@@ -493,6 +493,13 @@ function formatCountdown(seconds){const s=Math.max(0,Math.floor(Number(seconds||
 function formatLongCountdown(s){const m=Math.max(0,Math.floor(Number(s||0)/60));return m>=60?Math.floor(m/60)+' HR '+(m%60)+' MIN':m+' MIN';}
 function networkNextLine(network){const n=network?.next_event;if(!n)return 'More Elite programming coming up.';return `NEXT: ${esc(n.title||'')}  -  ${formatNetworkClock(n.start_iso)}`;}
 function setShowBug(state){const el=document.getElementById('showBug');if(el){el.className='showBug hidden';el.textContent='';}}
+// The server aggregates points across all three Gibberish puzzles.
+function gibScoreboard(mini){
+ const leaders=(mini.leaderboard||[]).slice(0,5);
+ if(!leaders.length)return '<div class="miniProgress">No scores yet</div>';
+ return `<div class="miniProgress">TOP SCORES: ${leaders.map((r,i)=>`${i+1}. ${esc(r.name||'PLAYER')} ${Number(r.points||0)} pts`).join('  •  ')}</div>`;
+}
+
 function renderMiniGame(state){
  const n=state.network||{},m=n.mini_game||{},q=m.question||{};
  const gameType=m.game_type||'quick_3';
@@ -642,11 +649,11 @@ function renderMiniGame(state){
  setBackground('/assets/quick_3_bg.png');
 
  if(phase==='intro'){
-   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">${esc(miniTitle)}</div><div class="miniSub">${gib?'SAY IT OUT LOUD. DECODE THE PHRASE!':'3 QUESTIONS  -  12 SECONDS EACH'}</div><div class="networkNext">Play along from your table.</div></div></div>`;
+   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">${esc(miniTitle)}</div><div class="miniSub">${gib?'3 PHRASES  -  TYPE ANSWERS ON YOUR PHONE  -  35 SECONDS EACH!':'3 QUESTIONS  -  12 SECONDS EACH'}</div><div class="networkNext">Play along from your table.</div></div></div>`;
  }
 
  else if(phase==='outro'){
-   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">${esc(miniTitle)}</div><div class="miniTitle">${gib?'Puzzle complete!':'3 Down.'}</div><div class="miniSub">${gib?'Did you crack it?':'How many did you get?'}</div><div class="networkNext">${next}</div></div></div>`;
+   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">${esc(miniTitle)}</div><div class="miniTitle">${gib?'GIBBERISH COMPLETE!':'3 Down.'}</div><div class="miniSub">${gib?'Final top scores':'How many did you get?'}</div>${gib?gibScoreboard(m):''}<div class="networkNext">${next}</div></div></div>`;
  }
 
  else{
@@ -663,6 +670,8 @@ function renderMiniGame(state){
    const answer=reveal
      ?`<div class="miniAnswer">ANSWER: ${esc(q.answer_display||((q.choices||[])[q.correct_index]||''))}</div>`
      :'';
+   const visibleChoices=(gib&&!reveal)?'':`<div class="miniChoices">${choices}</div>`;
+   const scoreSummary=gib&&reveal?gibScoreboard(m):'';
 
    html=`
      <div class="networkShell miniGameShell">
@@ -670,12 +679,13 @@ function renderMiniGame(state){
          <div class="miniTimer">${Math.ceil(m.seconds_remaining||0)}</div>
          <div class="miniCategory">${gib?'SAY IT OUT LOUD':' '+esc(q.category||'TRIVIA')}</div>
          <div class="miniQuestion">${esc(q.question||'')}</div>
-         <div class="miniChoices">${choices}</div>
+         ${visibleChoices}
          ${answer}
          <div class="miniProgress">
-           ${gib?'ELITE GIBBERISH':`QUESTION ${m.question_number||1} OF ${m.question_count||3}`}
-            -  ${reveal?'ANSWER REVEAL':'MAKE YOUR PICK'}
+           ${gib?`PUZZLE ${m.question_number||1} OF ${m.question_count||3} - ${(m.difficulty||'').toUpperCase()}`:`QUESTION ${m.question_number||1} OF ${m.question_count||3}`}
+            -  ${reveal?'ANSWER REVEAL':'SAY IT OUT LOUD! TYPE YOUR GUESS ON YOUR PHONE'}
          </div>
+         ${scoreSummary}
        </div>
      </div>
    `;

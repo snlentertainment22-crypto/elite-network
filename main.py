@@ -1083,7 +1083,13 @@ class MiniGameController:
         self.gibberish_decks = {"regular": [], "adult": []}
         self.gibberish_mode = "regular"
         self.gibberish_current = None
+        self.gibberish_rounds = []
         self.gibberish_go_started = None
+        self.gibberish_question_seconds = 35.0
+        self.gibberish_reveal_seconds = 7.0
+        # Wrong guesses are tracked separately; they are never counted as a solved puzzle.
+        self.gibberish_wrong_guesses = {}
+        self.gibberish_last_submit = {}
 
         self.active = False
         self.phase = "idle"
@@ -1241,16 +1247,33 @@ class MiniGameController:
 
             if game_type == "gibberish":
                 import random
-                self.gibberish_mode = "adult" if adult else "regular"
-                deck = self.gibberish_decks[self.gibberish_mode]
+                mode = "adult" if adult else "regular"
+                bank = self.gibberish_bank[mode]
+                levels = ("easy", "medium", "hard")
+                # Validate all three tiers before altering the deck.
+                if any(not any(p.get("difficulty") == tier for p in bank)
+                       for tier in levels):
+                    raise ValueError("Elite Gibberish requires easy, medium and hard phrases.")
+                deck = self.gibberish_decks[mode]
                 if not deck:
-                    deck.extend(self.gibberish_bank[self.gibberish_mode])
+                    deck.extend(bank)
                     random.shuffle(deck)
-                if not deck:
-                    raise ValueError("No Elite Gibberish phrases available.")
-                # Shuffle once per cycle: no repeating the same clue until
-                # every clue in that content set has appeared.
-                self.gibberish_current = dict(deck.pop())
+                # Draw one fresh phrase per tier. Refill only an exhausted
+                # tier, so there are no duplicate clues within a session.
+                selected = []
+                for tier in levels:
+                    available = [p for p in deck if p.get("difficulty") == tier]
+                    if not available:
+                        refills = [p for p in bank if p.get("difficulty") == tier]
+                        random.shuffle(refills)
+                        deck.extend(refills)
+                        available = refills
+                    chosen = available[-1]
+                    deck.remove(chosen)
+                    selected.append(dict(chosen))
+                self.gibberish_mode = mode
+                self.gibberish_rounds = selected
+                self.gibberish_current = selected[0]
                 self.gibberish_go_started = None
 
             self.game_type = game_type
@@ -1261,6 +1284,8 @@ class MiniGameController:
             self.question_index = 0
 
             self.responses = {}
+            self.gibberish_wrong_guesses = {}
+            self.gibberish_last_submit = {}
 
             self.started_reason = reason
 
@@ -1591,19 +1616,26 @@ class MiniGameController:
 
 
             # ================================================
-            # ELITE GIBBERISH (one original phonetic puzzle)
+            # ELITE GIBBERISH: three puzzles, progressively harder.
             # ================================================
             if self.game_type == "gibberish":
                 if self.phase == "intro":
                     self.phase = "question"
                     self.gibberish_go_started = now
-                    self.deadline = now + 20.0
+                    self.deadline = now + self.gibberish_question_seconds
                 elif self.phase == "question":
                     self.phase = "reveal"
-                    self.deadline = now + 7.0
+                    self.deadline = now + self.gibberish_reveal_seconds
                 elif self.phase == "reveal":
-                    self.phase = "outro"
-                    self.deadline = now + 6.0
+                    if self.question_index + 1 < len(self.gibberish_rounds):
+                        self.question_index += 1
+                        self.gibberish_current = self.gibberish_rounds[self.question_index]
+                        self.gibberish_go_started = now
+                        self.phase = "question"
+                        self.deadline = now + self.gibberish_question_seconds
+                    else:
+                        self.phase = "outro"
+                        self.deadline = now + 8.0
                 elif self.phase == "outro":
                     self.active = False
                     self.phase = "idle"
@@ -1968,6 +2000,7 @@ class MiniGameController:
         self,
         team_id,
         choice_index,
+        question_index=None,
     ):
 
         with self.lock:
@@ -2080,8 +2113,10 @@ class MiniGameController:
 
 
             # ================================================
-            # QUICK 3
+            # QUICK 3 - Gibberish uses its own typed-answer method.
             # ================================================
+            if self.game_type == "gibberish":
+                raise ValueError("Gibberish requires a typed answer.")
 
             if self.phase != "question":
 
@@ -2100,10 +2135,7 @@ class MiniGameController:
                 )
 
 
-            question = (
-                self.gibberish_current if self.game_type == "gibberish"
-                else self.questions[self.question_index]
-            )
+            question = self.questions[self.question_index]
 
 
             choices = question.get(
@@ -2159,12 +2191,6 @@ class MiniGameController:
             }
 
 
-            if self.game_type == "gibberish":
-                response["points"] = (
-                    100 + int(max(0.0, self.deadline - time.monotonic()) * 10)
-                    if response["correct"] else 0
-                )
-
             self.responses[
                 response_key
             ] = response
@@ -2174,6 +2200,86 @@ class MiniGameController:
                 response
             )
 
+
+    @staticmethod
+    def _normalize_gibberish_text(raw):
+        import unicodedata
+        normalized = unicodedata.normalize("NFKD", str(raw or "").casefold())
+        normalized = "".join(ch for ch in normalized if not unicodedata.combining(ch))
+        normalized = normalized.replace("&", "and")
+        return re.sub(r"[^a-z0-9]", "", normalized)
+
+    @staticmethod
+    def _gibberish_one_typo(a, b):
+        """Allow one typo for a long phrase; never silently accept short wrong answers."""
+        if min(len(a), len(b)) < 12 or abs(len(a) - len(b)) > 1:
+            return False
+        i = j = edits = 0
+        while i < len(a) and j < len(b):
+            if a[i] == b[j]:
+                i += 1
+                j += 1
+            else:
+                edits += 1
+                if edits > 1:
+                    return False
+                if len(a) > len(b):
+                    i += 1
+                elif len(b) > len(a):
+                    j += 1
+                else:
+                    i += 1
+                    j += 1
+        return edits + (len(a) - i) + (len(b) - j) <= 1
+
+    def submit_gibberish_answer(self, team_id, answer_text, question_index):
+        """Server-side typed-answer verification; never disclose the target before reveal."""
+        with self.lock:
+            if not self.active or self.game_type != "gibberish":
+                raise ValueError("Elite Gibberish isn't active.")
+            if self.phase != "question" or self.deadline is None or time.monotonic() >= self.deadline:
+                raise ValueError("That puzzle is closed.")
+            if type(question_index) is not int or question_index != self.question_index:
+                raise ValueError("That puzzle has ended. Answer the current puzzle.")
+            if not isinstance(answer_text, str) or not answer_text.strip() or len(answer_text) > 120:
+                raise ValueError("Enter a short answer before submitting.")
+            team_key = str(team_id)
+            response_key = (self.question_index, team_key)
+            if response_key in self.responses:
+                raise ValueError("You already solved this Gibberish puzzle!")
+            now = time.monotonic()
+            if now - self.gibberish_last_submit.get(response_key, 0.0) < 0.75:
+                raise ValueError("Give it a moment before trying again.")
+            self.gibberish_last_submit[response_key] = now
+            candidate = self._normalize_gibberish_text(answer_text)
+            clue = self.gibberish_current or {}
+            canonical = self._normalize_gibberish_text(clue.get("answer_display", ""))
+            # Never use the gibberish clue or its distractors as alternative answers.
+            correct = bool(canonical and (candidate == canonical or self._gibberish_one_typo(candidate, canonical)))
+            wrong_count = self.gibberish_wrong_guesses.get(response_key, 0)
+            if not correct:
+                wrong_count += 1
+                self.gibberish_wrong_guesses[response_key] = wrong_count
+                return {
+                    "correct": False,
+                    "attempts": wrong_count,
+                    "question_index": self.question_index,
+                    "try_again": True,
+                }
+            # Speed matters, but correct solves after a few misses still earn something.
+            remaining = max(0.0, self.deadline - now)
+            points = max(25, 100 + int(remaining * 10) - wrong_count * 65)
+            response = {
+                "team_id": team_key,
+                "question_index": self.question_index,
+                "correct": True,
+                "attempts": wrong_count + 1,
+                "wrong_guesses": wrong_count,
+                "points": points,
+                "answer_text": answer_text.strip(),
+            }
+            self.responses[response_key] = response
+            return dict(response)
 
     def get_team_response(
         self,
@@ -2206,6 +2312,22 @@ class MiniGameController:
                 )
             )
 
+
+            if self.game_type == "gibberish":
+                total = sum(
+                    int(item.get("points", 0))
+                    for item in self.responses.values()
+                    if str(item.get("team_id")) == str(team_id)
+                )
+                result = dict(response) if response else {
+                    "correct": False,
+                    "pending": True,
+                    "attempts": self.gibberish_wrong_guesses.get(
+                        (question_index, str(team_id)), 0
+                    ),
+                }
+                result["total_points"] = total
+                return result
 
             return (
                 dict(response)
@@ -2529,7 +2651,7 @@ class MiniGameController:
                     question = {
                         "category": "AFTER DARK GIBBERISH" if self.gibberish_mode == "adult" else "ELITE GIBBERISH",
                         "question": clue["phrase"],
-                        "choices": list(clue["choices"]),
+                        # Gibberish answers never travel to phones until reveal.
                     }
                     # Don't disclose the answer to a phone before reveal.
                     if self.phase in ("reveal", "outro"):
@@ -2541,13 +2663,14 @@ class MiniGameController:
                         str(t.get("id")): str(t.get("name", "PLAYER"))
                         for t in self.team_provider() or []
                     }
+                totals = {}
+                for answer in self.responses.values():
+                    key = str(answer["team_id"])
+                    totals[key] = totals.get(key, 0) + int(answer.get("points", 0))
                 rankings = sorted(
-                    (
-                        {"name": team_names.get(str(v["team_id"]), "PLAYER"),
-                         "points": v.get("points", 0)}
-                        for v in self.responses.values()
-                    ),
-                    key=lambda x: -x["points"],
+                    ({"name": team_names.get(team, "PLAYER"), "points": total}
+                     for team, total in totals.items()),
+                    key=lambda x: (-x["points"], x["name"]),
                 )
                 return {
                     "active": self.active,
@@ -2556,11 +2679,14 @@ class MiniGameController:
                     "mode": self.gibberish_mode,
                     "phase": self.phase,
                     "seconds_remaining": round(remaining, 2),
-                    "question_index": 0,
-                    "question_number": 1,
-                    "question_count": 1,
+                    "question_index": self.question_index,
+                    "question_number": self.question_index + 1,
+                    "question_count": len(self.gibberish_rounds),
+                    "difficulty": (self.gibberish_current or {}).get("difficulty", ""),
                     "question": question,
-                    "response_count": len(self.responses),
+                    "response_count": sum(
+                        1 for key in self.responses if key[0] == self.question_index
+                    ),
                     "leaderboard": rankings[:5] if self.phase in ("reveal", "outro") else [],
                     "started_reason": self.started_reason,
                 }
@@ -6045,27 +6171,17 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
 
 
             if parsed.path == "/api/mini-answer":
-                choice_index = payload.get(
-                    "choice_index"
-                )
-
-                if isinstance(
-                    choice_index,
-                    bool,
-                ):
-                    raise ValueError(
-                        "Invalid mini-game answer."
-                    )
-
-                try:
-                    choice_index = int(
-                        choice_index
-                    )
-
-                except Exception:
-                    raise ValueError(
-                        "Invalid mini-game answer."
-                    )
+                # Only Gibberish accepts typed guesses; other mini-games keep
+                # their original choice-index protocol unchanged.
+                is_gibberish = NETWORK_CONTROL.mini_game.game_type == "gibberish"
+                if not is_gibberish:
+                    choice_index = payload.get("choice_index")
+                    if isinstance(choice_index, bool):
+                        raise ValueError("Invalid mini-game answer.")
+                    try:
+                        choice_index = int(choice_index)
+                    except Exception:
+                        raise ValueError("Invalid mini-game answer.")
 
                 team_id = payload.get(
                     "team_id"
@@ -6091,14 +6207,18 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
                             "to that team. Rejoin first."
                         )
 
-                response = (
-                    NETWORK_CONTROL
-                    .mini_game
-                    .submit_answer(
+                if is_gibberish:
+                    response = NETWORK_CONTROL.mini_game.submit_gibberish_answer(
+                        team_id,
+                        payload.get("answer_text", ""),
+                        question_index=payload.get("question_index"),
+                    )
+                else:
+                    response = NETWORK_CONTROL.mini_game.submit_answer(
                         team_id,
                         choice_index,
+                        question_index=payload.get("question_index"),
                     )
-                )
 
                 return self._send_json(
                     {

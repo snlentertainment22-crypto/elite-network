@@ -1,296 +1,320 @@
 {
-  "version": 1,
-  "note": "Original Elite Network phonetic word puzzles; review pronunciations before wide beta.",
+  "version": 2,
+  "note": "Three puzzles per session, one from each difficulty tier (easy/medium/hard). Original phonetic phrases, editorially review with bar players.",
   "regular": [
     {
       "id": "regular-001",
-      "phrase": "PEAS OF CAKE",
+      "difficulty": "easy",
+      "phrase": "KNOT MY CUP UV TEE",
       "choices": [
-        "Piece of cake",
-        "Peace treaty",
-        "A slice of pie",
-        "Easy as pie"
+        "Not my cup of tea",
+        "A storm in a teacup",
+        "No time for tea",
+        "A cup of kindness"
       ],
       "correct_index": 0,
-      "answer_display": "Piece of cake"
+      "answer_display": "Not my cup of tea"
     },
     {
       "id": "regular-002",
-      "phrase": "HAIR WE GO A GAIN",
+      "difficulty": "easy",
+      "phrase": "WONCE UP PON UH THYME",
       "choices": [
-        "Here comes the rain",
-        "Here we go again",
-        "Where did we go?",
-        "There we go now"
+        "One day at a time",
+        "Once upon a time",
+        "The time has come",
+        "Once in a lifetime"
       ],
       "correct_index": 1,
-      "answer_display": "Here we go again"
+      "answer_display": "Once upon a time"
     },
     {
       "id": "regular-003",
-      "phrase": "FUR GET ME KNOT",
+      "difficulty": "easy",
+      "phrase": "ITCH SNOT ROCKET SIGH ENCE",
       "choices": [
-        "Forgive and forget",
-        "Tie the knot",
-        "Forget me not",
-        "Never forget"
+        "A scientific breakthrough",
+        "No time to waste",
+        "It's not rocket science",
+        "Rocket to the moon"
       ],
       "correct_index": 2,
-      "answer_display": "Forget me not"
+      "answer_display": "It's not rocket science"
     },
     {
       "id": "regular-004",
-      "phrase": "KNIGHT OWL",
+      "difficulty": "easy",
+      "phrase": "EYE SEA WUT EWE MEAN",
       "choices": [
-        "Knight in armor",
-        "Early bird",
-        "Night shift",
-        "Night owl"
+        "You know what I mean",
+        "I can hardly believe it",
+        "I know what you did",
+        "I see what you mean"
       ],
       "correct_index": 3,
-      "answer_display": "Night owl"
+      "answer_display": "I see what you mean"
     },
     {
       "id": "regular-005",
-      "phrase": "SEW FAR SEW GOOD",
+      "difficulty": "medium",
+      "phrase": "A BLESS SING IN DIS GUYS",
       "choices": [
-        "So far, so good",
-        "So long, farewell",
-        "Sewing it together",
-        "Far and away"
+        "A blessing in disguise",
+        "A hidden agenda",
+        "A wolf in sheep’s clothing",
+        "An unexpected surprise"
       ],
       "correct_index": 0,
-      "answer_display": "So far, so good"
+      "answer_display": "A blessing in disguise"
     },
     {
       "id": "regular-006",
-      "phrase": "OLIVE EWE",
+      "difficulty": "medium",
+      "phrase": "WHALE OILED MASH EEN",
       "choices": [
-        "All of you",
-        "I love you",
-        "Olive oil",
-        "Love is blind"
+        "A whale of a time",
+        "Well-oiled machine",
+        "Working like a charm",
+        "A mechanical failure"
       ],
       "correct_index": 1,
-      "answer_display": "I love you"
+      "answer_display": "Well-oiled machine"
     },
     {
       "id": "regular-007",
-      "phrase": "DOUGH NUT WORRY",
+      "difficulty": "medium",
+      "phrase": "THROE ING CAW SHUN TWO THUH WIND",
       "choices": [
-        "Donut shop",
-        "Nothing to lose",
-        "Do not worry",
-        "No worries here"
+        "Throwing in the towel",
+        "Going against the grain",
+        "Throwing caution to the wind",
+        "Taking the easy way out"
       ],
       "correct_index": 2,
-      "answer_display": "Do not worry"
+      "answer_display": "Throwing caution to the wind"
     },
     {
       "id": "regular-008",
-      "phrase": "NOSE WEAT",
+      "difficulty": "medium",
+      "phrase": "OFF THEE BEAT TEN PATH",
       "choices": [
-        "Cold feet",
-        "No way out",
-        "Know your limits",
-        "No sweat"
+        "On the right track",
+        "Getting off on the wrong foot",
+        "A walk down memory lane",
+        "Off the beaten path"
       ],
       "correct_index": 3,
-      "answer_display": "No sweat"
+      "answer_display": "Off the beaten path"
     },
     {
       "id": "regular-009",
-      "phrase": "FOUR TUNE ATE COOKIE",
+      "difficulty": "hard",
+      "phrase": "PAY SHUNS IZ UH VUR CHEW",
       "choices": [
-        "Fortune cookie",
-        "Cookie monster",
-        "Lucky break",
-        "Winning lottery ticket"
+        "Patience is a virtue",
+        "Practice makes perfect",
+        "Honesty is the best policy",
+        "Silence is golden"
       ],
       "correct_index": 0,
-      "answer_display": "Fortune cookie"
+      "answer_display": "Patience is a virtue"
     },
     {
       "id": "regular-010",
-      "phrase": "WEAR IN THIS TWO GET HER",
+      "difficulty": "hard",
+      "phrase": "UH CASE UV MISS TAKE IN EYE DEN TEE TEE",
       "choices": [
-        "Where are you going?",
-        "We're in this together",
-        "We can get along",
-        "Two heads are better"
+        "A comedy of errors",
+        "A case of mistaken identity",
+        "An identity crisis",
+        "A missing person mystery"
       ],
       "correct_index": 1,
-      "answer_display": "We're in this together"
+      "answer_display": "A case of mistaken identity"
     },
     {
       "id": "regular-011",
-      "phrase": "SEE EWE LATER ALLY GATOR",
+      "difficulty": "hard",
+      "phrase": "MAY KING ENDS MEAT",
       "choices": [
-        "See you tomorrow",
-        "See you on the other side",
-        "See you later, alligator",
-        "Call me later"
+        "Meating expectations",
+        "Making a fresh start",
+        "Making ends meet",
+        "Getting down to business"
       ],
       "correct_index": 2,
-      "answer_display": "See you later, alligator"
+      "answer_display": "Making ends meet"
     },
     {
       "id": "regular-012",
-      "phrase": "BEE LEAVE IT OR KNOT",
+      "difficulty": "hard",
+      "phrase": "BEE TWEEN UH ROK END UH HARD PLACE",
       "choices": [
-        "Leave it alone",
-        "Be or not to be",
-        "Believe in yourself",
-        "Believe it or not"
+        "Caught in the middle",
+        "A tough act to follow",
+        "Between two worlds",
+        "Between a rock and a hard place"
       ],
       "correct_index": 3,
-      "answer_display": "Believe it or not"
+      "answer_display": "Between a rock and a hard place"
     }
   ],
   "adult": [
     {
       "id": "adult-001",
-      "phrase": "BOO TEE CALL",
+      "difficulty": "easy",
+      "phrase": "WOK UV SHAYM",
       "choices": [
-        "Booty call",
-        "Wake-up call",
-        "Wrong number",
-        "Boot camp"
+        "Walk of shame",
+        "A late-night stroll",
+        "The morning commute",
+        "Walking on eggshells"
       ],
       "correct_index": 0,
-      "answer_display": "Booty call"
+      "answer_display": "Walk of shame"
     },
     {
       "id": "adult-002",
-      "phrase": "ONE KNIGHT STAND",
+      "difficulty": "easy",
+      "phrase": "KNOT SAYF FOUR WURK",
       "choices": [
-        "Stand-up comedy",
-        "One-night stand",
-        "Knight in shining armor",
-        "A night on the town"
+        "No time for work",
+        "Not safe for work",
+        "A workplace romance",
+        "Working after hours"
       ],
       "correct_index": 1,
-      "answer_display": "One-night stand"
+      "answer_display": "Not safe for work"
     },
     {
       "id": "adult-003",
-      "phrase": "FRIENDS WITH BEN A FITS",
+      "difficulty": "easy",
+      "phrase": "KNOW PANTS REE KWHY ERD",
       "choices": [
-        "Best friends forever",
-        "Mutual friends",
-        "Friends with benefits",
-        "Keeping it casual"
+        "Dress to impress",
+        "Pajama party",
+        "No pants required",
+        "Clothing optional"
       ],
       "correct_index": 2,
-      "answer_display": "Friends with benefits"
+      "answer_display": "No pants required"
     },
     {
       "id": "adult-004",
-      "phrase": "KEYS SAND TELL",
+      "difficulty": "easy",
+      "phrase": "KUM HIT HER LUK",
       "choices": [
-        "Kissing cousins",
-        "Keep a secret",
-        "Show and tell",
-        "Kiss and tell"
+        "Love at first sight",
+        "A suspicious glance",
+        "Looking for trouble",
+        "Come-hither look"
       ],
       "correct_index": 3,
-      "answer_display": "Kiss and tell"
+      "answer_display": "Come-hither look"
     },
     {
       "id": "adult-005",
-      "phrase": "LOVE BYTE",
+      "difficulty": "medium",
+      "phrase": "KNOW STRINGS UH TACHED",
       "choices": [
-        "Love bite",
-        "Love letter",
-        "First kiss",
-        "Digital romance"
+        "No strings attached",
+        "A committed relationship",
+        "Tying the knot",
+        "Friends with benefits"
       ],
       "correct_index": 0,
-      "answer_display": "Love bite"
+      "answer_display": "No strings attached"
     },
     {
       "id": "adult-006",
-      "phrase": "IN THE MEWED",
+      "difficulty": "medium",
+      "phrase": "KEY PING IT CASH EWE ULL",
       "choices": [
-        "In the moment",
-        "In the mood",
-        "In the nude",
-        "In the middle"
+        "Getting serious",
+        "Keeping it casual",
+        "Playing hard to get",
+        "Casual Friday"
       ],
       "correct_index": 1,
-      "answer_display": "In the mood"
+      "answer_display": "Keeping it casual"
     },
     {
       "id": "adult-007",
-      "phrase": "PLAY IN HARD TWO GET",
+      "difficulty": "medium",
+      "phrase": "LUV UM END LEE VUM",
       "choices": [
-        "Hard to handle",
-        "Play it cool",
-        "Playing hard to get",
-        "Playing the field"
+        "Love conquers all",
+        "Leave well enough alone",
+        "Love 'em and leave 'em",
+        "Long-distance romance"
       ],
       "correct_index": 2,
-      "answer_display": "Playing hard to get"
+      "answer_display": "Love 'em and leave 'em"
     },
     {
       "id": "adult-008",
-      "phrase": "SPY SING THINGS UP",
+      "difficulty": "medium",
+      "phrase": "TAY KING IT TWO THUH NECKS LEV ULL",
       "choices": [
-        "Spill the tea",
-        "Calling it quits",
-        "Turning up the heat",
-        "Spicing things up"
+        "Getting cold feet",
+        "Going through a phase",
+        "Taking a rain check",
+        "Taking it to the next level"
       ],
       "correct_index": 3,
-      "answer_display": "Spicing things up"
+      "answer_display": "Taking it to the next level"
     },
     {
       "id": "adult-009",
-      "phrase": "LOW KEE FLURT ING",
+      "difficulty": "hard",
+      "phrase": "THUH MOR NING AFF TUR THUH KNIGHT BEE FOUR",
       "choices": [
-        "Low-key flirting",
-        "Secret admirer",
-        "Love at first sight",
-        "Casual dating"
+        "The morning after the night before",
+        "A night to remember",
+        "Breakfast in bed",
+        "The early bird catches the worm"
       ],
       "correct_index": 0,
-      "answer_display": "Low-key flirting"
+      "answer_display": "The morning after the night before"
     },
     {
       "id": "adult-010",
-      "phrase": "TEX TING AFTER DARK",
+      "difficulty": "hard",
+      "phrase": "LEE VING LIT TUL TWO THEE IM A JIN AY SHUN",
       "choices": [
-        "Late-night talking",
-        "Texting after dark",
-        "Getting ghosted",
-        "Midnight snack"
+        "Getting carried away",
+        "Leaving little to the imagination",
+        "Keeping a secret",
+        "Nothing left to lose"
       ],
       "correct_index": 1,
-      "answer_display": "Texting after dark"
+      "answer_display": "Leaving little to the imagination"
     },
     {
       "id": "adult-011",
-      "phrase": "HOTTEN BOTHERED",
+      "difficulty": "hard",
+      "phrase": "RUN NING UH ROUND IN YORE BURTH DAY SOOT",
       "choices": [
-        "Hot under the collar",
-        "Bothered and blue",
-        "Hot and bothered",
-        "Too hot to handle"
+        "Getting dressed for a party",
+        "Dancing the night away",
+        "Running around in your birthday suit",
+        "A surprise birthday party"
       ],
       "correct_index": 2,
-      "answer_display": "Hot and bothered"
+      "answer_display": "Running around in your birthday suit"
     },
     {
       "id": "adult-012",
-      "phrase": "STEAM ME DATE KNIGHT",
+      "difficulty": "hard",
+      "phrase": "UH ROW MAN TICK RON DAY VOO",
       "choices": [
-        "Dinner and a movie",
-        "Blind date",
-        "A night to remember",
-        "Steamy date night"
+        "An awkward first date",
+        "An unexpected reunion",
+        "A candlelit dinner",
+        "A romantic rendezvous"
       ],
       "correct_index": 3,
-      "answer_display": "Steamy date night"
+      "answer_display": "A romantic rendezvous"
     }
   ]
 }
