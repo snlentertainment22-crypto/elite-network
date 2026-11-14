@@ -64,7 +64,15 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 .networkShell{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:4.5%;text-align:center;background:radial-gradient(circle at top,#182a44 0,#07101c 58%,#02050a 100%)}
 .networkShell.sports{background:radial-gradient(circle at top,#1f5934 0,#092414 58%,#020904 100%)}
 .networkShell.afterdark{background:radial-gradient(circle at top,#5c174c 0,#21081c 58%,#060205 100%)}
+/* Each mini-game owns its visual identity; only Quick 3 uses Quick 3 artwork. */
 .networkShell.miniGameShell{background:transparent}
+.networkShell.miniGameShell.gibberishShell{
+ background:radial-gradient(circle at 68% 18%,rgba(67,46,103,.85),transparent 55%),
+            radial-gradient(circle at 20% 80%,rgba(16,65,105,.58),transparent 58%),#050c20;
+}
+.networkShell.miniGameShell.reactionShell{
+ background:radial-gradient(circle at 60% 18%,#214963 0%,#091a31 55%,#030914 100%);
+}
 .networkKicker{font-size:30px;font-weight:1000;letter-spacing:.18em;color:#7eeaff;margin-bottom:22px}
 .networkTitle{font-size:82px;font-weight:1000;line-height:1.02;text-transform:uppercase;text-shadow:0 5px 24px rgba(0,0,0,.45)}
 .networkSub{font-size:30px;font-weight:800;color:#d2d9e7;margin-top:24px;line-height:1.35}
@@ -87,9 +95,27 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 
 /* Elite Gibberish: TV-first layout with large, readable phrases. */
 .gibWrap{
- width:95%;max-width:none;min-height:83%;padding:2.2% 3% 2%;
+ width:94%;max-width:none;min-height:83%;padding:2.2% 3% 2%;
  display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
+/* Keep the active clue in a reserved central lane; the join QR lives at right. */
+.gibWrap.gibPlay{
+ height:84%;min-height:0;max-height:84%;
+ justify-content:flex-start;
+}
+.gibPlay .gibPhrase{
+ width:70%;flex:1 1 auto;min-height:0;max-height:none;
+ margin:10px auto 6px;font-size:clamp(34px,5.4vw,94px);
+}
+.gibPlay .gibInstruction{flex:0 0 auto;max-width:70%;}
+.gibPlay .gibBottom{
+ width:calc(100% - 380px);max-width:960px;min-width:0;
+ align-self:center;flex:0 0 auto;margin:7px auto 0;
+ text-align:center;line-height:1.14;
+}
+.gibPlay .gibReveal{max-width:74%;flex:0 0 auto;}
+/* A smaller QR area is important on older 720p TVs. */
+
 .gibKicker{font-size:30px;font-weight:1000;letter-spacing:.14em;color:#7eeaff}
 .gibRound{margin-top:8px;font-size:25px;font-weight:900;color:#ffd85a}
 .gibHud{display:flex;gap:26px;align-items:stretch;justify-content:center;margin-top:16px}
@@ -106,11 +132,11 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 }
 .gibInstruction{font-size:25px;font-weight:900;color:#e6edff;max-width:75%;line-height:1.17}
 .gibReveal{font-size:35px;font-weight:1000;color:#6cffaf;margin:6px 0 10px}
-.gibBottom{align-self:flex-start;width:calc(100% - 235px);font-size:21px;font-weight:900;color:#c9d5e8;margin-top:12px;text-align:center}
+.gibBottom{align-self:center;width:75%;font-size:21px;font-weight:900;color:#c9d5e8;margin:12px auto 0;text-align:center}
 .gibBottom .miniProgress{font-size:20px;margin-top:8px}
 /* Persistent QR: not recreated on each TV poll, so it cannot flash. */
 #gibJoinPanel{
- position:absolute;right:2.8%;bottom:7%;z-index:25;width:192px;
+ position:absolute;right:2.8%;bottom:12%;z-index:25;width:192px;
  text-align:center;padding:11px 10px 9px;border:2px solid #7eeaff;
  border-radius:17px;background:rgba(3,10,23,.96);
  box-shadow:0 8px 28px rgba(0,0,0,.6);pointer-events:none;
@@ -118,6 +144,31 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 #gibJoinPanel .gibQrLabel{font-size:17px;font-weight:1000;letter-spacing:.05em;margin-bottom:8px}
 #gibJoinPanel img{display:block;width:164px;height:164px;margin:auto;padding:6px;background:#fff;border-radius:8px;object-fit:contain}
 #gibJoinPanel .gibQrSub{font-size:12px;font-weight:800;margin-top:8px;color:#d4e8f6}
+/* Compress the HUD on 720p/576p TV stages so long clues never collide with it. */
+@media(max-height:800px){
+ .gibWrap.gibPlay{height:93%;max-height:93%;padding:1.2% 2.8%;}
+ .gibPlay .gibPhrase{width:73%;font-size:clamp(24px,4.7vw,69px);margin:4px auto;}
+ .gibKicker{font-size:clamp(16px,2vw,25px);letter-spacing:.07em;}
+ .gibRound{font-size:clamp(15px,1.8vw,21px);margin-top:3px;}
+ .gibHud{margin-top:6px;gap:14px;}
+ .gibMetric{min-width:130px;padding:5px 14px;border-width:2px;border-radius:13px;}
+ .gibMetric.points{min-width:175px;}
+ .gibMetric .number{font-size:clamp(30px,3.6vw,45px)}
+ .gibMetric .metricLabel{font-size:clamp(10px,1.13vw,14px);letter-spacing:.04em;}
+ .gibPlay .gibInstruction{font-size:clamp(13px,1.6vw,20px);max-width:72%;}
+ .gibPlay .gibReveal{font-size:clamp(18px,2vw,25px);}
+ .gibPlay .gibBottom{width:calc(100% - 220px);max-width:850px;font-size:clamp(12px,1.5vw,18px);margin-top:4px;}
+ .gibPlay .gibBottom .miniProgress{font-size:clamp(12px,1.4vw,18px);margin-top:4px;}
+ #gibJoinPanel{width:150px;padding:7px;bottom:13%;right:4.0%;}
+ #gibJoinPanel img{width:130px;height:130px;padding:4px;}
+ #gibJoinPanel .gibQrLabel{font-size:13px;margin-bottom:5px;}
+ #gibJoinPanel .gibQrSub{font-size:10px;margin-top:5px;}
+}
+@media(max-width:900px){
+ #gibJoinPanel{bottom:9%;right:2.7%;width:135px;}
+ #gibJoinPanel img{width:115px;height:115px;}
+}
+
 
 .quick3Panel{transform:translateY(-60px);padding-top:32px;padding-bottom:32px}
 /* =========================================================
@@ -589,11 +640,11 @@ function renderMiniGame(state){
  // ==========================================================
 
  if(gameType==='reaction_rush'){
-   setBackground('/assets/quick_3_bg.png');
+   setBackground(null);
 
    if(phase==='intro'){
      html=`
-       <div class="networkShell miniGameShell">
+       <div class="networkShell miniGameShell reactionShell">
          <div class="miniWrap">
            <div class="networkKicker">ELITE NETWORK MINI-GAME</div>
            <div class="miniTitle">ELITE REACTION RUSH</div>
@@ -606,7 +657,7 @@ function renderMiniGame(state){
 
    else if(phase==='waiting'){
      html=`
-       <div class="networkShell miniGameShell">
+       <div class="networkShell miniGameShell reactionShell">
          <div class="miniWrap">
            <div class="networkKicker">ELITE REACTION RUSH</div>
            <div class="miniTitle" style="font-size:86px">WAIT...</div>
@@ -618,7 +669,7 @@ function renderMiniGame(state){
 
    else if(phase==='question'){
      html=`
-       <div class="networkShell miniGameShell">
+       <div class="networkShell miniGameShell reactionShell">
          <div class="miniWrap">
            <div class="networkKicker">ELITE REACTION RUSH</div>
            <div class="miniTitle" style="font-size:120px">GO!</div>
@@ -650,7 +701,7 @@ function renderMiniGame(state){
        .join('');
 
      html=`
-       <div class="networkShell miniGameShell">
+       <div class="networkShell miniGameShell reactionShell">
          <div class="miniWrap">
            <div class="networkKicker">ELITE REACTION RUSH</div>
            <div class="miniTitle">FASTEST REACTIONS</div>
@@ -665,7 +716,7 @@ function renderMiniGame(state){
 
    else{
      html=`
-       <div class="networkShell miniGameShell">
+       <div class="networkShell miniGameShell reactionShell">
          <div class="miniWrap">
            <div class="networkKicker">ELITE REACTION RUSH</div>
            <div class="miniTitle">REACTION RUSH COMPLETE</div>
@@ -686,7 +737,7 @@ function renderMiniGame(state){
 
  const gib=gameType==='gibberish';
  const miniTitle=gib?(m.mode==='adult'?'ELITE GIBBERISH AFTER DARK':'ELITE GIBBERISH'):'ELITE QUICK 3';
- setBackground('/assets/quick_3_bg.png');
+ setBackground(gib ? null : '/assets/quick_3_bg.png');
 
  if(gib){
    const seconds=Math.max(0,Number(m.seconds_remaining||0));
@@ -698,7 +749,7 @@ function renderMiniGame(state){
    const puzzleCount=Number(m.question_count||3);
    const difficulty=String(m.difficulty||'').toUpperCase();
    if(phase==='intro'){
-     html=`<div class="networkShell miniGameShell"><div class="miniWrap gibWrap">
+     html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap">
        <div class="gibKicker">ELITE NETWORK MINI-GAME</div>
        <div class="miniTitle">${esc(miniTitle)}</div>
        <div class="miniSub">3 PHRASES · TYPE YOUR GUESS · 35 SECONDS EACH</div>
@@ -706,7 +757,7 @@ function renderMiniGame(state){
      </div></div>`;
    }
    else if(phase==='outro'){
-     html=`<div class="networkShell miniGameShell"><div class="miniWrap gibWrap">
+     html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap">
        <div class="gibKicker">${esc(miniTitle)}</div>
        <div class="miniTitle">GIBBERISH COMPLETE!</div>
        <div class="miniSub">FINAL TOP SCORES</div>
@@ -717,9 +768,9 @@ function renderMiniGame(state){
      const label=showingAnswer?'ANSWER REVEAL':'SAY IT OUT LOUD!';
      const answer=showingAnswer
        ?`<div class="gibReveal">ANSWER: ${esc(q.answer_display||'')}</div>`
-       :`<div class="gibInstruction">TYPE THE REAL PHRASE ON YOUR PHONE · KEEP TRYING!</div>`;
+       :`<div class="gibInstruction">TYPE YOUR GUESS ON YOUR PHONE · KEEP TRYING!</div>`;
      const points=showingAnswer?'—':possiblePoints.toLocaleString('en-US');
-     html=`<div class="networkShell miniGameShell"><div class="miniWrap gibWrap">
+     html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap gibPlay">
        <div class="gibKicker">${esc(miniTitle)}</div>
        <div class="gibRound">PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
        <div class="gibHud">
@@ -729,7 +780,7 @@ function renderMiniGame(state){
        <div class="gibPhrase">${esc(q.question||'')}</div>
        ${answer}
        <div class="gibBottom">
-         <div>${label}${showingAnswer?'':' · WRONG GUESSES LOWER YOUR PERSONAL SCORE'}</div>
+         <div>${label}${showingAnswer?'':' · WRONG GUESSES COST POINTS'}</div>
          ${showingAnswer?gibScoreboard(m):''}
        </div>
      </div></div>`;
