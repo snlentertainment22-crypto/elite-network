@@ -634,17 +634,19 @@ function renderMiniGame(state){
  }
 
  // ==========================================================
- // QUICK 3
+ // QUICK 3 / ELITE GIBBERISH
  // ==========================================================
 
+ const gib=gameType==='gibberish';
+ const miniTitle=gib?(m.mode==='adult'?'ELITE GIBBERISH AFTER DARK':'ELITE GIBBERISH'):'ELITE QUICK 3';
  setBackground('/assets/quick_3_bg.png');
 
  if(phase==='intro'){
-   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">Elite Quick 3</div><div class="miniSub">3 QUESTIONS  -  12 SECONDS EACH</div><div class="networkNext">Play along from your table.</div></div></div>`;
+   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">${esc(miniTitle)}</div><div class="miniSub">${gib?'SAY IT OUT LOUD. DECODE THE PHRASE!':'3 QUESTIONS  -  12 SECONDS EACH'}</div><div class="networkNext">Play along from your table.</div></div></div>`;
  }
 
  else if(phase==='outro'){
-   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE QUICK 3</div><div class="miniTitle">3 Down.</div><div class="miniSub">How many did you get?</div><div class="networkNext">${next}</div></div></div>`;
+   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">${esc(miniTitle)}</div><div class="miniTitle">${gib?'Puzzle complete!':'3 Down.'}</div><div class="miniSub">${gib?'Did you crack it?':'How many did you get?'}</div><div class="networkNext">${next}</div></div></div>`;
  }
 
  else{
@@ -666,12 +668,12 @@ function renderMiniGame(state){
      <div class="networkShell miniGameShell">
        <div class="miniWrap quick3Panel">
          <div class="miniTimer">${Math.ceil(m.seconds_remaining||0)}</div>
-         <div class="miniCategory">${esc(q.category||'TRIVIA')}</div>
+         <div class="miniCategory">${gib?'SAY IT OUT LOUD':' '+esc(q.category||'TRIVIA')}</div>
          <div class="miniQuestion">${esc(q.question||'')}</div>
          <div class="miniChoices">${choices}</div>
          ${answer}
          <div class="miniProgress">
-           QUESTION ${m.question_number||1} OF ${m.question_count||3}
+           ${gib?'ELITE GIBBERISH':`QUESTION ${m.question_number||1} OF ${m.question_count||3}`}
             -  ${reveal?'ANSWER REVEAL':'MAKE YOUR PICK'}
          </div>
        </div>

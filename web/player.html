@@ -735,22 +735,23 @@ function render(state){
 
 
     // ======================================================
-    // QUICK 3
+    // QUICK 3 / ELITE GIBBERISH
     // ======================================================
 
+    const gib=gameType==='gibberish';
+    const miniTitle=gib?(mini.mode==='adult'?'GIBBERISH AFTER DARK':'ELITE GIBBERISH'):'ELITE QUICK 3';
     const reveal=phase==='reveal';
 
     document.getElementById('category').textContent=
-      mq.category||'QUICK 3';
+      gib?'SAY IT OUT LOUD':(mq.category||'QUICK 3');
 
-    document.getElementById('mode').textContent=
-      'ELITE QUICK 3';
+    document.getElementById('mode').textContent=miniTitle;
 
     document.getElementById('pointValue').textContent=
       mini.question_number||1;
 
     document.getElementById('pointLabel').textContent=
-      `OF ${mini.question_count||3}`;
+      gib?'PUZZLE':`OF ${mini.question_count||3}`;
 
     document.getElementById('timer').textContent=
       Math.ceil(mini.seconds_remaining||0);
@@ -759,8 +760,8 @@ function render(state){
     if(phase==='intro'){
 
       content.innerHTML=`
-        <div class="big">ELITE QUICK 3</div>
-        <div class="question">Get ready!</div>
+        <div class="big">${miniTitle}</div>
+        <div class="question">${gib?'Say the nonsense words out loud!':'Get ready!'}</div>
       `;
 
       message.textContent=
@@ -773,8 +774,8 @@ function render(state){
     if(phase==='outro'){
 
       content.innerHTML=`
-        <div class="big">QUICK 3 COMPLETE</div>
-        <div class="question">Trivia starts soon.</div>
+        <div class="big">${miniTitle} COMPLETE</div>
+        <div class="question">More Elite games are coming up.</div>
       `;
 
       message.textContent=
@@ -834,8 +835,7 @@ function render(state){
 
     content.innerHTML=`
       <div class="big">
-        QUICK 3 • ${mini.question_number||1}
-        OF ${mini.question_count||3}
+        ${gib?miniTitle:`QUICK 3 • ${mini.question_number||1} OF ${mini.question_count||3}`}
       </div>
 
       <div class="question">
@@ -857,8 +857,9 @@ function render(state){
 
       }else if(miniResponse.correct){
 
-        message.textContent=
-          'Correct!';
+        message.textContent=gib
+          ?`Correct! +${Number(miniResponse.points||0)} points`
+          :'Correct!';
 
       }else{
 

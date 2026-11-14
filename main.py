@@ -62,7 +62,7 @@ def get_public_base_url():
 def get_player_join_url():
     return get_public_base_url() + "/player"
 POLL_MS = 250
-APP_BUILD = "NETWORK-SHELL-1E-SCORE-ROTATION"
+APP_BUILD = "NETWORK-SHELL-1F-GIBBERISH"
 
 
 
@@ -1066,6 +1066,24 @@ class MiniGameController:
 
 
         self.questions = eligible
+        self.gibberish_bank = {"regular": [], "adult": []}
+        try:
+            with (BASE_DIR / "gibberish_phrases.json").open("r", encoding="utf-8") as source:
+                content = json.load(source)
+            for mode in ("regular", "adult"):
+                self.gibberish_bank[mode] = [
+                    p for p in content.get(mode, [])
+                    if len(p.get("choices", [])) == 4
+                    and 0 <= int(p.get("correct_index", -1)) < 4
+                ]
+        except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+            # Keep Blitz, Skee-Ball and Reaction Rush usable if
+            # the optional content file is missing or invalid.
+            print(f"GIBBERISH BANK NOT READY: {exc}")
+        self.gibberish_decks = {"regular": [], "adult": []}
+        self.gibberish_mode = "regular"
+        self.gibberish_current = None
+        self.gibberish_go_started = None
 
         self.active = False
         self.phase = "idle"
@@ -1183,6 +1201,7 @@ class MiniGameController:
         self,
         reason="manual",
         game_type="quick_3",
+        adult=False,
     ):
 
         with self.lock:
@@ -1199,6 +1218,7 @@ class MiniGameController:
                 "quick_3",
                 "reaction_rush",
                 "skee_ball",
+                "gibberish",
             ):
 
                 raise ValueError(
@@ -1218,6 +1238,20 @@ class MiniGameController:
                     "questions were found."
                 )
 
+
+            if game_type == "gibberish":
+                import random
+                self.gibberish_mode = "adult" if adult else "regular"
+                deck = self.gibberish_decks[self.gibberish_mode]
+                if not deck:
+                    deck.extend(self.gibberish_bank[self.gibberish_mode])
+                    random.shuffle(deck)
+                if not deck:
+                    raise ValueError("No Elite Gibberish phrases available.")
+                # Shuffle once per cycle: no repeating the same clue until
+                # every clue in that content set has appeared.
+                self.gibberish_current = dict(deck.pop())
+                self.gibberish_go_started = None
 
             self.game_type = game_type
 
@@ -1274,6 +1308,14 @@ class MiniGameController:
                     "ELITE SKEE-BALL CHALLENGE"
                 )
 
+
+            elif game_type == "gibberish":
+                self.title = (
+                    "ELITE GIBBERISH AFTER DARK" if adult
+                    else "ELITE GIBBERISH"
+                )
+                self.deadline = time.monotonic() + 5.0
+                self._log(f"MINI-GAME -> {self.title}")
 
             elif game_type == "reaction_rush":
 
@@ -1547,6 +1589,27 @@ class MiniGameController:
 
                     return
 
+
+            # ================================================
+            # ELITE GIBBERISH (one original phonetic puzzle)
+            # ================================================
+            if self.game_type == "gibberish":
+                if self.phase == "intro":
+                    self.phase = "question"
+                    self.gibberish_go_started = now
+                    self.deadline = now + 20.0
+                elif self.phase == "question":
+                    self.phase = "reveal"
+                    self.deadline = now + 7.0
+                elif self.phase == "reveal":
+                    self.phase = "outro"
+                    self.deadline = now + 6.0
+                elif self.phase == "outro":
+                    self.active = False
+                    self.phase = "idle"
+                    self.deadline = None
+                    self._log("ELITE GIBBERISH COMPLETE -> CHANNEL")
+                return
 
             # ================================================
             # QUICK 3
@@ -2037,9 +2100,10 @@ class MiniGameController:
                 )
 
 
-            question = self.questions[
-                self.question_index
-            ]
+            question = (
+                self.gibberish_current if self.game_type == "gibberish"
+                else self.questions[self.question_index]
+            )
 
 
             choices = question.get(
@@ -2094,6 +2158,12 @@ class MiniGameController:
                     ),
             }
 
+
+            if self.game_type == "gibberish":
+                response["points"] = (
+                    100 + int(max(0.0, self.deadline - time.monotonic()) * 10)
+                    if response["correct"] else 0
+                )
 
             self.responses[
                 response_key
@@ -2448,6 +2518,52 @@ class MiniGameController:
                         self.started_reason,
                 }
 
+
+            # ================================================
+            # GIBBERISH SNAPSHOT
+            # ================================================
+            if self.game_type == "gibberish":
+                question = None
+                if self.active and self.gibberish_current:
+                    clue = self.gibberish_current
+                    question = {
+                        "category": "AFTER DARK GIBBERISH" if self.gibberish_mode == "adult" else "ELITE GIBBERISH",
+                        "question": clue["phrase"],
+                        "choices": list(clue["choices"]),
+                    }
+                    # Don't disclose the answer to a phone before reveal.
+                    if self.phase in ("reveal", "outro"):
+                        question["correct_index"] = clue["correct_index"]
+                        question["answer_display"] = clue["answer_display"]
+                team_names = {}
+                if self.team_provider is not None:
+                    team_names = {
+                        str(t.get("id")): str(t.get("name", "PLAYER"))
+                        for t in self.team_provider() or []
+                    }
+                rankings = sorted(
+                    (
+                        {"name": team_names.get(str(v["team_id"]), "PLAYER"),
+                         "points": v.get("points", 0)}
+                        for v in self.responses.values()
+                    ),
+                    key=lambda x: -x["points"],
+                )
+                return {
+                    "active": self.active,
+                    "game_type": "gibberish",
+                    "title": self.title,
+                    "mode": self.gibberish_mode,
+                    "phase": self.phase,
+                    "seconds_remaining": round(remaining, 2),
+                    "question_index": 0,
+                    "question_number": 1,
+                    "question_count": 1,
+                    "question": question,
+                    "response_count": len(self.responses),
+                    "leaderboard": rankings[:5] if self.phase in ("reveal", "outro") else [],
+                    "started_reason": self.started_reason,
+                }
 
             # ================================================
             # QUICK 3 SNAPSHOT
@@ -4537,9 +4653,14 @@ class NetworkController:
             reason,
         ):
             try:
+                adult_gibberish = (
+                    game_type == "gibberish"
+                    and (now.hour >= 23 or now.hour < 1)
+                )
                 self.mini_game.start(
                     reason,
                     game_type=game_type,
+                    adult=adult_gibberish,
                 )
 
             except ValueError:
@@ -4830,6 +4951,20 @@ class NetworkController:
             self.mini_game.start(
                 "host test",
                 game_type="reaction_rush",
+            )
+
+    def run_gibberish_now(self, adult=None):
+        with self.lock:
+            self.tick()
+            if self.active_event_instance is not None:
+                raise ValueError("A scheduled Elite Blitz game is running right now.")
+            if self.mini_game.active:
+                self.mini_game.stop("host override")
+            if adult is None:
+                now = self.scheduler.now()
+                adult = now.hour >= 23 or now.hour < 1
+            self.mini_game.start(
+                "host test", game_type="gibberish", adult=adult,
             )
 
     def run_skee_ball_now(self):
@@ -6222,6 +6357,15 @@ class HostApp:
             fg="black",
             width=16,
         ).pack(side="left", padx=(6, 0))
+        tk.Button(
+            sim_line,
+            text="RUN GIBBERISH",
+            command=self.host_run_gibberish,
+            font=("Arial", 9, "bold"),
+            bg="#cb94ff",
+            fg="black",
+            width=17,
+        ).pack(side="left", padx=(6, 0))
         self.network_log_label = tk.Label(
             network_box, text="", font=("Consolas", 8), fg="#aaaaaa", bg="#151515",
             justify="left", anchor="w"
@@ -6362,6 +6506,9 @@ class HostApp:
         self._run_host_action(
             self.network_control.run_reaction_rush_now
         )
+
+    def host_run_gibberish(self):
+        self._run_host_action(self.network_control.run_gibberish_now)
 
     def host_run_skee_ball(self):
         self._run_host_action(
