@@ -492,7 +492,7 @@ function formatNetworkClock(iso){try{return new Date(iso).toLocaleTimeString([],
 function formatCountdown(seconds){const s=Math.max(0,Math.floor(Number(seconds||0)));const m=Math.floor(s/60),r=s%60;return `${m}:${String(r).padStart(2,'0')}`;}
 function formatLongCountdown(s){const m=Math.max(0,Math.floor(Number(s||0)/60));return m>=60?Math.floor(m/60)+' HR '+(m%60)+' MIN':m+' MIN';}
 function networkNextLine(network){const n=network?.next_event;if(!n)return 'More Elite programming coming up.';return `NEXT: ${esc(n.title||'')}  -  ${formatNetworkClock(n.start_iso)}`;}
-function setShowBug(state){const el=document.getElementById('showBug');const n=state.network||{};if(!n.game_active){el.className='showBug hidden';el.textContent='';return;}const profile=n.show_profile||'standard';const title=n.show_title||'ELITE BLITZ';el.className=`showBug ${profile}`;el.textContent=title;}
+function setShowBug(state){const el=document.getElementById('showBug');if(el){el.className='showBug hidden';el.textContent='';}}
 function renderMiniGame(state){
  const n=state.network||{},m=n.mini_game||{},q=m.question||{};
  const gameType=m.game_type||'quick_3';

@@ -17,7 +17,7 @@ if os.environ.get("ELITE_HEADLESS") == "1":
 else:
     import tkinter as tk
     from tkinter import messagebox, simpledialog, ttk
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -62,7 +62,7 @@ def get_public_base_url():
 def get_player_join_url():
     return get_public_base_url() + "/player"
 POLL_MS = 250
-APP_BUILD = "NETWORK-SHELL-1D-HEARTBEAT"
+APP_BUILD = "NETWORK-SHELL-1E-SCORE-ROTATION"
 
 
 
@@ -3412,6 +3412,19 @@ class GameEngine:
 
             self._touch()
 
+    def clear_registered_teams(self):
+        """Drop active phone sessions after a completed scheduled game.
+
+        Call only after durable scoreboard archival. A new session ID
+        forces old phones to display Join, rather than reusing stale IDs.
+        """
+        with self.lock:
+            self.teams.clear()
+            self.next_team_number = 1
+            self.server_session_id = secrets.token_urlsafe(12)
+            self.status_message = "Next game: waiting for new players"
+            self._touch()
+
     def reset_game(self):
         with self.lock:
             self.auto_game_running = False
@@ -4400,12 +4413,47 @@ class NetworkController:
             f"{program.get('title', 'ELITE BLITZ')}"
         )
 
+    def _archive_finished_show_locked(self):
+        """Append final Blitz results before clearing the registration roster.
+
+        No passwords, phone tokens, or IP addresses enter this archive.
+        In Render configure ELITE_SCORE_ARCHIVE_PATH on persistent storage.
+        """
+        from elite_network_scores import archive_completed_game
+        with self.engine.lock:
+            results = [
+                {
+                    "team_id": team["id"],
+                    "client_id": team.get("client_id", ""),
+                    "team_name": team["name"],
+                    "score": int(team.get("score", 0)),
+                    "correct_count": int(team.get("correct_count", 0)),
+                }
+                for team in self.engine.teams.values()
+            ]
+            archive_completed_game({
+                "event_instance": self.active_event_instance,
+                "game_title": self.engine.game_title,
+                "game_key": (self.active_event or {}).get("game_key", ""),
+                "show_title": (self.active_event or {}).get("title", ""),
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "teams": results,
+            })
+            self.engine.clear_registered_teams()
+
     def _finish_show_if_needed_locked(self):
         if self.active_event_instance is None:
             return
         with self.engine.lock:
             finished = self.engine.screen == "game_complete"
         if not finished:
+            return
+        # Archive succeeds BEFORE clearing players. On disk error, leave
+        # their scoreboard/registration untouched and retry next tick.
+        try:
+            self._archive_finished_show_locked()
+        except Exception as exc:
+            self.scheduler.record_event(f"SCORE ARCHIVE ERROR -> {exc}")
             return
         self.completed_event_instances.add(self.active_event_instance)
         title = (self.active_event or {}).get("title", "ELITE BLITZ")
