@@ -1,0 +1,413 @@
+{
+  "version": 1,
+  "puzzles": [
+    {
+      "id": "head-over-heels",
+      "difficulty": "easy",
+      "answer_display": "Head over heels",
+      "tiles": [
+        {
+          "text": "HEAD",
+          "row": 1,
+          "col": 2,
+          "style": "normal"
+        },
+        {
+          "text": "HEELS",
+          "row": 3,
+          "col": 2,
+          "style": "normal"
+        }
+      ]
+    },
+    {
+      "id": "mind-over-matter",
+      "difficulty": "easy",
+      "answer_display": "Mind over matter",
+      "tiles": [
+        {
+          "text": "MIND",
+          "row": 1,
+          "col": 2,
+          "style": "normal"
+        },
+        {
+          "text": "MATTER",
+          "row": 3,
+          "col": 2,
+          "style": "normal"
+        }
+      ]
+    },
+    {
+      "id": "read-between-lines",
+      "difficulty": "easy",
+      "answer_display": "Read between the lines",
+      "tiles": [
+        {
+          "text": "LINE",
+          "row": 1,
+          "col": 2,
+          "style": "small"
+        },
+        {
+          "text": "READ",
+          "row": 2,
+          "col": 2,
+          "style": "bright"
+        },
+        {
+          "text": "LINE",
+          "row": 3,
+          "col": 2,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "double-trouble",
+      "difficulty": "easy",
+      "answer_display": "Double trouble",
+      "tiles": [
+        {
+          "text": "TROUBLE",
+          "row": 2,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "TROUBLE",
+          "row": 2,
+          "col": 3,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "high-five",
+      "difficulty": "easy",
+      "answer_display": "High five",
+      "tiles": [
+        {
+          "text": "FIVE",
+          "row": 1,
+          "col": 2,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "under-pressure",
+      "difficulty": "easy",
+      "answer_display": "Under pressure",
+      "tiles": [
+        {
+          "text": "PRESSURE",
+          "row": 1,
+          "col": 2,
+          "style": "small"
+        },
+        {
+          "text": "UNDER",
+          "row": 3,
+          "col": 2,
+          "style": "normal"
+        }
+      ]
+    },
+    {
+      "id": "back-to-back",
+      "difficulty": "medium",
+      "answer_display": "Back to back",
+      "tiles": [
+        {
+          "text": "BACK",
+          "row": 2,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "BACK",
+          "row": 2,
+          "col": 3,
+          "style": "flipped"
+        }
+      ]
+    },
+    {
+      "id": "split-second",
+      "difficulty": "medium",
+      "answer_display": "Split second",
+      "tiles": [
+        {
+          "text": "SEC",
+          "row": 2,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "OND",
+          "row": 2,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "broken-heart",
+      "difficulty": "medium",
+      "answer_display": "Broken heart",
+      "tiles": [
+        {
+          "text": "HE",
+          "row": 2,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "ART",
+          "row": 2,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "falling-in-love",
+      "difficulty": "medium",
+      "answer_display": "Falling in love",
+      "tiles": [
+        {
+          "text": "LOVE",
+          "row": 1,
+          "col": 1,
+          "style": "tilt"
+        },
+        {
+          "text": "LOVE",
+          "row": 2,
+          "col": 2,
+          "style": "tilt"
+        },
+        {
+          "text": "LOVE",
+          "row": 3,
+          "col": 3,
+          "style": "tilt"
+        }
+      ]
+    },
+    {
+      "id": "right-under-nose",
+      "difficulty": "medium",
+      "answer_display": "Right under your nose",
+      "tiles": [
+        {
+          "text": "NOSE",
+          "row": 1,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "RIGHT",
+          "row": 3,
+          "col": 2,
+          "style": "normal"
+        }
+      ]
+    },
+    {
+      "id": "long-time-no-see",
+      "difficulty": "medium",
+      "answer_display": "Long time no see",
+      "tiles": [
+        {
+          "text": "LONG",
+          "row": 1,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "TIME",
+          "row": 1,
+          "col": 3,
+          "style": "small"
+        },
+        {
+          "text": "NO",
+          "row": 3,
+          "col": 1,
+          "style": "normal"
+        },
+        {
+          "text": "SEE",
+          "row": 3,
+          "col": 3,
+          "style": "normal"
+        }
+      ]
+    },
+    {
+      "id": "stand-in-line",
+      "difficulty": "hard",
+      "answer_display": "Stand in line",
+      "tiles": [
+        {
+          "text": "LINE",
+          "row": 1,
+          "col": 2,
+          "style": "small"
+        },
+        {
+          "text": "STAND",
+          "row": 2,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "LINE",
+          "row": 3,
+          "col": 2,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "three-blind-mice",
+      "difficulty": "hard",
+      "answer_display": "Three blind mice",
+      "tiles": [
+        {
+          "text": "MICE",
+          "row": 1,
+          "col": 2,
+          "style": "crossed"
+        },
+        {
+          "text": "MICE",
+          "row": 2,
+          "col": 2,
+          "style": "crossed"
+        },
+        {
+          "text": "MICE",
+          "row": 3,
+          "col": 2,
+          "style": "crossed"
+        }
+      ]
+    },
+    {
+      "id": "all-for-one",
+      "difficulty": "hard",
+      "answer_display": "All for one",
+      "tiles": [
+        {
+          "text": "ALL",
+          "row": 1,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "ALL",
+          "row": 1,
+          "col": 3,
+          "style": "small"
+        },
+        {
+          "text": "ONE",
+          "row": 2,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "ALL",
+          "row": 3,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "ALL",
+          "row": 3,
+          "col": 3,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "forgive-and-forget",
+      "difficulty": "hard",
+      "answer_display": "Forgive and forget",
+      "tiles": [
+        {
+          "text": "4",
+          "row": 1,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "GIVE",
+          "row": 1,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "4",
+          "row": 3,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "GET",
+          "row": 3,
+          "col": 2,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "piece-of-cake",
+      "difficulty": "hard",
+      "answer_display": "Piece of cake",
+      "tiles": [
+        {
+          "text": "CA",
+          "row": 2,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "KE",
+          "row": 2,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "six-feet-under",
+      "difficulty": "hard",
+      "answer_display": "Six feet under",
+      "tiles": [
+        {
+          "text": "6",
+          "row": 1,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "FEET",
+          "row": 2,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "UNDER",
+          "row": 3,
+          "col": 2,
+          "style": "small"
+        }
+      ]
+    }
+  ]
+}

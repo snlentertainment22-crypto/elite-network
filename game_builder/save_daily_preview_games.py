@@ -438,7 +438,15 @@ def create_game(
 def build_selection(
     seed: int,
     excluded_ids: set[int] | None = None,
+    game_counts: tuple[int, int, int] = (3, 3, 3),
+    reserve_sports: bool = False,
 ):
+
+    # Keep legacy nine-game test builds unchanged. The live Auto Builder
+    # explicitly requests (1 Sports, 2 Regular, 1 After Dark).
+    sports_count, regular_count, after_dark_count = game_counts
+    if any(type(count) is not int or count < 1 for count in game_counts):
+        raise ValueError("game_counts must contain positive integers")
 
     if excluded_ids is None:
         excluded_ids = set()
@@ -468,7 +476,7 @@ def build_selection(
 
     sports_games = build_games(
         sports_pool,
-        3,
+        sports_count,
         rng,
     )
 
@@ -483,6 +491,12 @@ def build_selection(
     # Excludes Sports questions already used that day.
     # --------------------------------------------------------
 
+    # Reserve the full Sports question pool for the seven-day Auto
+    # Builder so Regular games cannot exhaust it on earlier days.
+    sports_reserve = (
+        {int(question["id"]) for question in sports_pool}
+        if reserve_sports else set()
+    )
     regular_pool = (
         get_pool_questions(
             all_questions,
@@ -491,6 +505,8 @@ def build_selection(
                 excluded_ids
                 |
                 sports_used
+                |
+                sports_reserve
             ),
         )
     )
@@ -498,7 +514,7 @@ def build_selection(
 
     regular_games = build_games(
         regular_pool,
-        3,
+        regular_count,
         rng,
     )
 
@@ -534,7 +550,7 @@ def build_selection(
 
     after_dark_games = build_games(
         after_dark_pool,
-        3,
+        after_dark_count,
         rng,
     )
 

@@ -99,7 +99,12 @@ def next_standalone_mini(now, config):
                 if end <= begin:
                     end += timedelta(days=1)
                 every = max(5, int(window.get("every_minutes", 20)))
-                rotation = window.get("rotation") or ["quick_3"]
+                rotation = [
+                    kind for kind in (window.get("rotation") or ["reaction_rush", "skee_ball", "gibberish"])
+                    if kind in ("reaction_rush", "skee_ball", "gibberish")
+                ]
+                if not rotation:
+                    rotation = ["reaction_rush", "skee_ball", "gibberish"]
                 slot_index = 0
                 cursor = begin
                 while cursor < end:
@@ -108,7 +113,7 @@ def next_standalone_mini(now, config):
                     when = cursor + (timedelta(minutes=5) if sh == 11 and sm == 0 and slot_index == 0 else timedelta())
                     if 0 < (when - now).total_seconds() <= 3600:
                         kind = rotation[slot_index % len(rotation)]
-                        title = {"quick_3":"ELITE QUICK 3", "reaction_rush":"ELITE REACTION RUSH", "skee_ball":"ELITE SKEE-BALL CHALLENGE"}.get(kind, "ELITE MINI-GAME")
+                        title = {"reaction_rush":"ELITE REACTION RUSH", "skee_ball":"ELITE SKEE-BALL CHALLENGE", "gibberish":"ELITE GIBBERISH"}.get(kind, "ELITE MINI-GAME")
                         candidates.append({"game_type":kind, "title":title, "start_iso":when.isoformat(), "seconds_until":max(0,int((when-now).total_seconds()))})
                     cursor += timedelta(minutes=every)
                     slot_index += 1
@@ -1053,8 +1058,10 @@ class MiniGameController:
     Server-authoritative Elite Network mini-game controller.
 
     Supported:
-    - quick_3
     - reaction_rush
+    - skee_ball
+    - gibberish
+    - brain_warp (manual test only)
     """
 
     def __init__(
@@ -1137,6 +1144,32 @@ class MiniGameController:
             # Keep Blitz, Skee-Ball and Reaction Rush usable if
             # the optional content file is missing or invalid.
             print(f"GIBBERISH BANK NOT READY: {exc}")
+        # Brain Warp shares the proven Gibberish timers/scoring, not its content.
+        # Validation is strict so a malformed puzzle never interrupts the channel.
+        self.brain_warp_bank = []
+        try:
+            with (BASE_DIR / "brain_warp_puzzles.json").open("r", encoding="utf-8") as source:
+                warp_content = json.load(source)
+            allowed_styles = {"normal", "small", "large", "bright", "flipped", "tilt", "crossed", "tight"}
+            for puzzle in warp_content.get("puzzles", []):
+                tiles = puzzle.get("tiles", [])
+                if (puzzle.get("difficulty") not in ("easy", "medium", "hard")
+                    or not isinstance(puzzle.get("answer_display"), str)
+                    or not puzzle["answer_display"].strip()
+                    or not isinstance(tiles, list) or not 1 <= len(tiles) <= 9):
+                    continue
+                if any(not isinstance(tile, dict)
+                       or not isinstance(tile.get("text"), str)
+                       or not 1 <= len(tile["text"]) <= 12
+                       or type(tile.get("row")) is not int or not 1 <= tile["row"] <= 3
+                       or type(tile.get("col")) is not int or not 1 <= tile["col"] <= 3
+                       or tile.get("style", "normal") not in allowed_styles
+                       for tile in tiles):
+                    continue
+                self.brain_warp_bank.append(puzzle)
+        except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
+            print(f"BRAIN WARP BANK NOT READY: {exc}")
+        self.brain_warp_deck = []
         self.gibberish_decks = {"regular": [], "adult": []}
         self.gibberish_mode = "regular"
         self.gibberish_current = None
@@ -1161,7 +1194,7 @@ class MiniGameController:
 
         self.responses = {}
 
-        self.intro_seconds = 5.0
+        self.intro_seconds = 12.0
         self.question_seconds = 12.0
         self.reveal_seconds = 5.0
         self.outro_seconds = 6.0
@@ -1263,7 +1296,7 @@ class MiniGameController:
     def start(
         self,
         reason="manual",
-        game_type="quick_3",
+        game_type="reaction_rush",
         adult=False,
     ):
 
@@ -1271,17 +1304,22 @@ class MiniGameController:
 
             game_type = (
                 str(
-                    game_type or "quick_3"
+                    game_type or "reaction_rush"
                 )
                 .strip()
                 .lower()
             )
 
+            # Retired: Quick 3 consumed trivia questions unnecessarily.
+            # Keep its legacy methods for rollback but never start it.
+            if game_type == "quick_3":
+                raise ValueError("Quick 3 has been retired from Elite Network.")
+
             if game_type not in (
-                "quick_3",
                 "reaction_rush",
                 "skee_ball",
                 "gibberish",
+                "brain_warp",
             ):
 
                 raise ValueError(
@@ -1329,6 +1367,32 @@ class MiniGameController:
                     deck.remove(chosen)
                     selected.append(dict(chosen))
                 self.gibberish_mode = mode
+                self.gibberish_rounds = selected
+                self.gibberish_current = selected[0]
+                self.gibberish_go_started = None
+
+            if game_type == "brain_warp":
+                import random
+                levels = ("easy", "medium", "hard")
+                bank = self.brain_warp_bank
+                if any(not any(p.get("difficulty") == tier for p in bank) for tier in levels):
+                    raise ValueError("Brain Warp needs at least one valid easy, medium and hard rebus puzzle.")
+                deck = self.brain_warp_deck
+                if not deck:
+                    deck.extend(bank)
+                    random.shuffle(deck)
+                selected = []
+                for tier in levels:
+                    available = [p for p in deck if p.get("difficulty") == tier]
+                    if not available:
+                        refills = [p for p in bank if p.get("difficulty") == tier]
+                        random.shuffle(refills)
+                        deck.extend(refills)
+                        available = refills
+                    chosen = available[-1]
+                    deck.remove(chosen)
+                    selected.append(dict(chosen))
+                self.gibberish_mode = "regular"
                 self.gibberish_rounds = selected
                 self.gibberish_current = selected[0]
                 self.gibberish_go_started = None
@@ -1382,7 +1446,7 @@ class MiniGameController:
 
                 self.deadline = (
                     time.monotonic()
-                    + 4.0
+                    + self.intro_seconds
                 )
 
                 self._log(
@@ -1396,8 +1460,14 @@ class MiniGameController:
                     "ELITE GIBBERISH AFTER DARK" if adult
                     else "ELITE GIBBERISH"
                 )
-                self.deadline = time.monotonic() + 5.0
+                self.deadline = time.monotonic() + self.intro_seconds
                 self._log(f"MINI-GAME -> {self.title}")
+
+            elif game_type == "brain_warp":
+                self.title = "ELITE BRAIN WARP"
+                # Shared 12-second how-to screen.
+                self.deadline = time.monotonic() + self.intro_seconds
+                self._log("MINI-GAME -> ELITE BRAIN WARP")
 
             elif game_type == "reaction_rush":
 
@@ -1416,7 +1486,7 @@ class MiniGameController:
 
                 self.deadline = (
                     time.monotonic()
-                    + 4.0
+                    + self.intro_seconds
                 )
 
                 self._log(
@@ -1673,9 +1743,9 @@ class MiniGameController:
 
 
             # ================================================
-            # ELITE GIBBERISH: three puzzles, progressively harder.
+            # ELITE GIBBERISH / BRAIN WARP: three puzzles, progressively harder.
             # ================================================
-            if self.game_type == "gibberish":
+            if self.game_type in ("gibberish", "brain_warp"):
                 if self.phase == "intro":
                     self.phase = "question"
                     self.gibberish_go_started = now
@@ -1697,7 +1767,7 @@ class MiniGameController:
                     self.active = False
                     self.phase = "idle"
                     self.deadline = None
-                    self._log("ELITE GIBBERISH COMPLETE -> CHANNEL")
+                    self._log(f"{self.title} COMPLETE -> CHANNEL")
                 return
 
             # ================================================
@@ -2292,8 +2362,8 @@ class MiniGameController:
     def submit_gibberish_answer(self, team_id, answer_text, question_index):
         """Server-side typed-answer verification; never disclose the target before reveal."""
         with self.lock:
-            if not self.active or self.game_type != "gibberish":
-                raise ValueError("Elite Gibberish isn't active.")
+            if not self.active or self.game_type not in ("gibberish", "brain_warp"):
+                raise ValueError("No typed-answer mini-game is active.")
             if self.phase != "question" or self.deadline is None or time.monotonic() >= self.deadline:
                 raise ValueError("That puzzle is closed.")
             if type(question_index) is not int or question_index != self.question_index:
@@ -2303,7 +2373,7 @@ class MiniGameController:
             team_key = str(team_id)
             response_key = (self.question_index, team_key)
             if response_key in self.responses:
-                raise ValueError("You already solved this Gibberish puzzle!")
+                raise ValueError("You already solved this puzzle!")
             now = time.monotonic()
             if now - self.gibberish_last_submit.get(response_key, 0.0) < 0.75:
                 raise ValueError("Give it a moment before trying again.")
@@ -2312,7 +2382,11 @@ class MiniGameController:
             clue = self.gibberish_current or {}
             canonical = self._normalize_gibberish_text(clue.get("answer_display", ""))
             # Never use the gibberish clue or its distractors as alternative answers.
-            correct = bool(canonical and (candidate == canonical or self._gibberish_one_typo(candidate, canonical)))
+            # Brain Warp requires exact spelling (ignoring spaces/punctuation);
+            # preserve Gibberish's longstanding one-typo leniency.
+            correct = bool(canonical and (candidate == canonical or (
+                self.game_type == "gibberish" and self._gibberish_one_typo(candidate, canonical)
+            )))
             wrong_count = self.gibberish_wrong_guesses.get(response_key, 0)
             if not correct:
                 wrong_count += 1
@@ -2370,7 +2444,7 @@ class MiniGameController:
             )
 
 
-            if self.game_type == "gibberish":
+            if self.game_type in ("gibberish", "brain_warp"):
                 total = sum(
                     int(item.get("points", 0))
                     for item in self.responses.values()
@@ -2449,6 +2523,8 @@ class MiniGameController:
                     - time.monotonic(),
                 )
 
+
+            server_now_ms = int(time.time() * 1000)
 
             # ================================================
             # SKEE-BALL SNAPSHOT
@@ -2699,20 +2775,27 @@ class MiniGameController:
 
 
             # ================================================
-            # GIBBERISH SNAPSHOT
+            # GIBBERISH / BRAIN WARP SNAPSHOT
             # ================================================
-            if self.game_type == "gibberish":
+            if self.game_type in ("gibberish", "brain_warp"):
+                warp = self.game_type == "brain_warp"
                 question = None
                 if self.active and self.gibberish_current:
                     clue = self.gibberish_current
                     question = {
-                        "category": "AFTER DARK GIBBERISH" if self.gibberish_mode == "adult" else "ELITE GIBBERISH",
-                        "question": clue["phrase"],
-                        # Gibberish answers never travel to phones until reveal.
+                        "category": "ELITE BRAIN WARP" if warp else (
+                            "AFTER DARK GIBBERISH" if self.gibberish_mode == "adult" else "ELITE GIBBERISH"
+                        ),
                     }
-                    # Don't disclose the answer to a phone before reveal.
+                    if warp:
+                        question["question"] = "SOLVE THE VISUAL PHRASE"
+                        question["tiles"] = [dict(tile) for tile in clue["tiles"]]
+                    else:
+                        question["question"] = clue["phrase"]
+                    # Never disclose either game's answer until reveal.
                     if self.phase in ("reveal", "outro"):
-                        question["correct_index"] = clue["correct_index"]
+                        if not warp:
+                            question["correct_index"] = clue["correct_index"]
                         question["answer_display"] = clue["answer_display"]
                 team_names = {}
                 if self.team_provider is not None:
@@ -2731,11 +2814,16 @@ class MiniGameController:
                 )
                 return {
                     "active": self.active,
-                    "game_type": "gibberish",
+                    "game_type": self.game_type,
                     "title": self.title,
                     "mode": self.gibberish_mode,
                     "phase": self.phase,
                     "seconds_remaining": round(remaining, 2),
+                    # Paired server timestamps let TV and phones derive the
+                    # same live countdown despite different polling rates.
+                    # Server continues to enforce the monotonic deadline.
+                    "timer_server_now_ms": server_now_ms,
+                    "timer_deadline_ms": server_now_ms + int(remaining * 1000),
                     "question_index": self.question_index,
                     "question_number": self.question_index + 1,
                     "question_count": len(self.gibberish_rounds),
@@ -4848,15 +4936,16 @@ class NetworkController:
 
             except ValueError:
 
-                # Skee-Ball needs an active
-                # connected team. If nobody
-                # can play, use Quick 3.
+                # Skee-Ball needs an active connected team.
+                # Fall back to Reaction Rush, never Quick 3.
                 if game_type == "skee_ball":
 
                     fallback = config.get(
                         "skee_ball_fallback",
-                        "quick_3",
+                        "reaction_rush",
                     )
+                    if fallback not in ("reaction_rush", "gibberish"):
+                        fallback = "reaction_rush"
 
                     self.mini_game.start(
                         reason
@@ -4914,11 +5003,15 @@ class NetworkController:
                         "pre_blitz_mini_rotation"
                     )
                     or [
-                        "quick_3",
                         "reaction_rush",
+                        "gibberish",
                         "skee_ball",
                     ]
                 )
+                rotation = [
+                    kind for kind in rotation
+                    if kind in ("reaction_rush", "gibberish", "skee_ball")
+                ] or ["reaction_rush", "gibberish", "skee_ball"]
 
                 start_iso = (
                     next_event.get(
@@ -5072,9 +5165,13 @@ class NetworkController:
                 "rotation"
             )
             or [
-                "quick_3",
+                "reaction_rush", "gibberish", "skee_ball",
             ]
         )
+        rotation = [
+            kind for kind in rotation
+            if kind in ("reaction_rush", "gibberish", "skee_ball")
+        ] or ["reaction_rush", "gibberish", "skee_ball"]
 
         slot_number = (
             0 if startup_mini else elapsed // every
@@ -5117,14 +5214,8 @@ class NetworkController:
                 self._maybe_start_auto_mini_locked(base)
 
     def run_mini_game_now(self):
-        with self.lock:
-            self.tick()
-            if self.active_event_instance is not None:
-                raise ValueError("A scheduled Elite Blitz game is running right now.")
-            self.mini_game.start(
-                "host test",
-                game_type="quick_3",
-            )
+        # Backward-compatible host shortcut; Quick 3 is retired.
+        return self.run_reaction_rush_now()
 
     def run_reaction_rush_now(self):
         with self.lock:
@@ -5149,6 +5240,15 @@ class NetworkController:
             self.mini_game.start(
                 "host test", game_type="gibberish", adult=adult,
             )
+
+    def run_brain_warp_now(self):
+        with self.lock:
+            self.tick()
+            if self.active_event_instance is not None:
+                raise ValueError("A scheduled Elite Blitz game is running right now.")
+            if self.mini_game.active:
+                self.mini_game.stop("host override")
+            self.mini_game.start("host test", game_type="brain_warp")
 
     def run_skee_ball_now(self):
         with self.lock:
@@ -5183,7 +5283,7 @@ class NetworkController:
             elif mini.get("active"):
                 mini_type = mini.get(
                     "game_type",
-                    "quick_3",
+                    "reaction_rush",
                 )
 
                 program = {
@@ -6315,10 +6415,12 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
 
 
             if parsed.path == "/api/mini-answer":
-                # Only Gibberish accepts typed guesses; other mini-games keep
-                # their original choice-index protocol unchanged.
-                is_gibberish = NETWORK_CONTROL.mini_game.game_type == "gibberish"
-                if not is_gibberish:
+                # Gibberish and Brain Warp accept typed guesses; choice-index
+                # mini-games retain their original answer protocol.
+                is_typed_puzzle = NETWORK_CONTROL.mini_game.game_type in (
+                    "gibberish", "brain_warp"
+                )
+                if not is_typed_puzzle:
                     choice_index = payload.get("choice_index")
                     if isinstance(choice_index, bool):
                         raise ValueError("Invalid mini-game answer.")
@@ -6351,7 +6453,7 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
                             "to that team. Rejoin first."
                         )
 
-                if is_gibberish:
+                if is_typed_puzzle:
                     response = NETWORK_CONTROL.mini_game.submit_gibberish_answer(
                         team_id,
                         payload.get("answer_text", ""),
@@ -6597,10 +6699,7 @@ class HostApp:
             sim_line, text="LIVE TIME", command=self.host_network_live_time,
             font=("Arial", 9, "bold"), bg="#7cff8f", fg="black", width=10
         ).pack(side="left")
-        tk.Button(
-            sim_line, text="RUN QUICK 3", command=self.host_run_mini_game,
-            font=("Arial", 9, "bold"), bg="#ffd85a", fg="black", width=14
-        ).pack(side="left", padx=(6, 0))
+
 
         tk.Button(
             sim_line,
@@ -6629,6 +6728,15 @@ class HostApp:
             bg="#cb94ff",
             fg="black",
             width=17,
+        ).pack(side="left", padx=(6, 0))
+        tk.Button(
+            sim_line,
+            text="RUN BRAIN WARP",
+            command=self.host_run_brain_warp,
+            font=("Arial", 9, "bold"),
+            bg="#b18dff",
+            fg="black",
+            width=16,
         ).pack(side="left", padx=(6, 0))
         self.network_log_label = tk.Label(
             network_box, text="", font=("Consolas", 8), fg="#aaaaaa", bg="#151515",
@@ -6773,6 +6881,9 @@ class HostApp:
 
     def host_run_gibberish(self):
         self._run_host_action(self.network_control.run_gibberish_now)
+
+    def host_run_brain_warp(self):
+        self._run_host_action(self.network_control.run_brain_warp_now)
 
     def host_run_skee_ball(self):
         self._run_host_action(

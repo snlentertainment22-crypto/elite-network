@@ -20,34 +20,17 @@ from .save_daily_preview_games import (
 VALID_DAY_COUNTS = {1, 2, 3, 5, 7}
 
 QUESTIONS_PER_GAME = 24
-GAMES_PER_TYPE_PER_DAY = 3
-QUESTIONS_PER_TYPE_PER_DAY = (
-    QUESTIONS_PER_GAME
-    * GAMES_PER_TYPE_PER_DAY
-)
 
-
+# Actual Elite Network broadcast schedule (Central local time):
+# 12 PM Sports, 6 PM Regular, 7 PM Regular, 10 PM After Dark.
+GAME_COUNTS = (1, 2, 1)
 GAME_SCHEDULE = (
     (
         "SPORTS_BLITZ",
         "sports-blitz",
         "Sports Blitz",
-        14,
-        "2pm",
-    ),
-    (
-        "SPORTS_BLITZ",
-        "sports-blitz",
-        "Sports Blitz",
-        15,
-        "3pm",
-    ),
-    (
-        "SPORTS_BLITZ",
-        "sports-blitz",
-        "Sports Blitz",
-        16,
-        "4pm",
+        12,
+        "12pm",
     ),
     (
         "REGULAR_BLITZ",
@@ -64,34 +47,14 @@ GAME_SCHEDULE = (
         "7pm",
     ),
     (
-        "REGULAR_BLITZ",
-        "regular-blitz",
-        "Regular Blitz",
-        20,
-        "8pm",
-    ),
-    (
-        "AFTER_DARK_BLITZ",
-        "after-dark",
-        "After Dark",
-        21,
-        "9pm",
-    ),
-    (
         "AFTER_DARK_BLITZ",
         "after-dark",
         "After Dark",
         22,
         "10pm",
     ),
-    (
-        "AFTER_DARK_BLITZ",
-        "after-dark",
-        "After Dark",
-        23,
-        "11pm",
-    ),
 )
+GAMES_PER_DAY = len(GAME_SCHEDULE)
 
 
 def resolve_start_date(
@@ -148,10 +111,16 @@ def capacity_report(
         )
     )
 
+    # Regular games use only non-Sports inventory in Auto Build.
+    sports_ids = {
+        int(question["id"])
+        for question in get_pool_questions(all_questions, "sports")
+    }
     regular = len(
         get_pool_questions(
             all_questions,
             "regular",
+            excluded_ids=sports_ids,
         )
     )
 
@@ -162,35 +131,21 @@ def capacity_report(
         )
     )
 
-    required = (
-        QUESTIONS_PER_TYPE_PER_DAY
-        * days
-    )
+    sports_required = days * GAME_COUNTS[0] * QUESTIONS_PER_GAME
+    regular_required = days * GAME_COUNTS[1] * QUESTIONS_PER_GAME
+    after_dark_required = days * GAME_COUNTS[2] * QUESTIONS_PER_GAME
 
     return {
-        "days":
-            days,
-
-        "required_per_type":
-            required,
-
-        "sports_available":
-            sports,
-
-        "regular_available":
-            regular,
-
-        "after_dark_available":
-            after_dark,
-
-        "sports_ok":
-            sports >= required,
-
-        "regular_ok":
-            regular >= required,
-
-        "after_dark_ok":
-            after_dark >= required,
+        "days": days,
+        "sports_required": sports_required,
+        "regular_required": regular_required,
+        "after_dark_required": after_dark_required,
+        "sports_available": sports,
+        "regular_available": regular,
+        "after_dark_available": after_dark,
+        "sports_ok": sports >= sports_required,
+        "regular_ok": regular >= regular_required,
+        "after_dark_ok": after_dark >= after_dark_required,
     }
 
 
@@ -200,38 +155,17 @@ def _capacity_error(
 
     problems = []
 
-    required = int(
-        report[
-            "required_per_type"
-        ]
-    )
-
-    for label, field in (
-        (
-            "Sports",
-            "sports_available",
-        ),
-        (
-            "Regular",
-            "regular_available",
-        ),
-        (
-            "After Dark",
-            "after_dark_available",
-        ),
+    for label, field, required_field in (
+        ("Sports", "sports_available", "sports_required"),
+        ("Regular", "regular_available", "regular_required"),
+        ("After Dark", "after_dark_available", "after_dark_required"),
     ):
-
-        available = int(
-            report[field]
-        )
-
+        available = int(report[field])
+        required = int(report[required_field])
         if available < required:
-
             problems.append(
-                f"{label} needs "
-                f"{required} approved questions "
-                f"for this batch but only "
-                f"{available} are available."
+                f"{label} needs {required} questions "
+                f"for this batch but only {available} are available."
             )
 
     if not problems:
@@ -303,6 +237,8 @@ def plan_auto_games(
             seed,
             excluded_ids=
                 excluded_ids,
+            game_counts=GAME_COUNTS,
+            reserve_sports=True,
         )
 
 
@@ -420,8 +356,8 @@ def plan_auto_games(
 
     expected_questions = (
         days
-        * 9
-        * 24
+        * GAMES_PER_DAY
+        * QUESTIONS_PER_GAME
     )
 
     if len(excluded_ids) != expected_questions:
@@ -449,7 +385,7 @@ def plan_auto_games(
             ).isoformat(),
 
         "game_count":
-            days * 9,
+            days * GAMES_PER_DAY,
 
         "question_count":
             expected_questions,

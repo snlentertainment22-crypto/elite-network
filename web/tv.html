@@ -93,6 +93,82 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 .miniTitle{font-size:76px;font-weight:1000;text-transform:uppercase;line-height:1}.miniSub{font-size:27px;font-weight:900;color:#ffd85a;margin-top:16px}.miniCategory{font-size:24px;font-weight:1000;letter-spacing:.12em;color:#7eeaff;text-transform:uppercase;margin-bottom:14px}.miniQuestion{font-size:46px;font-weight:1000;line-height:1.12;margin:0 auto 24px;max-width:1100px}.miniChoices{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}.miniChoice{position:relative;padding:17px 20px;border-radius:16px;background:rgba(255,255,255,.075);border:2px solid rgba(255,255,255,.16);font-size:27px;font-weight:950;line-height:1.1}.miniChoice.correct{background:rgba(68,255,143,.19);border-color:#6cffaf;box-shadow:0 0 22px rgba(108,255,175,.22)}.miniTimer{position:absolute;right:4%;top:5%;font-size:56px;font-weight:1000;color:#fff}.miniProgress{font-size:21px;font-weight:900;color:#c9d5e8;margin-top:20px}.miniAnswer{font-size:26px;font-weight:950;color:#6cffaf;margin-top:15px}
 
 
+
+/* ELITE MINI-GAMES: 12-second text instructions on the existing channel theme. */
+.networkShell.miniRulesShell{
+ background:radial-gradient(circle at 18% 16%,#244a79 0%,#0b1a38 49%,#020713 100%);
+ padding:2.5%;
+}
+.networkShell.miniRulesShell.warpShell{
+ background:radial-gradient(circle at 75% 15%,#46316c 0%,#171a3b 47%,#04091b 100%);
+}
+.networkShell.miniRulesShell.reactionShell{
+ background:radial-gradient(circle at 70% 18%,#22546b 0%,#0b243a 52%,#030a18 100%);
+}
+.networkShell.miniRulesShell.gibberishShell{
+ background:radial-gradient(circle at 66% 17%,#48365c 0%,#182442 50%,#050b21 100%);
+}
+.miniRulesPanel{
+ width:85%;max-width:1460px;max-height:94%;padding:2% 4%;border-radius:29px;
+ background:linear-gradient(145deg,rgba(10,27,58,.96),rgba(3,9,23,.95));
+ border:3px solid rgba(126,234,255,.7);box-shadow:0 25px 75px rgba(0,0,0,.5);
+ display:flex;flex-direction:column;justify-content:center;align-items:center;
+}
+.miniRulesBrand{display:block;max-width:245px;max-height:100px;width:23%;object-fit:contain;filter:drop-shadow(0 5px 12px #000)}
+.miniRulesKicker{font-size:24px;font-weight:1000;letter-spacing:.17em;color:#81eaff;margin-top:4px}
+.miniRulesHeading{font-size:clamp(37px,4.7vw,78px);line-height:1;font-weight:1000;margin:10px 0 8px;text-shadow:0 3px 12px #000}
+.miniRulesSub{font-size:clamp(19px,1.9vw,31px);font-weight:950;color:#ffe17e;margin-bottom:16px}
+.miniRulesSteps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;width:100%}
+.miniRulesStep{padding:19px 14px 18px;border-radius:16px;background:rgba(255,255,255,.055);
+ border:2px solid rgba(120,231,255,.25);text-align:center;
+ font-size:clamp(16px,1.65vw,27px);font-weight:900;line-height:1.2;
+ display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px}
+.miniRulesStepNum{display:grid;place-items:center;width:45px;height:45px;border-radius:50%;
+ background:#136e93;border:2px solid #9bedff;font-weight:1000;font-size:26px;color:#fff;flex-shrink:0}
+.miniRulesFooter{font-size:clamp(16px,1.35vw,23px);font-weight:900;color:#bcdaf5;margin-top:17px;line-height:1.25}
+@media(max-height:750px){
+ .miniRulesPanel{max-height:96%;padding:1.4% 3%}
+ .miniRulesBrand{max-height:67px}
+ .miniRulesHeading{margin:5px 0;font-size:clamp(32px,4.1vw,63px)}
+ .miniRulesSub{margin-bottom:9px}
+ .miniRulesStep{padding:10px 8px;font-size:clamp(16px,1.45vw,23px);gap:5px}
+ .miniRulesStepNum{width:35px;height:35px;font-size:21px}
+ .miniRulesFooter{margin-top:9px}
+}
+/* Leave the persistent phone-join QR on the right of typed-answer instructions. */
+.miniRulesShell.qrVisible .miniRulesPanel{width:78%;margin-right:13%}
+
+/* Brain Warp: responsive TV rebus grid, no external images or scripts. */
+.networkShell.miniGameShell.warpShell{
+ background:radial-gradient(circle at 70% 15%,rgba(91,51,148,.65),transparent 54%),
+            radial-gradient(circle at 20% 80%,rgba(14,112,151,.45),transparent 60%),#080b24;
+}
+.warpWrap{width:91%;max-width:1480px;padding:2.4% 3%;}
+.warpBoard{width:min(78%,850px);height:clamp(270px,42vh,445px);margin:14px auto;
+ display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));
+ align-items:stretch;justify-items:stretch;border:4px solid #85ddff;border-radius:24px;
+ padding:15px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(6,13,45,.8));
+ box-shadow:inset 0 0 34px rgba(0,0,0,.35),0 15px 45px rgba(0,0,0,.32);}
+.warpTile{display:flex;justify-content:center;align-items:center;min-width:0;
+ font-size:clamp(23px,3vw,48px);font-weight:1000;letter-spacing:.03em;white-space:nowrap;
+ color:#fff;text-shadow:0 4px 15px #001;}
+.warpTile.small{font-size:clamp(15px,1.8vw,27px)}
+.warpTile.large{font-size:clamp(29px,3.7vw,58px)}
+.warpTile.bright{color:#ffe575}
+.warpTile.flipped{transform:scaleX(-1)}
+.warpTile.tilt{transform:rotate(-18deg)}
+.warpTile.crossed{text-decoration:line-through;text-decoration-thickness:5px;text-decoration-color:#ff628c}
+.warpTile.tight{font-size:clamp(13px,1.6vw,24px);letter-spacing:-.06em}
+.warpWrap .gibHud{margin-top:9px}
+.warpWrap .gibBottom{margin-top:6px}
+@media(max-height:800px){
+ .warpWrap{padding:1.1% 2%;}
+ .warpBoard{height:clamp(210px,36vh,315px);margin:5px auto;padding:8px}
+ .warpTile{font-size:clamp(18px,2.5vw,39px)}
+ .warpTile.small{font-size:clamp(13px,1.5vw,22px)}
+ .warpTile.large{font-size:clamp(22px,3vw,48px)}
+ .warpTile.tight{font-size:clamp(12px,1.5vw,20px)}
+}
 /* Elite Gibberish: TV-first layout with large, readable phrases. */
 .gibWrap{
  width:94%;max-width:none;min-height:83%;padding:2.2% 3% 2%;
@@ -605,6 +681,57 @@ function gibScoreboard(mini){
  return `<div class="miniProgress">TOP SCORES: ${leaders.map((r,i)=>`${i+1}. ${esc(r.name||'PLAYER')} ${Number(r.points||0)} pts`).join('  •  ')}</div>`;
 }
 
+function brainWarpBoard(tiles){
+ const cells=(Array.isArray(tiles)?tiles:[]).slice(0,9);
+ return `<div class="warpBoard" aria-label="Visual phrase puzzle">${cells.map(tile=>{
+   const row=Math.max(1,Math.min(3,Number(tile.row)||2));
+   const col=Math.max(1,Math.min(3,Number(tile.col)||2));
+   const styles=['normal','small','large','bright','flipped','tilt','crossed','tight'];
+   const style=styles.includes(tile.style)?tile.style:'normal';
+   return `<div class="warpTile ${style}" style="grid-row:${row};grid-column:${col}">${esc(tile.text||'')}</div>`;
+ }).join('')}</div>`;
+}
+
+
+// One reusable TV intro; all text stays editable, unlike baked-in JPG instruction slides.
+const ELITE_MINI_RULES={
+  skee_ball:{title:'ELITE SKEE-BALL',subtitle:'3 BALLS PER PLAYER',theme:'',steps:[
+   'Wait for your name on the TV.',
+   'Use your phone to AIM, then HOLD to charge power.',
+   'RELEASE to roll! Aim for the highest score.'
+  ],footer:'THREE BALLS PER TURN · WATCH THE TV FOR YOUR SCORE'},
+  reaction_rush:{title:'ELITE REACTION RUSH',subtitle:'FASTEST FINGER WINS',theme:'reactionShell',steps:[
+   'Get your finger ready on your phone.',
+   'Watch the TV. Wait until you see GO!',
+   'Tap immediately after GO! Fastest reaction wins.'
+  ],footer:'DO NOT TAP EARLY · WAIT FOR GO!'},
+  gibberish:{title:'ELITE GIBBERISH',subtitle:'SAY IT OUT LOUD',theme:'gibberishShell',steps:[
+   'Read the funny-sounding words aloud.',
+   'Figure out the REAL phrase they sound like.',
+   'Type your guess on your phone. Be quick!'
+  ],footer:'3 PHRASES · 35 SECONDS EACH · WRONG GUESSES COST POINTS'},
+  brain_warp:{title:'ELITE BRAIN WARP',subtitle:'THINK OUTSIDE THE BOX',theme:'warpShell',steps:[
+   'Study the word arrangement on the screen.',
+   'Decode the hidden saying or phrase.',
+   'Type the FULL answer on your phone. Faster is better!'
+  ],footer:'3 VISUAL PUZZLES · 35 SECONDS EACH · WRONG GUESSES COST POINTS'},
+};
+function miniInstructionScreen(kind,mode){
+ const r=ELITE_MINI_RULES[kind]||ELITE_MINI_RULES.reaction_rush;
+ const title=(kind==='gibberish'&&mode==='adult')?'ELITE GIBBERISH AFTER DARK':r.title;
+ const hasQr=kind==='gibberish'||kind==='brain_warp';
+ return `<div class="networkShell miniRulesShell ${r.theme} ${hasQr?'qrVisible':''}">
+  <div class="miniRulesPanel">
+   <img class="miniRulesBrand" src="/assets/channel/elite_trivia_logo.png" alt="Elite Trivia">
+   <div class="miniRulesKicker">HOW TO PLAY</div>
+   <div class="miniRulesHeading">${esc(title)}</div>
+   <div class="miniRulesSub">${esc(r.subtitle)}</div>
+   <div class="miniRulesSteps">${r.steps.map((s,i)=>`<div class="miniRulesStep"><span class="miniRulesStepNum">${i+1}</span><span>${esc(s)}</span></div>`).join('')}</div>
+   <div class="miniRulesFooter">${esc(r.footer)} · STARTING SHORTLY</div>
+  </div>
+ </div>`;
+}
+
 function renderMiniGame(state){
  const n=state.network||{},m=n.mini_game||{},q=m.question||{};
  const gameType=m.game_type||'quick_3';
@@ -642,8 +769,14 @@ function renderMiniGame(state){
          "
          allow="fullscreen"
        ></iframe>
+       <div id="eliteSkeeInstructions" style="position:absolute;inset:0;z-index:9;pointer-events:none">
+         ${miniInstructionScreen('skee_ball')}
+       </div>
      `;
    }
+   // Toggle only the cover. Never recreate the Skee-Ball iframe on poll.
+   const rules=document.getElementById('eliteSkeeInstructions');
+   if(rules)rules.classList.toggle('hidden',phase!=='intro');
 
    return;
  }
@@ -657,16 +790,7 @@ function renderMiniGame(state){
    setBackground(null);
 
    if(phase==='intro'){
-     html=`
-       <div class="networkShell miniGameShell reactionShell">
-         <div class="miniWrap">
-           <div class="networkKicker">ELITE NETWORK MINI-GAME</div>
-           <div class="miniTitle">ELITE REACTION RUSH</div>
-           <div class="miniSub">FASTEST FINGER WINS</div>
-           <div class="networkNext">Watch the screen. Do not tap early.</div>
-         </div>
-       </div>
-     `;
+     html=miniInstructionScreen('reaction_rush');
    }
 
    else if(phase==='waiting'){
@@ -746,12 +870,44 @@ function renderMiniGame(state){
  }
 
  // ==========================================================
- // QUICK 3 / ELITE GIBBERISH
+ // QUICK 3 / ELITE GIBBERISH / BRAIN WARP
  // ==========================================================
 
+ const warp=gameType==='brain_warp';
  const gib=gameType==='gibberish';
- const miniTitle=gib?(m.mode==='adult'?'ELITE GIBBERISH AFTER DARK':'ELITE GIBBERISH'):'ELITE QUICK 3';
- setBackground(gib ? null : '/assets/quick_3_bg.png');
+ const miniTitle=warp?'ELITE BRAIN WARP':(gib?(m.mode==='adult'?'ELITE GIBBERISH AFTER DARK':'ELITE GIBBERISH'):'ELITE QUICK 3');
+ setBackground((gib||warp) ? null : '/assets/quick_3_bg.png');
+
+ if(warp){
+   const seconds=Math.max(0,Number(m.seconds_remaining||0));
+   const showingAnswer=phase==='reveal';
+   const possiblePoints=100+Math.floor(seconds*10);
+   const puzzleNumber=Number(m.question_number||1);
+   const puzzleCount=Number(m.question_count||3);
+   const difficulty=String(m.difficulty||'').toUpperCase();
+   if(phase==='intro'){
+     html=miniInstructionScreen('brain_warp');
+   }else if(phase==='outro'){
+     html=`<div class="networkShell miniGameShell warpShell"><div class="miniWrap warpWrap">
+       <div class="gibKicker">ELITE BRAIN WARP</div><div class="miniTitle">BRAIN WARP COMPLETE!</div>
+       <div class="miniSub">FINAL TOP SCORES</div>${gibScoreboard(m)}
+       <div class="networkNext">${next}</div></div></div>`;
+   }else{
+     html=`<div class="networkShell miniGameShell warpShell"><div class="miniWrap warpWrap">
+       <div class="gibKicker">ELITE BRAIN WARP</div>
+       <div class="gibRound">VISUAL PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
+       <div class="gibHud">
+         <div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
+         <div class="gibMetric points"><div class="number">${showingAnswer?'—':possiblePoints.toLocaleString('en-US')}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div>
+       </div>
+       ${brainWarpBoard(q.tiles)}
+       <div class="gibInstruction">${showingAnswer?`<span class="gibReveal">ANSWER: ${esc(q.answer_display||'')}</span>`:'WHAT PHRASE DO YOU SEE? TYPE IT ON YOUR PHONE!'}</div>
+       <div class="gibBottom">${showingAnswer?gibScoreboard(m):'35 SECONDS PER PUZZLE · WRONG GUESSES COST POINTS'}</div>
+     </div></div>`;
+   }
+   document.getElementById('overlay').innerHTML=html;
+   return;
+ }
 
  if(gib){
    const seconds=Math.max(0,Number(m.seconds_remaining||0));
@@ -763,12 +919,7 @@ function renderMiniGame(state){
    const puzzleCount=Number(m.question_count||3);
    const difficulty=String(m.difficulty||'').toUpperCase();
    if(phase==='intro'){
-     html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap">
-       <div class="gibKicker">ELITE NETWORK MINI-GAME</div>
-       <div class="miniTitle">${esc(miniTitle)}</div>
-       <div class="miniSub">3 PHRASES · TYPE YOUR GUESS · 35 SECONDS EACH</div>
-       <div class="networkNext">SCAN THE QR CODE TO JOIN NOW</div>
-     </div></div>`;
+     html=miniInstructionScreen('gibberish',m.mode);
    }
    else if(phase==='outro'){
      html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap">
@@ -788,7 +939,7 @@ function renderMiniGame(state){
        <div class="gibKicker">${esc(miniTitle)}</div>
        <div class="gibRound">PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
        <div class="gibHud">
-         <div class="gibMetric"><div class="number">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
+         <div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
          <div class="gibMetric points"><div class="number">${points}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div>
        </div>
        <div class="gibPhrase">${esc(q.question||'')}</div>
@@ -805,7 +956,7 @@ function renderMiniGame(state){
 
 
  if(phase==='intro'){
-   html=`<div class="networkShell miniGameShell"><div class="miniWrap"><div class="networkKicker">ELITE NETWORK MINI-GAME</div><div class="miniTitle">${esc(miniTitle)}</div><div class="miniSub">${gib?'3 PHRASES  -  TYPE ANSWERS ON YOUR PHONE  -  35 SECONDS EACH!':'3 QUESTIONS  -  12 SECONDS EACH'}</div><div class="networkNext">Play along from your table.</div></div></div>`;
+   html=miniInstructionScreen('quick_3');
  }
 
  else if(phase==='outro'){
@@ -1291,7 +1442,7 @@ function renderNetworkProgram(state){
 
  return true;
 }
-function render(state){const overlay=document.getElementById('overlay');document.getElementById('footer').textContent='WWW.ELITETRIVIAOFWISCONSIN.COM';setShowBug(state);const gibQr=document.getElementById('gibJoinPanel');if(gibQr){const mini=state?.network?.mini_game||{};gibQr.classList.toggle('hidden',!(mini.active&&mini.game_type==='gibberish'));}if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
+function render(state){const overlay=document.getElementById('overlay');document.getElementById('footer').textContent='WWW.ELITETRIVIAOFWISCONSIN.COM';setShowBug(state);const gibQr=document.getElementById('gibJoinPanel');if(gibQr){const mini=state?.network?.mini_game||{};gibQr.classList.toggle('hidden',!(mini.active&&['gibberish','brain_warp'].includes(mini.game_type)));}if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
 let eliteWakeLock=null;
 async function keepEliteScreenAwake(){
  try{
@@ -1308,6 +1459,42 @@ const ELITE_TV_CLIENT_ID=(()=>{
   return id;
  }catch(e){return 'tv-'+Date.now().toString(36);}
 })();
+// Elite mini-games: use one server-owned deadline, not independent poll snapshots.
+// performance.now() makes this immune to differing TV/phone system clocks.
+const eliteMiniClock={active:false,deadlineMs:0,serverAtResponseMs:0,responsePerfMs:0,phase:''};
+function syncEliteMiniClock(state,sentPerf,receivedPerf){
+ const m=state?.network?.mini_game||{};
+ if(!m.active||!['brain_warp','gibberish'].includes(m.game_type)){
+  eliteMiniClock.active=false;
+  return;
+ }
+ const now=Number(m.timer_server_now_ms),deadline=Number(m.timer_deadline_ms);
+ if(!Number.isFinite(now)||!Number.isFinite(deadline)||deadline<now){
+  eliteMiniClock.active=false;
+  return;
+ }
+ // Network round-trip adjustment, capped to avoid huge clock jumps on a stalled fetch.
+ const halfRtt=Math.min(500,Math.max(0,receivedPerf-sentPerf)/2);
+ eliteMiniClock.active=true;
+ eliteMiniClock.deadlineMs=deadline;
+ eliteMiniClock.serverAtResponseMs=now+halfRtt;
+ eliteMiniClock.responsePerfMs=receivedPerf;
+ eliteMiniClock.phase=`${m.game_type}:${m.phase}:${m.question_index}`;
+}
+function eliteMiniSecondsLive(){
+ if(!eliteMiniClock.active)return null;
+ return Math.max(0,(eliteMiniClock.deadlineMs-eliteMiniClock.serverAtResponseMs
+  -(performance.now()-eliteMiniClock.responsePerfMs))/1000);
+}
+function updateEliteMiniTvClock(){
+ const sec=eliteMiniSecondsLive();
+ if(sec===null)return;
+ const timer=document.getElementById('eliteMiniTvSeconds');
+ if(timer){
+  timer.textContent=String(Math.ceil(sec));
+ }
+}
+setInterval(updateEliteMiniTvClock,125);
 const POLL_ACTIVE_MS=1000;
 const POLL_IDLE_MS=30000;
 const FETCH_TIMEOUT_MS=5000;
@@ -1418,17 +1605,21 @@ function nextTvPollMs(state){
 async function poll(){
  let nextMs=5000;
  try{
+  const sentPerf=performance.now();
   const r=await fetchWithTimeout('/api/state',{cache:'no-store'});
   if(!r.ok)throw new Error(`HTTP ${r.status}`);
   const d=await r.json();
+  const receivedPerf=performance.now();
   if(d.ok){
    if(!ensureCurrentBuild(d.state.app_build,d.state))return;
    nextMs=nextTvPollMs(d.state);
+   syncEliteMiniClock(d.state,sentPerf,receivedPerf);
    const key=renderKey(d.state);
    if(key!==LAST_RENDER_KEY){
     LAST_RENDER_KEY=key;
     render(d.state);
    }
+   updateEliteMiniTvClock();
   }
  }catch(e){
   document.getElementById('footer').textContent='Waiting for local Auto Elite server...';

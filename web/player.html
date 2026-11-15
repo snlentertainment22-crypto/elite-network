@@ -17,6 +17,19 @@ body{background:
   url('/assets/slides/category_bg.png') center/cover fixed no-repeat,#040507}
 .card{background:rgba(9,14,24,.90);border-color:rgba(99,223,255,.42)}
 .brand{color:#fff;text-shadow:0 0 10px rgba(255,78,220,.55),0 0 18px rgba(99,223,255,.35)}
+/* Brain Warp: mobile-friendly 3x3 visual word puzzle. */
+.phoneWarp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,72px);
+ background:linear-gradient(135deg,#212b53,#090e23);border:3px solid #7eeaff;
+ border-radius:16px;padding:8px;margin:15px 0;box-shadow:0 7px 22px rgba(0,0,0,.3)}
+.phoneWarpTile{display:flex;align-items:center;justify-content:center;min-width:0;color:white;
+ font-size:clamp(18px,5vw,28px);font-weight:1000;white-space:nowrap;letter-spacing:-.03em}
+.phoneWarpTile.small{font-size:clamp(13px,3.5vw,20px)}
+.phoneWarpTile.large{font-size:clamp(21px,5.6vw,32px)}
+.phoneWarpTile.bright{color:#ffe575}
+.phoneWarpTile.flipped{transform:scaleX(-1)}
+.phoneWarpTile.tilt{transform:rotate(-18deg)}
+.phoneWarpTile.crossed{text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:#ff628c}
+.phoneWarpTile.tight{font-size:clamp(11px,3vw,17px);letter-spacing:-.07em}
 </style>
 </head>
 <body>
@@ -64,6 +77,41 @@ let serverSessionId=localStorage.getItem('autoEliteServerSessionId')||'';
 let clientId=localStorage.getItem('autoEliteClientId')||'';
 if(!clientId){clientId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():`player-${Date.now()}-${Math.random().toString(36).slice(2)}`;localStorage.setItem('autoEliteClientId',clientId);}
 let busy=false,editingTeamName=false,playerCanRename=true,identityEpoch=0,joinInProgress=false;
+// Elite mini-games: use one server-owned deadline, not independent poll snapshots.
+// performance.now() makes this immune to differing TV/phone system clocks.
+const eliteMiniClock={active:false,deadlineMs:0,serverAtResponseMs:0,responsePerfMs:0,phase:''};
+function syncEliteMiniClock(state,sentPerf,receivedPerf){
+ const m=state?.network?.mini_game||{};
+ if(!m.active||!['brain_warp','gibberish'].includes(m.game_type)){
+  eliteMiniClock.active=false;
+  return;
+ }
+ const now=Number(m.timer_server_now_ms),deadline=Number(m.timer_deadline_ms);
+ if(!Number.isFinite(now)||!Number.isFinite(deadline)||deadline<now){
+  eliteMiniClock.active=false;
+  return;
+ }
+ // Network round-trip adjustment, capped to avoid huge clock jumps on a stalled fetch.
+ const halfRtt=Math.min(500,Math.max(0,receivedPerf-sentPerf)/2);
+ eliteMiniClock.active=true;
+ eliteMiniClock.deadlineMs=deadline;
+ eliteMiniClock.serverAtResponseMs=now+halfRtt;
+ eliteMiniClock.responsePerfMs=receivedPerf;
+ eliteMiniClock.phase=`${m.game_type}:${m.phase}:${m.question_index}`;
+}
+function eliteMiniSecondsLive(){
+ if(!eliteMiniClock.active)return null;
+ return Math.max(0,(eliteMiniClock.deadlineMs-eliteMiniClock.serverAtResponseMs
+  -(performance.now()-eliteMiniClock.responsePerfMs))/1000);
+}
+function updateEliteMiniPhoneClock(){
+ const sec=eliteMiniSecondsLive();
+ if(sec!==null){
+  const timer=document.getElementById('timer');
+  if(timer)timer.textContent=String(Math.ceil(sec));
+ }
+}
+setInterval(updateEliteMiniPhoneClock,125);
 let miniQuestionIndex=0;
 let gibDraft='';
 let gibFeedback='';
@@ -188,6 +236,16 @@ async function submitMiniAnswer(index){
     busy=false;
     pollOnce();
   }
+}
+
+function phoneBrainWarpBoard(tiles){
+ const styles=['normal','small','large','bright','flipped','tilt','crossed','tight'];
+ return `<div class="phoneWarp" aria-label="Visual word puzzle">${(Array.isArray(tiles)?tiles:[]).slice(0,9).map(tile=>{
+   const row=Math.max(1,Math.min(3,Number(tile.row)||2));
+   const col=Math.max(1,Math.min(3,Number(tile.col)||2));
+   const style=styles.includes(tile.style)?tile.style:'normal';
+   return `<div class="phoneWarpTile ${style}" style="grid-row:${row};grid-column:${col}">${esc(tile.text||'')}</div>`;
+ }).join('')}</div>`;
 }
 
 async function submitGibberishGuess(){
@@ -773,15 +831,16 @@ function render(state){
 
 
     // ======================================================
-    // QUICK 3 / ELITE GIBBERISH
+    // QUICK 3 / ELITE GIBBERISH / BRAIN WARP
     // ======================================================
 
-    const gib=gameType==='gibberish';
-    const miniTitle=gib?(mini.mode==='adult'?'GIBBERISH AFTER DARK':'ELITE GIBBERISH'):'ELITE QUICK 3';
+    const warp=gameType==='brain_warp';
+    const gib=gameType==='gibberish'||warp;
+    const miniTitle=warp?'ELITE BRAIN WARP':(gib?(mini.mode==='adult'?'GIBBERISH AFTER DARK':'ELITE GIBBERISH'):'ELITE QUICK 3');
     const reveal=phase==='reveal';
 
     document.getElementById('category').textContent=
-      gib?'SAY IT OUT LOUD':(mq.category||'QUICK 3');
+      warp?'SOLVE THE VISUAL PHRASE':(gib?'SAY IT OUT LOUD':(mq.category||'QUICK 3'));
 
     document.getElementById('mode').textContent=miniTitle;
 
@@ -799,7 +858,7 @@ function render(state){
 
       content.innerHTML=`
         <div class="big">${miniTitle}</div>
-        <div class="question">${gib?'Three puzzles. Type your guesses. Keep trying until you solve each one!':'Get ready!'}</div>
+        <div class="question">${warp?'Three visual rebus puzzles. Type the hidden phrase. Spelling counts!':(gib?'Three puzzles. Type your guesses. Keep trying until you solve each one!':'Get ready!')}</div>
       `;
 
       message.textContent=
@@ -825,7 +884,7 @@ function render(state){
 
     if(gib){
       // Polling happens every 250ms; preserve input focus and caret while typing.
-      const key=`${mini.mode||'regular'}:${mini.question_index||0}:${mq.question||''}`;
+      const key=`${gameType}:${mini.mode||'regular'}:${mini.question_index||0}:${warp?JSON.stringify(mq.tiles||[]):mq.question||''}`;
       if(gibPuzzleKey!==key){gibPuzzleKey=key;gibDraft='';gibFeedback='';}
       const solved=!!miniResponse?.correct;
       const templateKey=`${key}:${phase}:${solved}`;
@@ -834,33 +893,33 @@ function render(state){
         if(field)gibDraft=field.value;
         if(phase==='question'&&!solved){
           content.innerHTML=`
-            <div class="big">GIBBERISH • ${mini.question_number||1} OF ${mini.question_count||3}</div>
-            <div class="question">${esc(mq.question||'')}</div>
+            <div class="big">${warp?'BRAIN WARP':'GIBBERISH'} • ${mini.question_number||1} OF ${mini.question_count||3}</div>
+            ${warp?phoneBrainWarpBoard(mq.tiles):`<div class="question">${esc(mq.question||'')}</div>`}
             <input id="gibTypedAnswer" type="text" maxlength="120" autocomplete="off"
-              autocapitalize="sentences" spellcheck="false" placeholder="Type the real phrase"
-              aria-label="Your Gibberish answer"
+              autocapitalize="sentences" spellcheck="false" placeholder="${warp?'Type the hidden phrase':'Type the real phrase'}"
+              aria-label="Your typed puzzle answer"
               oninput="gibDraft=this.value"
               onkeydown="if(event.key==='Enter'){event.preventDefault();submitGibberishGuess();}">
             <button id="gibSubmitButton" onclick="submitGibberishGuess()">SUBMIT GUESS</button>
-            <div class="mode">Keep trying until you get it right or time runs out.</div>
+            <div class="mode">${warp?'Solve the rebus. Spelling counts.':'Keep trying until you get it right or time runs out.'}</div>
           `;
           document.getElementById('gibTypedAnswer').value=gibDraft;
         }else if(solved){
-          content.innerHTML=`<div class="big">SOLVED!</div><div class="question">${esc(mq.question||'')}</div>
+          content.innerHTML=`<div class="big">SOLVED!</div>${warp?phoneBrainWarpBoard(mq.tiles):`<div class="question">${esc(mq.question||'')}</div>`}
             <div class="locked">+${Number(miniResponse.points||0)} POINTS • ${Number(miniResponse.attempts||1)} ATTEMPT(S)</div>`;
         }else{
-          content.innerHTML=`<div class="big">ANSWER REVEAL</div><div class="question">${esc(mq.question||'')}</div>
+          content.innerHTML=`<div class="big">ANSWER REVEAL</div>${warp?phoneBrainWarpBoard(mq.tiles):`<div class="question">${esc(mq.question||'')}</div>`}
             <div class="correct-answer">${esc(mq.answer_display||'')}</div>`;
         }
         content.dataset.gibTemplate=templateKey;
       }
-      document.getElementById('scoreLabel').textContent=`${Number(miniResponse?.total_points||0)} gibberish pts`;
+      document.getElementById('scoreLabel').textContent=`${Number(miniResponse?.total_points||0)} ${warp?'brain warp':'gibberish'} pts`;
       if(phase==='reveal'){
-        message.textContent=solved?`Great job! +${Number(miniResponse.points||0)} points`:'Time! Next phrase coming.';
+        message.textContent=solved?`Great job! +${Number(miniResponse.points||0)} points`:'Time! Next puzzle coming.';
       }else if(solved){
         message.textContent=gibFeedback||'Correct! You are locked in.';
       }else{
-        message.textContent=gibFeedback||((miniResponse?.attempts||0)>0?`Keep guessing! ${miniResponse.attempts} incorrect so far.`:'Sound it out. Type your answer.');
+        message.textContent=gibFeedback||((miniResponse?.attempts||0)>0?`Keep guessing! ${miniResponse.attempts} incorrect so far.`:(warp?'Decode the visual phrase. Type your answer.':'Sound it out. Type your answer.'));
       }
       return;
     }
@@ -1049,12 +1108,17 @@ async function pollOnce(){
   if(joinInProgress)return;const requestEpoch=identityEpoch,requestTeamId=teamId,requestDeviceToken=deviceToken,requestServerSessionId=serverSessionId;
   try{
     const query=requestTeamId?`?team_id=${encodeURIComponent(requestTeamId)}&device_token=${encodeURIComponent(requestDeviceToken)}&server_session_id=${encodeURIComponent(requestServerSessionId)}`:'';
-    const res=await fetch(`/api/state${query}`,{cache:'no-store'}),data=await res.json();if(!data.ok)return;
+    const sentPerf=performance.now();
+    const res=await fetch(`/api/state${query}`,{cache:'no-store'}),data=await res.json();
+    const receivedPerf=performance.now();
+    if(!data.ok)return;
     if(data.state.app_build&&data.state.app_build!==PAGE_BUILD){const u=new URL(location.href);u.searchParams.set('build',data.state.app_build);u.searchParams.set('_reload',Date.now());location.replace(u.toString());return;}
     if(requestEpoch!==identityEpoch||requestTeamId!==teamId||requestDeviceToken!==deviceToken||requestServerSessionId!==serverSessionId)return;
     const liveSessionId=data.state.server_session_id||'';if(requestServerSessionId&&liveSessionId&&requestServerSessionId!==liveSessionId){clearSavedTeamIdentity(liveSessionId);showJoin('This phone needs to join the current local game.');return;}
     playerPollDelay=computePlayerPollDelay(data.state);
+    syncEliteMiniClock(data.state,sentPerf,receivedPerf);
     render(data.state);
+    updateEliteMiniPhoneClock();
   }catch(e){const target=teamId?document.getElementById('message'):joinMessage;target.textContent='Reconnecting to local Auto Elite server…';}
 }
 // Answers still POST instantly. These are only read-only state refreshes.
