@@ -444,6 +444,20 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 
 
 /* ELITE REVEAL COLOR */ .choiceCell.correct,.sixChoice.correct{background:#12a85b!important;border:4px solid #a5ffba!important;color:#fff!important;box-shadow:0 0 30px rgba(46,255,130,.85)!important;}
+
+/* Elite Network off-air / upcoming: channel brand + scan-safe static QR panels. */
+.eliteInfoPanel{position:absolute;inset:0;padding:4% 5%;display:grid;grid-template-columns:minmax(0,1fr) 31%;gap:3%;align-items:center;background:radial-gradient(circle at 20% 18%,#183a6b 0%,#08162e 48%,#020710 100%)}
+.eliteInfoMain{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px}
+.eliteInfoLogo{display:block;width:min(430px,82%);max-height:290px;object-fit:contain;filter:drop-shadow(0 10px 22px rgba(0,0,0,.55))}
+.eliteInfoKicker{font-size:clamp(18px,2vw,34px);font-weight:1000;letter-spacing:.13em;color:#78e8ff}
+.eliteInfoTitle{font-size:clamp(33px,4.3vw,76px);font-weight:1000;line-height:1.1;text-shadow:0 4px 18px #000;overflow-wrap:anywhere}
+.eliteInfoSubtitle{font-size:clamp(19px,2.3vw,36px);font-weight:900;color:#ffe17f}
+.eliteInfoNext{font-size:clamp(16px,1.5vw,24px);font-weight:800;line-height:1.25;color:#d5eaff}
+.eliteInfoQRs{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2.3%;min-width:0}
+.eliteInfoQRCard{width:min(100%,350px);padding:9px 9px 11px;text-align:center;border:2px solid rgba(109,229,255,.8);border-radius:15px;background:rgba(1,10,27,.93);box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.eliteInfoQRCard img{display:block;margin:auto;background:#fff;border:5px solid #fff;border-radius:5px;width:clamp(138px,12.8vw,220px);height:clamp(138px,12.8vw,220px);image-rendering:auto}
+.eliteInfoQRLabel{font-size:clamp(17px,1.4vw,23px);font-weight:950;color:#fff;margin-bottom:6px}
+.eliteInfoQRSub{font-size:clamp(12px,1.04vw,17px);font-weight:800;color:#c8d7ef;margin-top:7px}
 </style>
 </head>
 <body>
@@ -573,10 +587,10 @@ function renderCategory(state){
 function renderWaiting(state){setBackground(assetsFor(state).category);document.getElementById('overlay').innerHTML=`<div class="centerWrap"><div class="pill">ELITE TRIVIA BLITZ</div><div class="categoryTitle">Waiting to Start</div><div class="waitingCopy">${state.team_count} team${state.team_count===1?'':'s'} registered</div><div class="waitingCopy">Rules slides will play automatically when the game begins.</div></div>`;fitAll(state);}
 function renderRules(state){const a=assetsFor(state);setBackground(a.rules[state.rule_slide_key]||a.rules.welcome);document.getElementById('overlay').innerHTML='';}
 function renderQuestionBoard(state,reveal){const q=state.question;setBackground(assetsFor(state).question);const profile=state?.network?.show_profile||'standard';const isFinal=q.scoring_type==='final_wager';const left=state.timer_running?Math.ceil(state.timer_remaining):q.timer_seconds;const right=pointLabel(q,state);const teams=teamStatus(state,'answer');let content='';
- if(isFinal){const answer=reveal&&q.answer_display?`<div class="finalNote" style="bottom:5.5%;color:#6cffaf">ANSWER: ${esc(q.answer_display)}</div>`:'';content=`<div class="finalLabel">ELITE WAGER</div><div class="questionBox">${esc(q.question)}</div><div class="finalNote">Teams choose <span style="color:#ff6de8">ALL IN</span> or <span style="color:#63dfff">SAVE MY POINTS</span> on their phones.</div>${answer}`;}
+ if(isFinal){const answer=reveal&&q.answer_display?`<div class="finalNote" style="bottom:5.5%;color:#6cffaf">ANSWER: ${esc(q.answer_display)}</div>`:'';content=`<div class="questionBox">${esc(q.question)}</div><div class="finalNote">Teams choose <span style="color:#ff6de8">ALL IN</span> or <span style="color:#63dfff">SAVE MY POINTS</span> on their phones.</div>${answer}`;}
  else {const allChoices=(q.choices||[]);if(allChoices.length>4){const choices=allChoices.slice(0,6).map((txt,i)=>`<div class="sixChoice ${reveal&&i===q.correct_index?'correct':''}"><span>${esc(txt)}</span></div>`).join('');content=`<div class="questionBox">${esc(q.question)}</div><div class="sixMask"></div><div class="sixGrid">${choices}</div>`;}else{const choices=allChoices.slice(0,4).map((txt,i)=>`<div class="choiceCell ${reveal&&i===q.correct_index?'correct':''}"><span>${esc(txt)}</span></div>`).join('');content=`<div class="questionBox">${esc(q.question)}</div><div class="choiceGrid">${choices}</div>`;}}
  document.getElementById('overlay').innerHTML=`<div class="board ${profile}"><div class="topInfo questionHeader"><div class="left">${left}</div><div class="mid">${teams}</div><div class="right">${right}</div></div>${content}<div class="bottomBanner">${reveal?'Correct answer highlighted':'Answer on your phone before time runs out.'}</div></div>`;fitAll(state);}
-function renderRouletteWager(state){const q=state.question;setBackground(assetsFor(state).roulette);const profile=state?.network?.show_profile||'standard';const left=state.timer_running?Math.ceil(state.timer_remaining):q.wager_seconds;const teams=teamStatus(state,'wager');const right='--';document.getElementById('overlay').innerHTML=`<div class="board ${profile}"><div class="topInfo rouletteHeader"><div class="left">${left}</div><div class="mid">${teams}</div><div class="right">${right}</div></div><div class="questionBox" data-kind="hint">${esc(q.hint)}</div><div class="rouletteGrid"><div class="rouletteChoice">0%</div><div class="rouletteChoice">50%</div><div class="rouletteChoice">100%</div></div><div class="bottomBanner">Choose A, B, or C on your phone before the question appears.</div></div>`;fitAll(state);}
+function renderRouletteWager(state){const q=state.question;setBackground(assetsFor(state).roulette);const profile=state?.network?.show_profile||'standard';const left=state.timer_running?Math.ceil(state.timer_remaining):q.wager_seconds;const teams=teamStatus(state,'wager');const right='--';document.getElementById('overlay').innerHTML=`<div class="board ${profile}"><div class="topInfo rouletteHeader"><div class="left">${left}</div><div class="mid">${teams}</div><div class="right">${right}</div></div><div class="questionBox" data-kind="hint">${esc(String(q.hint||'').trim()||'MAKE YOUR WAGER NOW!')}</div><div class="rouletteGrid"><div class="rouletteChoice">0%</div><div class="rouletteChoice">50%</div><div class="rouletteChoice">100%</div></div><div class="bottomBanner">MAKE YOUR WAGER NOW! Choose 0%, 50%, or 100% on your phone.</div></div>`;fitAll(state);}
 function renderScores(state,title,sub){setBackground(assetsFor(state).category);document.getElementById('overlay').innerHTML=`<div class="scoreWrap"><div class="scoreTitle">${title}</div>${sub?`<div class="scoreSub">${sub}</div>`:''}<div class="scoreList">${scoreRows(state.scoreboard)}</div></div>`;}
 function renderSpeedBonus(state){setBackground(assetsFor(state).category);const rows=(state.speed_bonus_winners||[]).map(w=>`<div class="speedRow"><div>#${w.rank}</div><div>${esc(w.name)}</div><div>+${w.bonus} BONUS</div></div>`).join('');document.getElementById('overlay').innerHTML=`<div class="speedWrap"><div class="speedTitle">SPEED BONUS</div><div class="smallMsg">Fastest correct teams earn extra points.</div><div class="speedList">${rows||'<div class="smallMsg">No bonus winners this time.</div>'}</div></div>`;}
 function formatNetworkClock(iso){try{return new Date(iso).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});}catch(e){return '';}}
@@ -837,6 +851,50 @@ function renderMiniGame(state){
 }
 
 function guideMarkup(network){const rows=(network.today_guide||[]);if(!rows.length)return '<div class="main">Schedule loading...</div>';return `<div class="guideGrid">${rows.map(r=>`<div class="guideItem"><div class="guideTime">${formatNetworkClock(r.start_iso)}</div><div class="guideTitle">${esc(r.title||'')}</div></div>`).join('')}</div>`;}
+
+// QR graphics stay mounted across state polls so they do not flash when scanned.
+function renderEliteInfoPanel(mode, network){
+ const overlay=document.getElementById('overlay');
+ const next=network.next_event||{};
+ const isOffAir=mode==='off_air';
+ setBackground(null);
+ const existing=document.getElementById('eliteInfoPanel');
+ if(!existing || existing.dataset.mode!==mode){
+  overlay.innerHTML=`
+   <div id="eliteInfoPanel" class="eliteInfoPanel" data-mode="${mode}">
+    <div class="eliteInfoMain">
+     <img class="eliteInfoLogo" src="/assets/channel/elite_trivia_logo.png" alt="Elite Trivia">
+     <div class="eliteInfoKicker">ELITE NETWORK</div>
+     <div class="eliteInfoTitle" id="eliteInfoTitle"></div>
+     <div class="eliteInfoSubtitle" id="eliteInfoSubtitle"></div>
+     <div class="eliteInfoNext" id="eliteInfoNext"></div>
+    </div>
+    <div class="eliteInfoQRs">
+     <div class="eliteInfoQRCard">
+      <div class="eliteInfoQRLabel">FOLLOW ELITE TRIVIA</div>
+      <img src="/assets/channel/elite_facebook_qr.png" alt="QR code for Elite Trivia Facebook">
+      <div class="eliteInfoQRSub">Scan for our Facebook page</div>
+     </div>
+     <div class="eliteInfoQRCard">
+      <div class="eliteInfoQRLabel">ADVERTISE WITH US</div>
+      <img src="/assets/channel/elite_advertise_qr.png" alt="QR code for Elite advertising">
+      <div class="eliteInfoQRSub">Scan for advertising information</div>
+     </div>
+    </div>
+   </div>`;
+ }
+ const start=next.start_iso?formatNetworkClock(next.start_iso):'';
+ document.getElementById('eliteInfoTitle').textContent=isOffAir
+  ? 'PROGRAMMING RETURNS AT 11 AM'
+  : (next.title||'NEXT ELITE BLITZ');
+ document.getElementById('eliteInfoSubtitle').textContent=isOffAir
+  ? 'SEE YOU TOMORROW!'
+  : (start?'STARTS AT '+start:'COMING UP SOON');
+ document.getElementById('eliteInfoNext').textContent=isOffAir
+  ? (next.title?'NEXT: '+next.title+(start?' · '+start:''):'SPORTS · ELITE BLITZ · AFTER DARK · MINI-GAMES')
+  : 'SPORTS · ELITE BLITZ · AFTER DARK · MINI-GAMES';
+}
+
 function renderChannel(state){
  const n=state.network||{};
  const type=n.filler_type||'did_you_know';
@@ -879,20 +937,7 @@ function renderChannel(state){
  }
 
  if(type==='off_air'){
-  setBackground(null);
-
-  overlay.innerHTML=`
-   <div class="networkShell">
-    <div class="channelCard">
-     <div class="label">ELITE NETWORK</div>
-     <div class="main">PROGRAMMING RETURNS AT 11 AM</div>
-     <div class="small">
-      Sports  -  Elite Blitz  -  After Dark  -  Mini-Games
-     </div>
-    </div>
-   </div>
-  `;
-
+  renderEliteInfoPanel('off_air',n);
   return;
  }
 
@@ -1079,6 +1124,11 @@ function renderChannel(state){
   return;
  }
 
+ if(type==='coming_up'){
+  renderEliteInfoPanel('coming_up',n);
+  return;
+ }
+
  setBackground(null);
 
  const nx=n.next_event||{};
@@ -1104,48 +1154,40 @@ function renderNetworkProgram(state){
    nx.kind==='sports_blitz'?'sports':
    nx.kind==='after_dark'?'afterdark':'';
 
-  document.getElementById('screen').style.backgroundImage='none';
-
-  document.getElementById('overlay').innerHTML=`
-   <div class="networkShell ${klass}">
-    <div style="display:flex;align-items:center;justify-content:center;gap:60px;width:90%;margin:auto">
-
-     <div style="text-align:center">
-      <div class="networkKicker">ELITE NETWORK</div>
-
-      <div class="networkTitle">
-       ${n.lead_in_phase==="teams_ready"?"TEAMS READY":"JOIN THE GAME"}
+  setBackground(null);
+  const overlay=document.getElementById('overlay');
+  const eventKey=String(nx.id||nx.start_iso||nx.title||'blitz');
+  let panel=document.getElementById('eliteStableBlitzJoin');
+  // Only recreate the QR when the event changes or this screen is first shown.
+  // Normal 1-second countdown/team changes update text in place instead.
+  if(!panel||panel.dataset.eventKey!==eventKey||panel.dataset.variant!==klass){
+   overlay.innerHTML=`
+    <div class="networkShell ${klass}" id="eliteStableBlitzJoin">
+     <div style="display:flex;align-items:center;justify-content:center;gap:60px;width:90%;margin:auto">
+      <div style="text-align:center">
+       <div class="networkKicker">ELITE NETWORK</div>
+       <div class="networkTitle" id="eliteBlitzJoinHeading"></div>
+       <div class="networkSub" id="eliteBlitzJoinEvent"></div>
+       <div class="comingTime" id="eliteBlitzJoinCountdown"></div>
+       <div class="networkSub" id="eliteBlitzJoinTeams"></div>
+       <div class="networkNext">Scan the QR code with your phone</div>
       </div>
-
-      <div class="networkSub">
-       ${esc(nx.title||'ELITE BLITZ')}
-      </div>
-
-      <div class="comingTime">
-       ${formatCountdown(nx.seconds_until||0)}
-      </div>
-
-      <div class="networkSub">
-       ${state.team_count||0} TEAM${state.team_count===1?'':'S'} REGISTERED
-      </div>
-
-      <div class="networkNext">
-       Scan the QR code with your phone
+      <div style="background:white;padding:18px;border-radius:18px">
+       <img src="/join-qr.png" style="width:300px;height:300px;display:block" alt="Join Elite Trivia">
       </div>
      </div>
-
-     <div style="background:white;padding:18px;border-radius:18px">
-      <img
-       src="/join-qr.png"
-       style="width:300px;height:300px;display:block"
-       alt="Join Elite Trivia"
-      >
-     </div>
-
-    </div>
-   </div>
-  `;
-
+    </div>`;
+   panel=document.getElementById('eliteStableBlitzJoin');
+   panel.dataset.eventKey=eventKey;
+   panel.dataset.variant=klass;
+  }
+  document.getElementById('eliteBlitzJoinHeading').textContent=
+   n.lead_in_phase==='teams_ready'?'TEAMS READY':'JOIN THE GAME';
+  document.getElementById('eliteBlitzJoinEvent').textContent=nx.title||'ELITE BLITZ';
+  document.getElementById('eliteBlitzJoinCountdown').textContent=formatCountdown(nx.seconds_until||0);
+  const teams=Number(state.team_count||0);
+  document.getElementById('eliteBlitzJoinTeams').textContent=
+   `${teams} TEAM${teams===1?'':'S'} REGISTERED`;
   return true;
  }
  if(n.lead_in_phase==='teams_ready'){
@@ -1190,22 +1232,35 @@ function renderNetworkProgram(state){
  if(n.standalone_mini_signup && n.standalone_mini_signup.seconds_until <= 300 && kind==='channel'){
   const upcoming=n.standalone_mini_signup;
   setBackground(null);
-  document.getElementById('overlay').innerHTML=`
-   <div class="networkShell">
-    <div style="display:flex;align-items:center;justify-content:center;gap:60px;width:90%;margin:auto">
-     <div style="text-align:center;max-width:65%">
-      <div class="networkKicker">ELITE NETWORK MINI-GAME</div>
-      <div class="networkTitle" style="font-size:66px">SCAN TO JOIN</div>
-      <div class="networkSub">${esc(upcoming.title||'ELITE MINI-GAME')}</div>
-      <div class="comingTime">${formatCountdown(upcoming.seconds_until||0)}</div>
-      <div class="networkSub">${state.team_count||0} TEAM${state.team_count===1?'':'S'} REGISTERED</div>
-      <div class="networkNext">Scan now to play when the countdown ends!</div>
+  const overlay=document.getElementById('overlay');
+  const eventKey=String(upcoming.id||upcoming.start_iso||upcoming.title||upcoming.game_type||'mini');
+  let panel=document.getElementById('eliteStableMiniJoin');
+  // Keep the QR image node mounted while updating the countdown once per second.
+  if(!panel||panel.dataset.eventKey!==eventKey){
+   overlay.innerHTML=`
+    <div class="networkShell" id="eliteStableMiniJoin">
+     <div style="display:flex;align-items:center;justify-content:center;gap:60px;width:90%;margin:auto">
+      <div style="text-align:center;max-width:65%">
+       <div class="networkKicker">ELITE NETWORK MINI-GAME</div>
+       <div class="networkTitle" style="font-size:66px">SCAN TO JOIN</div>
+       <div class="networkSub" id="eliteMiniJoinEvent"></div>
+       <div class="comingTime" id="eliteMiniJoinCountdown"></div>
+       <div class="networkSub" id="eliteMiniJoinTeams"></div>
+       <div class="networkNext">Scan now to play when the countdown ends!</div>
+      </div>
+      <div style="background:white;padding:18px;border-radius:18px;flex-shrink:0">
+       <img src="/join-qr.png" alt="Scan to join Elite Network" style="width:300px;height:300px;display:block">
+      </div>
      </div>
-     <div style="background:white;padding:18px;border-radius:18px;flex-shrink:0">
-      <img src="/join-qr.png" alt="Scan to join Elite Network" style="width:300px;height:300px;display:block">
-     </div>
-    </div>
-   </div>`;
+    </div>`;
+   panel=document.getElementById('eliteStableMiniJoin');
+   panel.dataset.eventKey=eventKey;
+  }
+  document.getElementById('eliteMiniJoinEvent').textContent=upcoming.title||'ELITE MINI-GAME';
+  document.getElementById('eliteMiniJoinCountdown').textContent=formatCountdown(upcoming.seconds_until||0);
+  const teams=Number(state.team_count||0);
+  document.getElementById('eliteMiniJoinTeams').textContent=
+   `${teams} TEAM${teams===1?'':'S'} REGISTERED`;
   return true;
  }
  if(kind==='mini_game'){
