@@ -833,6 +833,7 @@ class NetworkScheduler:
                             f"/channel-content/"
                             f"{filler_type}/"
                             f"{media_index}?v={media_file_version(media_file)}"
+                            + ("&clip_nocache=1" if filler_type == "funny_clip" else "")
                         ),
                 }
 
@@ -934,6 +935,7 @@ class NetworkScheduler:
                             "url": (
                                 f"/channel-content/{cue_kind}/{media_index}"
                                 f"?v={media_file_version(media_file)}"
+                                + ("&clip_nocache=1" if cue_kind == "funny_clip" else "")
                             ),
                         }
 
@@ -5499,7 +5501,7 @@ class EliteRequestHandler(BaseHTTPRequestHandler):
             return
         self._send_bytes(data, "application/json; charset=utf-8", status)
 
-    def _send_cached_media_file(self, file_path, content_type, request_version="", allow_build_version=False):
+    def _send_cached_media_file(self, file_path, content_type, request_version="", allow_build_version=False, disable_cache=False):
         """Send assets without loading videos into RAM, with HTTP cache/Range support.
 
         Versioned URLs may cache immutably; unversioned URLs revalidate via
@@ -5513,12 +5515,13 @@ class EliteRequestHandler(BaseHTTPRequestHandler):
         # shorter than immutable because local testing can edit assets.
         build_version = APP_BUILD + "-" + os.environ.get("RENDER_GIT_COMMIT", "local")[:12]
         build_cache = allow_build_version and request_version == build_version
-        cache = ("public, max-age=31536000, immutable" if immutable
+        cache = ("no-store, no-cache, must-revalidate, max-age=0" if disable_cache
+                 else "public, max-age=31536000, immutable" if immutable
                  else "public, max-age=3600" if build_cache
                  else "public, max-age=0, must-revalidate")
         total = stat.st_size
         range_header = self.headers.get("Range", "").strip()
-        if not range_header and self.headers.get("If-None-Match", "") == etag:
+        if not disable_cache and not range_header and self.headers.get("If-None-Match", "") == etag:
             self.send_response(HTTPStatus.NOT_MODIFIED)
             self.send_header("ETag", etag)
             self.send_header("Cache-Control", cache)
@@ -5553,6 +5556,9 @@ class EliteRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(length))
         self.send_header("Cache-Control", cache)
+        if disable_cache:
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
         self.send_header("ETag", etag)
         self.send_header("Accept-Ranges", "bytes")
         if partial:
@@ -5921,6 +5927,7 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
                 media_file,
                 content_type,
                 query.get("v", [""])[0],
+                disable_cache=(kind == "funny_clip"),
             )
 
 
