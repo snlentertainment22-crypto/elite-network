@@ -561,6 +561,35 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 #eliteSponsorHouse .houseSub{color:#c9d9ec;font-weight:800;font-size:clamp(14px,1.9vw,34px);}
 #eliteSponsorHouse img{height:32%;max-width:45%;aspect-ratio:1;object-fit:contain;background:white;border-radius:10px;}
 #eliteSponsorHouse .houseScan{color:#ffd85a;font-size:clamp(16px,2.1vw,38px);font-weight:950;}
+/* ELITE TV SAFE AREA — Daily Word and mini signup */
+#eliteDailyWordTv{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:3%;padding:3% 5% 6%;background:radial-gradient(ellipse at top,#244b75,#09182d 65%,#030913);text-align:center;overflow:hidden;--dw-unit:min(1vw,1.7778vh)}
+#eliteDailyWordTv .dwTag{font-size:calc(var(--dw-unit)*1.35);font-weight:900;letter-spacing:.14em;color:#7eeaff}
+#eliteDailyWordTv .dwTitle{font-size:calc(var(--dw-unit)*4.2);font-weight:1000;line-height:1.08;margin:.5% 0;color:#fff}
+#eliteDailyWordTv .dwSub{font-size:calc(var(--dw-unit)*1.65);font-weight:900;color:#ffe17f}
+#eliteDailyWordTv .dwBody{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4%;align-items:center;min-height:0}
+#eliteDailyWordTv .dwRules{display:grid;gap:calc(var(--dw-unit)*1.15);text-align:left;font-size:calc(var(--dw-unit)*1.55);font-weight:800;line-height:1.2;color:#dceaff}
+#eliteDailyWordTv .dwRules>div{display:flex;align-items:center;gap:calc(var(--dw-unit)*.7)}
+#eliteDailyWordTv .dwTile{display:inline-grid;place-items:center;flex-shrink:0;width:calc(var(--dw-unit)*2.8);height:calc(var(--dw-unit)*2.8);border-radius:5px;font-weight:1000;color:white}
+#eliteDailyWordTv .dwGreen{background:#26834d} #eliteDailyWordTv .dwYellow{background:#a87818} #eliteDailyWordTv .dwGray{background:#536174}
+#eliteDailyWordTv .dwBoardWrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--dw-unit)*.6);min-height:0}
+#eliteDailyWordTv .dwBoard{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(6,1fr);gap:calc(var(--dw-unit)*.35);width:calc(var(--dw-unit)*21);height:calc(var(--dw-unit)*25.2)}
+#eliteDailyWordTv .dwCell{display:grid;place-items:center;min-width:0;min-height:0;border:2px solid #557796;border-radius:5px;background:#152d49;font-size:calc(var(--dw-unit)*2.3);font-weight:1000}
+#eliteDailyWordTv .dwCell.dwGreen{background:#26834d;border-color:#78ce92}
+#eliteDailyWordTv .dwExample{font-size:calc(var(--dw-unit)*1.15);font-weight:850;color:#c8d9ec;text-align:center}
+#eliteDailyWordTv .dwRight{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--dw-unit)*.75);min-width:0}
+#eliteDailyWordTv .dwRight img{display:block;width:calc(var(--dw-unit)*19);height:calc(var(--dw-unit)*19);object-fit:contain;background:white;border:6px solid white;border-radius:10px}
+#eliteDailyWordTv .dwScan{font-size:calc(var(--dw-unit)*2.6);font-weight:1000;color:#fff;line-height:1.05}
+#eliteDailyWordTv .dwFree{font-size:calc(var(--dw-unit)*1.35);font-weight:850;color:#7eeaff}
+#eliteStableMiniJoin{padding:3% 5% 8%;--mj-unit:min(1vw,1.7778vh)}
+#eliteStableMiniJoin .eliteMiniJoinLayout{display:grid;grid-template-columns:minmax(0,1fr) 32%;gap:5%;align-items:center;width:100%;max-height:100%}
+#eliteStableMiniJoin .eliteMiniJoinCopy{min-width:0;text-align:center}
+#eliteStableMiniJoin .networkKicker{font-size:calc(var(--mj-unit)*1.8);margin:0 0 calc(var(--mj-unit)*.75)}
+#eliteStableMiniJoin .networkTitle{font-size:calc(var(--mj-unit)*4.2);line-height:1.04}
+#eliteStableMiniJoin .networkSub{font-size:calc(var(--mj-unit)*2.05);margin-top:calc(var(--mj-unit)*.85);line-height:1.15;overflow-wrap:anywhere}
+#eliteStableMiniJoin .comingTime{font-size:calc(var(--mj-unit)*5.4);margin:calc(var(--mj-unit)*.85) 0;line-height:1}
+#eliteStableMiniJoin .networkNext{font-size:calc(var(--mj-unit)*1.55);margin-top:calc(var(--mj-unit)*1.15);padding:calc(var(--mj-unit)*.7) calc(var(--mj-unit)*1.3);line-height:1.2}
+#eliteStableMiniJoin .eliteMiniJoinQr{justify-self:center;background:white;padding:calc(var(--mj-unit)*.85);border-radius:18px}
+#eliteStableMiniJoin .eliteMiniJoinQr img{display:block;width:calc(var(--mj-unit)*22);height:calc(var(--mj-unit)*22);object-fit:contain}
 </style>
 </head>
 <body>
@@ -1217,7 +1246,7 @@ function renderChannel(state){
  if(type==='daily_word'){
   setBackground(null);
   if(!document.getElementById('eliteDailyWordTv')){
-   overlay.innerHTML=`<div id="eliteDailyWordTv"><div class="dwLeft"><div class="dwTag">ELITE NETWORK ORIGINALS</div><div class="dwTitle">ELITE DAILY WORD</div><div class="dwSub">5 LETTERS • 6 GUESSES • FIRST LETTER FREE</div><div class="dwRules"><div><span class="dwTile dwGreen">A</span> Right letter, right spot</div><div><span class="dwTile dwYellow">B</span> Right letter, wrong spot</div><div><span class="dwTile dwGray">C</span> Letter not available</div></div></div><div class="dwRight"><img src="/daily-word-qr.png" alt="Scan to play Elite Daily Word"><div class="dwScan">SCAN TO PLAY</div><div class="dwFree">FREE • NEW WORD DAILY</div></div></div>`;
+   overlay.innerHTML=`<div id="eliteDailyWordTv"><header><div class="dwTag">ELITE NETWORK ORIGINALS</div><div class="dwTitle">ELITE DAILY WORD</div><div class="dwSub">5 LETTERS • 6 GUESSES • FIRST LETTER FREE</div></header><div class="dwBody"><div class="dwRules"><div><span class="dwTile dwGreen">A</span> Right letter, right spot</div><div><span class="dwTile dwYellow">B</span> Right letter, wrong spot</div><div><span class="dwTile dwGray">C</span> Letter not in word</div></div><div class="dwBoardWrap"><div class="dwBoard" aria-label="Example puzzle board, not today's answer">${Array.from({length:30},(_,i)=>i%5===0?'<span class="dwCell dwGreen">S</span>':'<span class="dwCell"></span>').join('')}</div><div class="dwExample">EXAMPLE BOARD • PLAY ON YOUR PHONE</div></div><div class="dwRight"><img src="/daily-word-qr.png" alt="Scan to play Elite Daily Word"><div class="dwScan">SCAN TO PLAY</div><div class="dwFree">FREE • NEW WORD DAILY</div></div></div></div>`;
   }
   return;
  }
@@ -1430,17 +1459,17 @@ function renderNetworkProgram(state){
   if(!panel||panel.dataset.eventKey!==eventKey){
    overlay.innerHTML=`
     <div class="networkShell" id="eliteStableMiniJoin">
-     <div style="display:flex;align-items:center;justify-content:center;gap:60px;width:90%;margin:auto">
-      <div style="text-align:center;max-width:65%">
+     <div class="eliteMiniJoinLayout">
+      <div class="eliteMiniJoinCopy">
        <div class="networkKicker">ELITE NETWORK MINI-GAME</div>
-       <div class="networkTitle" style="font-size:66px">SCAN TO JOIN</div>
+       <div class="networkTitle">SCAN TO JOIN</div>
        <div class="networkSub" id="eliteMiniJoinEvent"></div>
        <div class="comingTime" id="eliteMiniJoinCountdown"></div>
        <div class="networkSub" id="eliteMiniJoinTeams"></div>
        <div class="networkNext">Scan now to play when the countdown ends!</div>
       </div>
-      <div style="background:white;padding:18px;border-radius:18px;flex-shrink:0">
-       <img src="/join-qr.png" alt="Scan to join Elite Network" style="width:300px;height:300px;display:block">
+      <div class="eliteMiniJoinQr">
+       <img src="/join-qr.png" alt="Scan to join Elite Network">
       </div>
      </div>
     </div>`;
