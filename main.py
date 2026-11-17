@@ -11,6 +11,7 @@ import threading
 import time
 import io
 import qrcode
+import daily_word
 if os.environ.get("ELITE_HEADLESS") == "1":
     tk = None
     messagebox = None
@@ -699,9 +700,14 @@ class NetworkScheduler:
                 available_rotation = ["sponsor"]
 
 
+            sponsor_seconds = 18  # Independent of other filler durations.
+
             # Different content can have
             # different screen durations.
             def content_duration(kind):
+
+                if kind == "sponsor":
+                    return sponsor_seconds
 
                 if kind == "tv_guide":
                     return max(8, int(channel_config.get("tv_guide_seconds", 20)))
@@ -858,7 +864,7 @@ class NetworkScheduler:
                     (
                         "sponsor",
                         "sponsor_minutes_of_hour",
-                        filler_seconds,
+                        sponsor_seconds,
                     ),
                     (
                         "live_event",
@@ -876,7 +882,7 @@ class NetworkScheduler:
                         fact_seconds,
                     ),
                     (
-                        "funny_clip",
+                        "daily_word",
                         "funny_clip_minutes_of_hour",
                         max(
                             8,
@@ -893,7 +899,7 @@ class NetworkScheduler:
                     ):
                         continue
 
-                    items = get_media_items(cue_kind)
+                    items = [] if cue_kind == "daily_word" else get_media_items(cue_kind)
                     if cue_kind in {"funny_clip", "promo", "live_event"} and not items:
                         continue
                     if cue_kind == "did_you_know" and not did_you_know:
@@ -5732,6 +5738,20 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
         if path == "/player":
             return self._serve_html(WEB_DIR / "player.html")
 
+        if path == "/daily-word":
+            return self._serve_html(WEB_DIR / "daily-word.html")
+
+        if path == "/daily-word-qr.png":
+            buffer = io.BytesIO()
+            qrcode.make(get_public_base_url() + "/daily-word").save(buffer, format="PNG")
+            return self._send_bytes(buffer.getvalue(), "image/png")
+
+        if path == "/api/daily-word/counts":
+            try:
+                return self._send_json({"ok": True, **daily_word.counts(NETWORK.now())})
+            except Exception:
+                return self._send_json({"ok": False, "error": "Counts temporarily unavailable"}, HTTPStatus.SERVICE_UNAVAILABLE)
+
         if path == "/join-qr.png":
             join_url = (
                 get_player_join_url()
@@ -6179,6 +6199,16 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
     def do_POST(self):
         parsed = urlparse(self.path)
         try:
+            if parsed.path == "/api/daily-word":
+                if not 0 < int(self.headers.get("Content-Length", "0")) <= 4096:
+                    return self._send_json({"ok": False, "error": "Invalid request size"}, HTTPStatus.BAD_REQUEST)
+                try:
+                    puzzle = daily_word.play(NETWORK.now(), self._read_json_body())
+                    return self._send_json({"ok": True, "puzzle": puzzle})
+                except ValueError as exc:
+                    return self._send_json({"ok": False, "error": str(exc)}, HTTPStatus.BAD_REQUEST)
+                except Exception:
+                    return self._send_json({"ok": False, "error": "Puzzle temporarily unavailable. Please try again."}, HTTPStatus.SERVICE_UNAVAILABLE)
             payload = self._read_json_body()
 
             # ====================================================

@@ -190,6 +190,9 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
  text-align:center;line-height:1.14;
 }
 .gibPlay .gibReveal{max-width:74%;flex:0 0 auto;}
+/* At reveal the decoded answer replaces the clue in its large central lane. */
+.gibPlay .gibAnswerPhrase{color:#6cffaf;font-size:clamp(34px,5.4vw,94px);}
+.gibPlay .gibAnswerLabel{color:#a8f9ca;letter-spacing:.09em;}
 /* A smaller QR area is important on older 720p TVs. */
 
 .gibKicker{font-size:30px;font-weight:1000;letter-spacing:.14em;color:#7eeaff}
@@ -233,6 +236,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
  .gibMetric .metricLabel{font-size:clamp(10px,1.13vw,14px);letter-spacing:.04em;}
  .gibPlay .gibInstruction{font-size:clamp(13px,1.6vw,20px);max-width:72%;}
  .gibPlay .gibReveal{font-size:clamp(18px,2vw,25px);}
+ .gibPlay .gibAnswerPhrase{font-size:clamp(24px,4.7vw,69px);}
  .gibPlay .gibBottom{width:calc(100% - 220px);max-width:850px;font-size:clamp(12px,1.5vw,18px);margin-top:4px;}
  .gibPlay .gibBottom .miniProgress{font-size:clamp(12px,1.4vw,18px);margin-top:4px;}
  #gibJoinPanel{width:150px;padding:7px;bottom:13%;right:4.0%;}
@@ -534,6 +538,29 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 .eliteInfoQRCard img{display:block;margin:auto;background:#fff;border:5px solid #fff;border-radius:5px;width:clamp(138px,12.8vw,220px);height:clamp(138px,12.8vw,220px);image-rendering:auto}
 .eliteInfoQRLabel{font-size:clamp(17px,1.4vw,23px);font-weight:950;color:#fff;margin-bottom:6px}
 .eliteInfoQRSub{font-size:clamp(12px,1.04vw,17px);font-weight:800;color:#c8d7ef;margin-top:7px}
+
+/* Gibberish only: reserve HUD/footer space and fit wrapped text to its lane. */
+.gibWrap.gibPlay{height:92%;max-height:92%;}
+.gibPlay .gibKicker,.gibPlay .gibRound,.gibPlay .gibHud{flex:0 0 auto;}
+.gibPlay .gibPhrase{flex:1 1 0;min-height:0;}
+.gibPlay .gibPhraseText{display:block;width:100%;min-width:0;flex:0 0 auto;overflow-wrap:anywhere;}
+@media(max-height:800px){.gibWrap.gibPlay{height:93%;max-height:93%;}}
+
+/* Sponsor house banner: reserve a dedicated lane; never cover a game. */
+#stage.eliteAdLane{background:radial-gradient(ellipse at top,#182a44,#050c17 70%)}
+#stage.eliteAdLane #screen,#stage.eliteAdLane #overlay{transform:scale(.83);transform-origin:top center;}
+#eliteAdBanner{position:absolute;left:4%;right:4%;bottom:3.5%;height:12%;display:flex;align-items:center;justify-content:space-between;gap:2%;padding:.35% 1.6%;background:linear-gradient(100deg,#0b1930,#14283c);border:2px solid #63dfff;border-radius:14px;box-shadow:0 0 18px #63dfff33;z-index:4;}
+.eliteAdCopy{flex:1;min-width:0;text-align:left;line-height:1.12;}
+.eliteAdHeadline{font-size:clamp(14px,2.3vw,40px);font-weight:950;color:white;}
+.eliteAdSub{font-size:clamp(9px,1.15vw,20px);font-weight:750;color:#b8e7f5;margin-top:.5%;}
+.eliteAdScan{font-size:clamp(9px,1.05vw,18px);font-weight:850;color:#ffd85a;text-align:right;}
+#eliteAdBanner img{height:100%;width:auto;aspect-ratio:1;object-fit:contain;background:white;border-radius:5px;}
+#eliteSponsorHouse{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2%;padding:3%;background:radial-gradient(ellipse at top,#1c3855,#07101e 72%);text-align:center;}
+#eliteSponsorHouse .houseKicker{color:#7eeaff;font-size:clamp(15px,2vw,36px);font-weight:900;letter-spacing:.16em;}
+#eliteSponsorHouse .houseTitle{color:#fff;font-size:clamp(26px,4.8vw,84px);font-weight:1000;line-height:1.04;}
+#eliteSponsorHouse .houseSub{color:#c9d9ec;font-weight:800;font-size:clamp(14px,1.9vw,34px);}
+#eliteSponsorHouse img{height:32%;max-width:45%;aspect-ratio:1;object-fit:contain;background:white;border-radius:10px;}
+#eliteSponsorHouse .houseScan{color:#ffd85a;font-size:clamp(16px,2.1vw,38px);font-weight:950;}
 </style>
 </head>
 <body>
@@ -547,6 +574,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
       <img src="/join-qr.png" alt="Scan with your phone to join Elite Network">
       <div class="gibQrSub">PLAY ON YOUR PHONE</div>
     </div>
+    <div id="eliteAdBanner" class="hidden"><div class="eliteAdCopy"><div class="eliteAdHeadline">YOUR BUSINESS COULD BE HERE</div><div class="eliteAdSub">Founding sponsor opportunities • Advertise on Elite Network</div></div><div class="eliteAdScan">SCAN FOR<br>ADVERTISING RATES</div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUgAAAFIAQAAAAAab1qeAAACG0lEQVR4nO2azY7DMAiEZ1Z9/1f+9gA4jvbSVkqLs86hTeyRDIh/bPTk8/MscCM3ciM38l8gH5LkeCf+yW/M2Lno9PshH5JCXnK8WBLGWObYWYajFkg7pGk5f1RSti8//UbIx/wRBu6U5Pi77vSbI7GERSjm8J4fOv0WyNTPUkjLEZUsYnXo6CocdZBnKqKJGF/R6KSiq3D0XaRnH2lhTi8Xn35TpGXLNmHxEZTS7GOzB51rIWHkoOE4rRAonzj9ZkgceVKmTEwxPsumHnR2Rw5/KU0BCEelxORIV+GoAbLyeGNBFpkZlNLoW9C5ANIlO4VpY+av2OP7dK6CzPyzinbSzpXdJufS1+lcCjmMXZJslG0QPJXwDehcAFn9OhQCxdjpMcvcrzv9rkhbFgKMEAaReajY+fwb9aaP/rynLoiH0a/CUQNk5JwZjhAQGpslaBs6F0Ae/SXrlDrVsIPtP19HIolMPZHkKuYdG13o7I8s/1mjTWWMr3JTtb4MRx2QdlWZp5Gmh0ttQmd/ZCTvVCeJbIeQPXodoX4VjhrIc3xEchQmn5ujjF+Fowbx/bgFMsZwuWx2/f4S8nw/hLR8jrs3Q0FX4agFsu6HxOCISJNiGW17f1U/87Eo96lK7CmBrsJRK2TeVhqD+On6TSs6uyNj/pYZqDNPqoR0zzveqd81Dedsavhhma2fTyP/XAP56OkbuZEbuZHrIn8BDKPlo24jCaoAAAAASUVORK5CYII=" alt="Scan for Elite Network advertising packages"></div>
     <div id="footer" class="debugFooter">Connecting...</div>
   </div>
 </div>
@@ -731,6 +759,21 @@ function miniInstructionScreen(kind,mode){
   </div>
  </div>`;
 }
+
+// Measure actual wrapped text, not the clipped flex container.
+function fitGibberishPhrase(){
+ const lane=document.querySelector('.gibPlay .gibPhrase');
+ const text=lane?.querySelector('.gibPhraseText');
+ if(!text||!lane.clientHeight)return;
+ const max=Math.floor(parseFloat(getComputedStyle(lane).fontSize));
+ const height=lane.clientHeight-4;
+ const fits=size=>{text.style.fontSize=size+'px';return text.getBoundingClientRect().height<=height&&text.scrollWidth<=text.clientWidth+1;};
+ if(fits(max))return;
+ let low=1,high=max-1,best=1;
+ while(low<=high){const mid=Math.floor((low+high)/2);if(fits(mid)){best=mid;low=mid+1;}else{high=mid-1;}}
+ text.style.fontSize=best+'px';
+}
+window.addEventListener('resize',fitGibberishPhrase);
 
 function renderMiniGame(state){
  const n=state.network||{},m=n.mini_game||{},q=m.question||{};
@@ -932,7 +975,7 @@ function renderMiniGame(state){
    else{
      const label=showingAnswer?'ANSWER REVEAL':'SAY IT OUT LOUD!';
      const answer=showingAnswer
-       ?`<div class="gibReveal">ANSWER: ${esc(q.answer_display||'')}</div>`
+       ?`<div class="gibInstruction gibAnswerLabel">CORRECT ANSWER</div>`
        :`<div class="gibInstruction">TYPE YOUR GUESS ON YOUR PHONE · KEEP TRYING!</div>`;
      const points=showingAnswer?'—':possiblePoints.toLocaleString('en-US');
      html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap gibPlay">
@@ -942,7 +985,7 @@ function renderMiniGame(state){
          <div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
          <div class="gibMetric points"><div class="number">${points}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div>
        </div>
-       <div class="gibPhrase">${esc(q.question||'')}</div>
+       <div class="gibPhrase${showingAnswer?' gibAnswerPhrase':''}"><span class="gibPhraseText">${esc(showingAnswer?(q.answer_display||''):(q.question||''))}</span></div>
        ${answer}
        <div class="gibBottom">
          <div>${label}${showingAnswer?'':' · WRONG GUESSES COST POINTS'}</div>
@@ -951,6 +994,7 @@ function renderMiniGame(state){
      </div></div>`;
    }
    document.getElementById('overlay').innerHTML=html;
+   fitGibberishPhrase();
    return;
  }
 
@@ -1039,18 +1083,23 @@ function renderEliteInfoPanel(mode, network){
   ? 'PROGRAMMING RETURNS AT 11 AM'
   : (next.title||'NEXT ELITE BLITZ');
  document.getElementById('eliteInfoSubtitle').textContent=isOffAir
-  ? 'SEE YOU TOMORROW!'
+  ? 'SEE YOU SOON!'
   : (start?'STARTS AT '+start:'COMING UP SOON');
  document.getElementById('eliteInfoNext').textContent=isOffAir
   ? (next.title?'NEXT: '+next.title+(start?' · '+start:''):'SPORTS · ELITE BLITZ · AFTER DARK · MINI-GAMES')
   : 'SPORTS · ELITE BLITZ · AFTER DARK · MINI-GAMES';
 }
 
+function setEliteAdLane(active){
+ document.getElementById('stage').classList.toggle('eliteAdLane',active);
+ document.getElementById('eliteAdBanner').classList.toggle('hidden',!active);
+}
 function renderChannel(state){
  const n=state.network||{};
  const type=n.filler_type||'did_you_know';
  const item=n.content_item||null;
  const overlay=document.getElementById('overlay');
+ setEliteAdLane(['did_you_know','promo','live_event','tv_guide'].includes(type)||(type==='sponsor'&&!!item));
 
  function showChannelImage(url){
   setBackground(null);
@@ -1141,34 +1190,17 @@ function renderChannel(state){
  if(type==='sponsor'){
   if(item){
    showChannelImage(item.url);
+   const img=document.getElementById('channelMediaImage');
+   if(img){
+    const failed=()=>{if(img.isConnected){renderChannel({...state,network:{...n,content_item:null}});}};
+    img.onerror=failed;
+    if(img.complete&&!img.naturalWidth)failed();
+   }
    return;
   }
 
-  setBackground(
-   '/assets/sponsor_spotlight_slide.png'
-  );
-
-  overlay.innerHTML=`
-   <div style="
-    position:absolute;
-    left:17%;
-    right:17%;
-    top:36%;
-    height:31%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
-    padding:2% 4%;
-    font-size:50px;
-    font-weight:1000;
-    line-height:1.08;
-    text-shadow:0 4px 16px rgba(0,0,0,.9);
-   ">
-    YOUR BUSINESS COULD BE HERE
-   </div>
-   <div style="position:absolute;left:19%;right:19%;bottom:7%;text-align:center;font-size:20px;font-weight:850;color:#dbefff;text-shadow:0 2px 8px #000;background:rgba(0,0,0,.65);border-radius:10px;padding:8px">${networkNextLine(n)}</div>
-  `;
+  setBackground(null);
+  overlay.innerHTML=`<div id="eliteSponsorHouse"><div class="houseKicker">ELITE NETWORK • FOUNDING SPONSORS</div><div class="houseTitle">YOUR BUSINESS<br>COULD BE HERE</div><div class="houseSub">Reach customers at participating bars as we grow.</div><img src="${document.querySelector('#eliteAdBanner img').src}" alt="Advertising QR code"><div class="houseScan">SCAN FOR ADVERTISING RATES</div><div class="houseSub">${networkNextLine(n)}</div></div>`;
 
   return;
  }
@@ -1179,6 +1211,14 @@ function renderChannel(state){
   item
  ){
   showChannelImage(item.url);
+  return;
+ }
+
+ if(type==='daily_word'){
+  setBackground(null);
+  if(!document.getElementById('eliteDailyWordTv')){
+   overlay.innerHTML=`<div id="eliteDailyWordTv"><div class="dwLeft"><div class="dwTag">ELITE NETWORK ORIGINALS</div><div class="dwTitle">ELITE DAILY WORD</div><div class="dwSub">5 LETTERS • 6 GUESSES • FIRST LETTER FREE</div><div class="dwRules"><div><span class="dwTile dwGreen">A</span> Right letter, right spot</div><div><span class="dwTile dwYellow">B</span> Right letter, wrong spot</div><div><span class="dwTile dwGray">C</span> Letter not available</div></div></div><div class="dwRight"><img src="/daily-word-qr.png" alt="Scan to play Elite Daily Word"><div class="dwScan">SCAN TO PLAY</div><div class="dwFree">FREE • NEW WORD DAILY</div></div></div>`;
+  }
   return;
  }
 
@@ -1442,7 +1482,7 @@ function renderNetworkProgram(state){
 
  return true;
 }
-function render(state){const overlay=document.getElementById('overlay');document.getElementById('footer').textContent='WWW.ELITETRIVIAOFWISCONSIN.COM';setShowBug(state);const gibQr=document.getElementById('gibJoinPanel');if(gibQr){const mini=state?.network?.mini_game||{};gibQr.classList.toggle('hidden',!(mini.active&&['gibberish','brain_warp'].includes(mini.game_type)));}if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
+function render(state){setEliteAdLane(false);const overlay=document.getElementById('overlay');document.getElementById('footer').textContent='WWW.ELITETRIVIAOFWISCONSIN.COM';setShowBug(state);const gibQr=document.getElementById('gibJoinPanel');if(gibQr){const mini=state?.network?.mini_game||{};gibQr.classList.toggle('hidden',!(mini.active&&['gibberish','brain_warp'].includes(mini.game_type)));}if(state.network&&renderNetworkProgram(state))return;const q=state.question;if(state.screen==='pregame'){renderWaiting(state);return;}if(state.screen==='rules'){renderRules(state);return;}if(state.screen==='category'){renderCategory(state);return;}if(state.screen==='wager'){renderRouletteWager(state);return;}if(state.screen==='question'){renderQuestionBoard(state,false);return;}if(state.screen==='reveal'){renderQuestionBoard(state,true);return;}if(state.screen==='sociable'){setBackground(assetsFor(state).sociable);overlay.innerHTML='';return;}if(state.screen==='speed_bonus'){renderSpeedBonus(state);return;}if(state.screen==='scores'){renderScores(state,'Scores',`Round ${q.round}`);return;}if(state.screen==='round_complete'){renderScores(state,`Round ${q.round} Complete`,'Standings');return;}if(state.screen==='game_complete'){renderScores(state,'Game Complete','Final Standings');return;}renderWaiting(state);}
 let eliteWakeLock=null;
 async function keepEliteScreenAwake(){
  try{
