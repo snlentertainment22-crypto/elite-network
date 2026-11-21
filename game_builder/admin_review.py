@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import hashlib
 from datetime import datetime, timezone
 
 try:
@@ -186,6 +187,7 @@ def get_current_content(
 
 def validate_for_game(
     content: dict,
+    round_number: int,
 ) -> list[str]:
 
     issues = []
@@ -235,24 +237,18 @@ def validate_for_game(
 
     # --------------------------------------------------------
     # DISTRACTORS
-    #
-    # We store 5 for reusable Network questions even though
-    # Rounds 1-3 display only 3 at a time.
+    # Rounds 1-3 display 3 wrong answers; R4 displays 5.
+    # Extra reviewed distractors can remain on an earlier round's
+    # game copy, but may not be required just to approve that slot.
     # --------------------------------------------------------
 
-    if (
-        question_type
-        !=
-        "final_wager"
-    ):
+    if question_type != "final_wager":
+        required_wrong = 5 if round_number == 4 else 3
 
-        if len(
-            wrong_answers
-        ) != 5:
-
+        if len(wrong_answers) < required_wrong:
             issues.append(
-                "Question requires exactly "
-                "5 prepared distractors."
+                f"Round {round_number} requires at least "
+                f"{required_wrong} prepared distractors."
             )
 
         normalized_wrong = [
@@ -295,22 +291,9 @@ def validate_for_game(
                 "correct answer."
             )
 
-    # --------------------------------------------------------
-    # ROULETTE
-    # --------------------------------------------------------
-
-    if (
-        question_type
-        ==
-        "roulette"
-    ):
-
-        if not roulette_hint:
-
-            issues.append(
-                "Roulette hint is missing."
-            )
-
+    # Blank Roulette hints are allowed for Elite Network. The TV shows
+    # "MAKE YOUR WAGER NOW" when no clue has been supplied. Wagering and
+    # answer timers still function normally.
     return issues
 
 
@@ -379,7 +362,9 @@ def review_game_builder_question(
                 gq.question_id,
                 gq.slot_id,
                 gq.question_type,
+                gq.round_number,
                 gq.question_snapshot_json,
+                g.status AS game_status,
 
                 q.category,
                 q.question,
@@ -416,6 +401,9 @@ def review_game_builder_question(
                 row
             )
         )
+
+        if str(row["game_status"]).upper() == "PUBLISHED":
+            raise ValueError("Published games are locked. No question review edits allowed.")
 
         # ----------------------------------------------------
         # RESET
@@ -474,7 +462,8 @@ def review_game_builder_question(
         # ----------------------------------------------------
 
         issues = validate_for_game(
-            content
+            content,
+            int(row["round_number"]),
         )
 
         can_approve = (
@@ -533,9 +522,12 @@ def review_game_builder_question(
 
         approved_at = utc_now()
 
+        from .admin_publish import content_fingerprint
+
         snapshot[
             "game_review"
         ] = {
+            "content_sha256": content_fingerprint(content),
             "status":
                 "APPROVED",
 

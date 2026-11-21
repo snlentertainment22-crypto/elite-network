@@ -1,11 +1,11 @@
 {
-  "version": 2,
-  "note": "Three puzzles per session, one from each difficulty tier (easy/medium/hard). Original phonetic phrases, editorially review with bar players.",
+  "version": 3,
+  "note": "Expanded 2026-11-20: 8 regular and 8 After Dark phrases per difficulty tier, with moderately tougher phonetics. Editorial/playtesting review recommended before public deployment.",
   "regular": [
     {
       "id": "regular-001",
       "difficulty": "easy",
-      "phrase": "KNOT MY CUP UV TEE",
+      "phrase": "NAWT MY KUP UH TEE",
       "choices": [
         "Not my cup of tea",
         "A storm in a teacup",
@@ -18,7 +18,7 @@
     {
       "id": "regular-002",
       "difficulty": "easy",
-      "phrase": "WONCE UP PON UH THYME",
+      "phrase": "WUNCE UH PAWN UH TYM",
       "choices": [
         "One day at a time",
         "Once upon a time",
@@ -31,7 +31,7 @@
     {
       "id": "regular-003",
       "difficulty": "easy",
-      "phrase": "ITCH SNOT ROCKET SIGH ENCE",
+      "phrase": "IT SNAWT ROK IT SIGH INS",
       "choices": [
         "A scientific breakthrough",
         "No time to waste",
@@ -44,7 +44,7 @@
     {
       "id": "regular-004",
       "difficulty": "easy",
-      "phrase": "EYE SEA WUT EWE MEAN",
+      "phrase": "AYE SEE WUT YOO MEEN",
       "choices": [
         "You know what I mean",
         "I can hardly believe it",
@@ -157,13 +157,169 @@
       ],
       "correct_index": 3,
       "answer_display": "Between a rock and a hard place"
+    },
+    {
+      "id": "regular-013",
+      "difficulty": "easy",
+      "phrase": "THUH BAWL IZ IN YORE KORT",
+      "choices": [
+        "The ball is in your court",
+        "Out of your league",
+        "Playing hardball",
+        "On the ball"
+      ],
+      "correct_index": 0,
+      "answer_display": "The ball is in your court"
+    },
+    {
+      "id": "regular-014",
+      "difficulty": "easy",
+      "phrase": "SKAYT ING ON THIN EYES",
+      "choices": [
+        "Walking on eggshells",
+        "Skating on thin ice",
+        "Breaking the ice",
+        "On shaky ground"
+      ],
+      "correct_index": 1,
+      "answer_display": "Skating on thin ice"
+    },
+    {
+      "id": "regular-015",
+      "difficulty": "easy",
+      "phrase": "EWE MISSED THUH BOWT",
+      "choices": [
+        "Whatever floats your boat",
+        "Rocking the boat",
+        "You missed the boat",
+        "A sinking feeling"
+      ],
+      "correct_index": 2,
+      "answer_display": "You missed the boat"
+    },
+    {
+      "id": "regular-016",
+      "difficulty": "easy",
+      "phrase": "KETCH ING SOME ZEEZ",
+      "choices": [
+        "Sleeping on it",
+        "A dream come true",
+        "Counting sheep",
+        "Catching some Zs"
+      ],
+      "correct_index": 3,
+      "answer_display": "Catching some Zs"
+    },
+    {
+      "id": "regular-017",
+      "difficulty": "medium",
+      "phrase": "UH PEECE UV THUH PYE",
+      "choices": [
+        "A piece of the pie",
+        "Easy as pie",
+        "A piece of cake",
+        "A slice of life"
+      ],
+      "correct_index": 0,
+      "answer_display": "A piece of the pie"
+    },
+    {
+      "id": "regular-018",
+      "difficulty": "medium",
+      "phrase": "THUH ELL UH FUNT IN THUH RUME",
+      "choices": [
+        "The cat is out of the bag",
+        "The elephant in the room",
+        "Room for improvement",
+        "A fish out of water"
+      ],
+      "correct_index": 1,
+      "answer_display": "The elephant in the room"
+    },
+    {
+      "id": "regular-019",
+      "difficulty": "medium",
+      "phrase": "THROH ING UH RENCH IN THUH WERKS",
+      "choices": [
+        "Putting the pieces together",
+        "Working against the clock",
+        "Throwing a wrench in the works",
+        "Throwing caution to the wind"
+      ],
+      "correct_index": 2,
+      "answer_display": "Throwing a wrench in the works"
+    },
+    {
+      "id": "regular-020",
+      "difficulty": "medium",
+      "phrase": "OFF THUH TOP UV MY HED",
+      "choices": [
+        "Head over heels",
+        "A chip on my shoulder",
+        "Keeping a cool head",
+        "Off the top of my head"
+      ],
+      "correct_index": 3,
+      "answer_display": "Off the top of my head"
+    },
+    {
+      "id": "regular-021",
+      "difficulty": "hard",
+      "phrase": "PUT ING AWL YORE EGS IN WUN BASS KIT",
+      "choices": [
+        "Putting all your eggs in one basket",
+        "Counting your chickens before they hatch",
+        "Too many irons in the fire",
+        "A bird in the hand"
+      ],
+      "correct_index": 0,
+      "answer_display": "Putting all your eggs in one basket"
+    },
+    {
+      "id": "regular-022",
+      "difficulty": "hard",
+      "phrase": "SWEEP ING IT UN DER THUH RUG",
+      "choices": [
+        "Pulling the rug out",
+        "Sweeping it under the rug",
+        "Burying the hatchet",
+        "Cleaning up your act"
+      ],
+      "correct_index": 1,
+      "answer_display": "Sweeping it under the rug"
+    },
+    {
+      "id": "regular-023",
+      "difficulty": "hard",
+      "phrase": "THUH GRASS IZ AWL WAYZ GREE NER ON THEE UTH ER SIDE",
+      "choices": [
+        "A change of scenery",
+        "The other side of the coin",
+        "The grass is always greener on the other side",
+        "Seeing the bigger picture"
+      ],
+      "correct_index": 2,
+      "answer_display": "The grass is always greener on the other side"
+    },
+    {
+      "id": "regular-024",
+      "difficulty": "hard",
+      "phrase": "UH FOOL END HIZ MUN EE AR SOON PART ED",
+      "choices": [
+        "A penny saved is a penny earned",
+        "Money talks",
+        "A fool for love",
+        "A fool and his money are soon parted"
+      ],
+      "correct_index": 3,
+      "answer_display": "A fool and his money are soon parted"
     }
   ],
   "adult": [
     {
       "id": "adult-001",
       "difficulty": "easy",
-      "phrase": "WOK UV SHAYM",
+      "phrase": "WAWK UH SHAYM",
       "choices": [
         "Walk of shame",
         "A late-night stroll",
@@ -176,7 +332,7 @@
     {
       "id": "adult-002",
       "difficulty": "easy",
-      "phrase": "KNOT SAYF FOUR WURK",
+      "phrase": "NAWT SAYF FER WERK",
       "choices": [
         "No time for work",
         "Not safe for work",
@@ -189,7 +345,7 @@
     {
       "id": "adult-003",
       "difficulty": "easy",
-      "phrase": "KNOW PANTS REE KWHY ERD",
+      "phrase": "NOH PANTS REE KWAH YERD",
       "choices": [
         "Dress to impress",
         "Pajama party",
@@ -315,6 +471,162 @@
       ],
       "correct_index": 3,
       "answer_display": "A romantic rendezvous"
+    },
+    {
+      "id": "adult-013",
+      "difficulty": "easy",
+      "phrase": "NET FLIKS END CHILL",
+      "choices": [
+        "Netflix and chill",
+        "Movie night",
+        "A quiet evening in",
+        "Binge watching"
+      ],
+      "correct_index": 0,
+      "answer_display": "Netflix and chill"
+    },
+    {
+      "id": "adult-014",
+      "difficulty": "easy",
+      "phrase": "FRENDS WIT BEN UH FITS",
+      "choices": [
+        "Friends forever",
+        "Friends with benefits",
+        "Keeping it casual",
+        "A mutual understanding"
+      ],
+      "correct_index": 1,
+      "answer_display": "Friends with benefits"
+    },
+    {
+      "id": "adult-015",
+      "difficulty": "easy",
+      "phrase": "DIRT EE MIN DED",
+      "choices": [
+        "A clean conscience",
+        "Naughty by nature",
+        "Dirty minded",
+        "Thinking out loud"
+      ],
+      "correct_index": 2,
+      "answer_display": "Dirty minded"
+    },
+    {
+      "id": "adult-016",
+      "difficulty": "easy",
+      "phrase": "LUV AT FURST SWIPE",
+      "choices": [
+        "Love at first sight",
+        "Playing hard to get",
+        "A perfect match",
+        "Love at first swipe"
+      ],
+      "correct_index": 3,
+      "answer_display": "Love at first swipe"
+    },
+    {
+      "id": "adult-017",
+      "difficulty": "medium",
+      "phrase": "KISS END DON TELL",
+      "choices": [
+        "Kiss and don't tell",
+        "Never say never",
+        "A public display of affection",
+        "Love and let go"
+      ],
+      "correct_index": 0,
+      "answer_display": "Kiss and don't tell"
+    },
+    {
+      "id": "adult-018",
+      "difficulty": "medium",
+      "phrase": "THUH BIRDS END THUH BEEZ",
+      "choices": [
+        "A little bird told me",
+        "The birds and the bees",
+        "Butterflies in my stomach",
+        "Birds of a feather"
+      ],
+      "correct_index": 1,
+      "answer_display": "The birds and the bees"
+    },
+    {
+      "id": "adult-019",
+      "difficulty": "medium",
+      "phrase": "GET ING LUCK EE TUH NIGHT",
+      "choices": [
+        "Having a lucky streak",
+        "Making a wish",
+        "Getting lucky tonight",
+        "Out on the town"
+      ],
+      "correct_index": 2,
+      "answer_display": "Getting lucky tonight"
+    },
+    {
+      "id": "adult-020",
+      "difficulty": "medium",
+      "phrase": "MAK ING OWT IN THUH BAK SEET",
+      "choices": [
+        "A drive through town",
+        "Going for a joyride",
+        "Taking the scenic route",
+        "Making out in the back seat"
+      ],
+      "correct_index": 3,
+      "answer_display": "Making out in the back seat"
+    },
+    {
+      "id": "adult-021",
+      "difficulty": "hard",
+      "phrase": "KAWT WIT YORE PANTS DOWN",
+      "choices": [
+        "Caught with your pants down",
+        "Out of your comfort zone",
+        "Caught red-handed",
+        "Dressed to impress"
+      ],
+      "correct_index": 0,
+      "answer_display": "Caught with your pants down"
+    },
+    {
+      "id": "adult-022",
+      "difficulty": "hard",
+      "phrase": "WUT HAP ENS IN VAY GUS STAYZ IN VAY GUS",
+      "choices": [
+        "Let the good times roll",
+        "What happens in Vegas stays in Vegas",
+        "The party never stops",
+        "Nothing ventured nothing gained"
+      ],
+      "correct_index": 1,
+      "answer_display": "What happens in Vegas stays in Vegas"
+    },
+    {
+      "id": "adult-023",
+      "difficulty": "hard",
+      "phrase": "LET ING YORE EYES DO THUH TAWK ING",
+      "choices": [
+        "Seeing eye to eye",
+        "Love is blind",
+        "Letting your eyes do the talking",
+        "A look that says it all"
+      ],
+      "correct_index": 2,
+      "answer_display": "Letting your eyes do the talking"
+    },
+    {
+      "id": "adult-024",
+      "difficulty": "hard",
+      "phrase": "HAV ING SEK UND THAWTS UH BOWT THUH FURST KISS",
+      "choices": [
+        "Getting cold feet",
+        "Love at first sight",
+        "Kissing and making up",
+        "Having second thoughts about the first kiss"
+      ],
+      "correct_index": 3,
+      "answer_display": "Having second thoughts about the first kiss"
     }
   ]
 }

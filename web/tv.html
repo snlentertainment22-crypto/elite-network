@@ -590,6 +590,54 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 #eliteStableMiniJoin .networkNext{font-size:calc(var(--mj-unit)*1.55);margin-top:calc(var(--mj-unit)*1.15);padding:calc(var(--mj-unit)*.7) calc(var(--mj-unit)*1.3);line-height:1.2}
 #eliteStableMiniJoin .eliteMiniJoinQr{justify-self:center;background:white;padding:calc(var(--mj-unit)*.85);border-radius:18px}
 #eliteStableMiniJoin .eliteMiniJoinQr img{display:block;width:calc(var(--mj-unit)*22);height:calc(var(--mj-unit)*22);object-fit:contain}
+
+/* ELITE_RESULT_STAGES_20261120: show answer then large, centered results. */
+.eliteCenterReveal{width:96%;height:88%;max-width:1500px;margin:auto;padding:1.1% 2%;
+ display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+}
+.eliteCenterReveal .eliteResultHeader{font-size:clamp(23px,2.4vw,39px);font-weight:1000;
+ letter-spacing:.1em;color:#8eeaff;text-shadow:0 3px 12px #000;margin-bottom:7px}
+.eliteCenterReveal .eliteResultSub{font-size:clamp(19px,2vw,31px);font-weight:900;
+ color:#e6d4ff;letter-spacing:.07em;margin-bottom:14px}
+.eliteCenterReveal .eliteBigAnswer{display:flex;align-items:center;justify-content:center;
+ width:78%;max-width:1110px;min-height:32vh;padding:22px 35px;border-radius:23px;
+ background:linear-gradient(130deg,rgba(10,40,42,.92),rgba(5,12,43,.94));
+ border:3px solid #7ff2be;box-shadow:0 12px 42px rgba(0,0,0,.5);
+ color:#8bffbd;font-size:clamp(42px,5.5vw,92px);font-weight:1000;
+ line-height:1.08;overflow-wrap:anywhere;text-wrap:balance;text-shadow:0 5px 16px #000}
+.eliteCenterReveal .eliteResultCard{width:72%;max-width:1050px;min-height:0;
+ padding:7px 19px;border-radius:21px;background:rgba(7,12,38,.9);
+ border:3px solid rgba(187,124,255,.72);box-shadow:0 12px 35px rgba(0,0,0,.36)}
+.eliteResultRow{display:grid;grid-template-columns:62px minmax(0,1fr) 190px;
+ gap:16px;align-items:center;text-align:left;padding:13px 14px;
+ border-bottom:2px solid rgba(166,194,255,.24);font-weight:1000}
+.eliteResultRow:last-child{border-bottom:0}
+.eliteResultRank{color:#ffdf76;font-size:clamp(27px,2.6vw,42px)}
+.eliteResultName{color:#fff;font-size:clamp(27px,2.6vw,43px);
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eliteResultPoints{color:#8bffbd;font-size:clamp(24px,2.3vw,37px);
+ text-align:right;white-space:nowrap}
+.eliteResultEmpty{font-size:38px;font-weight:900;text-align:center;padding:40px;color:#fff}
+/* Brain Warp puzzle: center the whole grid, do not change rebus tile positioning. */
+.eliteWarpPlay{display:flex;flex-direction:column;align-items:center;text-align:center;
+ justify-content:center;width:92%;max-width:1450px;height:90%;min-height:0;padding:1% 2%}
+.eliteWarpPlay .warpBoard{width:min(76%,850px);height:clamp(230px,39vh,390px);
+ flex:0 1 auto;margin:10px auto 8px;align-self:center}
+.eliteWarpPlay .warpTile{text-align:center}
+.eliteWarpPlay .gibInstruction{text-align:center;max-width:76%;font-size:clamp(19px,2vw,28px)}
+@media(max-height:800px){
+ .eliteCenterReveal{height:94%;padding:.7% 1.2%}
+ .eliteCenterReveal .eliteResultHeader{font-size:clamp(20px,2vw,29px);margin-bottom:3px}
+ .eliteCenterReveal .eliteResultSub{font-size:clamp(16px,1.6vw,23px);margin-bottom:7px}
+ .eliteCenterReveal .eliteBigAnswer{min-height:28vh;font-size:clamp(34px,4.7vw,66px);padding:12px 22px}
+ .eliteCenterReveal .eliteResultCard{width:77%}
+ .eliteResultRow{grid-template-columns:45px minmax(0,1fr) 150px;padding:7px 9px;gap:10px}
+ .eliteResultRank{font-size:clamp(22px,2.2vw,31px)}
+ .eliteResultName{font-size:clamp(20px,2.2vw,31px)}
+ .eliteResultPoints{font-size:clamp(19px,2vw,29px)}
+ .eliteWarpPlay .warpBoard{height:clamp(185px,32vh,285px);margin:5px auto}
+}
+
 </style>
 </head>
 <body>
@@ -738,6 +786,22 @@ function gibScoreboard(mini){
  return `<div class="miniProgress">TOP SCORES: ${leaders.map((r,i)=>`${i+1}. ${esc(r.name||'PLAYER')} ${Number(r.points||0)} pts`).join('  •  ')}</div>`;
 }
 
+// ELITE_RESULT_STAGES_20261120: draw readable, centered results on the TV.
+function eliteResultTitle(title, subtitle, inner, theme='gibberishShell'){
+ return `<div class="networkShell miniGameShell ${theme}"><div class="miniWrap eliteCenterReveal">
+  <div class="eliteResultHeader">${esc(title)}</div>
+  <div class="eliteResultSub">${esc(subtitle)}</div>${inner}
+ </div></div>`;
+}
+function eliteResultBoard(mini, reaction=false){
+ const leaders=(mini.leaderboard||[]).slice(0,3);
+ if(!leaders.length)return '<div class="eliteResultEmpty">No scores recorded yet</div>';
+ return `<div class="eliteResultCard">${leaders.map((r,i)=>`<div class="eliteResultRow">
+  <span class="eliteResultRank">#${i+1}</span>
+  <span class="eliteResultName">${esc(r.name||('PLAYER '+(i+1)))}</span>
+  <span class="eliteResultPoints">${reaction?Number(r.reaction_seconds||0).toFixed(3)+' SEC':Number(r.points||0).toLocaleString('en-US')+' PTS'}</span>
+ </div>`).join('')}</div>`;
+}
 function brainWarpBoard(tiles){
  const cells=(Array.isArray(tiles)?tiles:[]).slice(0,9);
  return `<div class="warpBoard" aria-label="Visual phrase puzzle">${cells.map(tile=>{
@@ -766,12 +830,12 @@ const ELITE_MINI_RULES={
    'Read the funny-sounding words aloud.',
    'Figure out the REAL phrase they sound like.',
    'Type your guess on your phone. Be quick!'
-  ],footer:'3 PHRASES · 35 SECONDS EACH · WRONG GUESSES COST POINTS'},
+  ],footer:'3 PHRASES · 50 SECONDS EACH · WRONG GUESSES COST POINTS'},
   brain_warp:{title:'ELITE BRAIN WARP',subtitle:'THINK OUTSIDE THE BOX',theme:'warpShell',steps:[
    'Study the word arrangement on the screen.',
    'Decode the hidden saying or phrase.',
    'Type the FULL answer on your phone. Faster is better!'
-  ],footer:'3 VISUAL PUZZLES · 35 SECONDS EACH · WRONG GUESSES COST POINTS'},
+  ],footer:'3 VISUAL PUZZLES · 50 SECONDS EACH · WRONG GUESSES COST POINTS'},
 };
 function miniInstructionScreen(kind,mode){
  const r=ELITE_MINI_RULES[kind]||ELITE_MINI_RULES.reaction_rush;
@@ -860,83 +924,30 @@ function renderMiniGame(state){
 
  if(gameType==='reaction_rush'){
    setBackground(null);
-
    if(phase==='intro'){
      html=miniInstructionScreen('reaction_rush');
+   }else if(phase==='waiting'){
+     html=`<div class="networkShell miniGameShell reactionShell"><div class="miniWrap">
+       <div class="networkKicker">ELITE REACTION RUSH</div>
+       <div class="miniTitle" style="font-size:86px">WAIT...</div>
+       <div class="miniSub">DON'T TAP YET</div></div></div>`;
+   }else if(phase==='question'){
+     html=`<div class="networkShell miniGameShell reactionShell"><div class="miniWrap">
+       <div class="networkKicker">ELITE REACTION RUSH</div>
+       <div class="miniTitle" style="font-size:120px">GO!</div>
+       <div class="miniSub">TAP NOW ON YOUR PHONE</div>
+       <div class="miniProgress">${Number(m.response_count||0)} REACTIONS LOCKED</div>
+     </div></div>`;
+   }else if(phase==='reveal'){
+     const first=(m.leaderboard||[])[0];
+     const top=first?`<div class="eliteBigAnswer">${Number(first.reaction_seconds||0).toFixed(3)} SECONDS</div>`:
+       '<div class="eliteBigAnswer">NO REACTIONS RECORDED</div>';
+     html=eliteResultTitle('ELITE REACTION RUSH','FASTEST REACTION',top,'reactionShell');
+   }else if(phase==='outro'){
+     html=eliteResultTitle('ELITE REACTION RUSH','TOP 3 FASTEST PLAYERS',eliteResultBoard(m,true),'reactionShell');
+   }else{
+     html=eliteResultTitle('ELITE REACTION RUSH','COMPLETE','');
    }
-
-   else if(phase==='waiting'){
-     html=`
-       <div class="networkShell miniGameShell reactionShell">
-         <div class="miniWrap">
-           <div class="networkKicker">ELITE REACTION RUSH</div>
-           <div class="miniTitle" style="font-size:86px">WAIT...</div>
-           <div class="miniSub">DON'T TAP YET</div>
-         </div>
-       </div>
-     `;
-   }
-
-   else if(phase==='question'){
-     html=`
-       <div class="networkShell miniGameShell reactionShell">
-         <div class="miniWrap">
-           <div class="networkKicker">ELITE REACTION RUSH</div>
-           <div class="miniTitle" style="font-size:120px">GO!</div>
-           <div class="miniSub">TAP NOW ON YOUR PHONE</div>
-           <div class="miniProgress">
-             ${Number(m.response_count||0)} REACTIONS LOCKED
-           </div>
-         </div>
-       </div>
-     `;
-   }
-
-   else if(phase==='reveal'){
-     const leaders=(m.leaderboard||[])
-       .slice(0,5)
-       .map((r,i)=>`
-         <div style="
-           display:flex;
-           justify-content:center;
-           gap:28px;
-           font-size:34px;
-           font-weight:900;
-           margin:8px 0;
-         ">
-           <span>#${i+1}</span>
-           <span>${Number(r.reaction_seconds||0).toFixed(3)} SEC</span>
-         </div>
-       `)
-       .join('');
-
-     html=`
-       <div class="networkShell miniGameShell reactionShell">
-         <div class="miniWrap">
-           <div class="networkKicker">ELITE REACTION RUSH</div>
-           <div class="miniTitle">FASTEST REACTIONS</div>
-           ${leaders||'<div class="miniSub">No reactions recorded.</div>'}
-           <div class="miniProgress">
-             ${Number(m.response_count||0)} TOTAL REACTIONS
-           </div>
-         </div>
-       </div>
-     `;
-   }
-
-   else{
-     html=`
-       <div class="networkShell miniGameShell reactionShell">
-         <div class="miniWrap">
-           <div class="networkKicker">ELITE REACTION RUSH</div>
-           <div class="miniTitle">REACTION RUSH COMPLETE</div>
-           <div class="miniSub">How fast were you?</div>
-           <div class="networkNext">${next}</div>
-         </div>
-       </div>
-     `;
-   }
-
    document.getElementById('overlay').innerHTML=html;
    return;
  }
@@ -952,29 +963,29 @@ function renderMiniGame(state){
 
  if(warp){
    const seconds=Math.max(0,Number(m.seconds_remaining||0));
-   const showingAnswer=phase==='reveal';
-   const possiblePoints=100+Math.floor(seconds*10);
    const puzzleNumber=Number(m.question_number||1);
    const puzzleCount=Number(m.question_count||3);
    const difficulty=String(m.difficulty||'').toUpperCase();
    if(phase==='intro'){
      html=miniInstructionScreen('brain_warp');
    }else if(phase==='outro'){
-     html=`<div class="networkShell miniGameShell warpShell"><div class="miniWrap warpWrap">
-       <div class="gibKicker">ELITE BRAIN WARP</div><div class="miniTitle">BRAIN WARP COMPLETE!</div>
-       <div class="miniSub">FINAL TOP SCORES</div>${gibScoreboard(m)}
-       <div class="networkNext">${next}</div></div></div>`;
+     html=eliteResultTitle('ELITE BRAIN WARP','FINAL TOP SCORES',eliteResultBoard(m),'warpShell');
+   }else if(phase==='reveal'&&seconds>4){
+     // The server allocates 7 seconds to reveal: first 3 answer, last 4 scores.
+     html=eliteResultTitle('ELITE BRAIN WARP','CORRECT ANSWER',
+       `<div class="eliteBigAnswer">${esc(q.answer_display||'')}</div>`,'warpShell');
+   }else if(phase==='reveal'){
+     html=eliteResultTitle('ELITE BRAIN WARP','CURRENT TOP 3',eliteResultBoard(m),'warpShell');
    }else{
-     html=`<div class="networkShell miniGameShell warpShell"><div class="miniWrap warpWrap">
+     const points=100+Math.floor(seconds*10);
+     html=`<div class="networkShell miniGameShell warpShell"><div class="miniWrap warpWrap eliteWarpPlay">
        <div class="gibKicker">ELITE BRAIN WARP</div>
        <div class="gibRound">VISUAL PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
-       <div class="gibHud">
-         <div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
-         <div class="gibMetric points"><div class="number">${showingAnswer?'—':possiblePoints.toLocaleString('en-US')}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div>
-       </div>
+       <div class="gibHud"><div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
+       <div class="gibMetric points"><div class="number">${points.toLocaleString('en-US')}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div></div>
        ${brainWarpBoard(q.tiles)}
-       <div class="gibInstruction">${showingAnswer?`<span class="gibReveal">ANSWER: ${esc(q.answer_display||'')}</span>`:'WHAT PHRASE DO YOU SEE? TYPE IT ON YOUR PHONE!'}</div>
-       <div class="gibBottom">${showingAnswer?gibScoreboard(m):'35 SECONDS PER PUZZLE · WRONG GUESSES COST POINTS'}</div>
+       <div class="gibInstruction">WHAT PHRASE DO YOU SEE? TYPE IT ON YOUR PHONE!</div>
+       <div class="gibBottom">50 SECONDS PER PUZZLE · WRONG GUESSES COST POINTS</div>
      </div></div>`;
    }
    document.getElementById('overlay').innerHTML=html;
@@ -983,50 +994,34 @@ function renderMiniGame(state){
 
  if(gib){
    const seconds=Math.max(0,Number(m.seconds_remaining||0));
-   const showingAnswer=phase==='reveal';
-   // Match the server's FIRST-TRY point formula. Wrong guesses are
-   // penalized individually on phones and cannot share one TV value.
-   const possiblePoints=100+Math.floor(seconds*10);
    const puzzleNumber=Number(m.question_number||1);
    const puzzleCount=Number(m.question_count||3);
    const difficulty=String(m.difficulty||'').toUpperCase();
    if(phase==='intro'){
      html=miniInstructionScreen('gibberish',m.mode);
-   }
-   else if(phase==='outro'){
-     html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap">
-       <div class="gibKicker">${esc(miniTitle)}</div>
-       <div class="miniTitle">GIBBERISH COMPLETE!</div>
-       <div class="miniSub">FINAL TOP SCORES</div>
-       ${gibScoreboard(m)}<div class="networkNext">${next}</div>
-     </div></div>`;
-   }
-   else{
-     const label=showingAnswer?'ANSWER REVEAL':'SAY IT OUT LOUD!';
-     const answer=showingAnswer
-       ?`<div class="gibInstruction gibAnswerLabel">CORRECT ANSWER</div>`
-       :`<div class="gibInstruction">TYPE YOUR GUESS ON YOUR PHONE · KEEP TRYING!</div>`;
-     const points=showingAnswer?'—':possiblePoints.toLocaleString('en-US');
+   }else if(phase==='outro'){
+     html=eliteResultTitle(miniTitle,'FINAL TOP SCORES',eliteResultBoard(m));
+   }else if(phase==='reveal'&&seconds>4){
+     html=eliteResultTitle(miniTitle,'CORRECT ANSWER',
+       `<div class="eliteBigAnswer">${esc(q.answer_display||'')}</div>`);
+   }else if(phase==='reveal'){
+     html=eliteResultTitle(miniTitle,'CURRENT TOP 3',eliteResultBoard(m));
+   }else{
+     const possiblePoints=100+Math.floor(seconds*10);
      html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap gibPlay">
        <div class="gibKicker">${esc(miniTitle)}</div>
        <div class="gibRound">PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
-       <div class="gibHud">
-         <div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
-         <div class="gibMetric points"><div class="number">${points}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div>
-       </div>
-       <div class="gibPhrase${showingAnswer?' gibAnswerPhrase':''}"><span class="gibPhraseText">${esc(showingAnswer?(q.answer_display||''):(q.question||''))}</span></div>
-       ${answer}
-       <div class="gibBottom">
-         <div>${label}${showingAnswer?'':' · WRONG GUESSES COST POINTS'}</div>
-         ${showingAnswer?gibScoreboard(m):''}
-       </div>
+       <div class="gibHud"><div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
+       <div class="gibMetric points"><div class="number">${possiblePoints.toLocaleString('en-US')}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div></div>
+       <div class="gibPhrase"><span class="gibPhraseText">${esc(q.question||'')}</span></div>
+       <div class="gibInstruction">TYPE YOUR GUESS ON YOUR PHONE · KEEP TRYING!</div>
+       <div class="gibBottom">WRONG GUESSES COST POINTS</div>
      </div></div>`;
    }
    document.getElementById('overlay').innerHTML=html;
-   fitGibberishPhrase();
+   if(phase==='question')fitGibberishPhrase();
    return;
  }
-
 
  if(phase==='intro'){
    html=miniInstructionScreen('quick_3');

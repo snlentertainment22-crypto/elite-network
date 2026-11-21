@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "puzzles": [
     {
       "id": "head-over-heels",
@@ -406,6 +406,408 @@
           "row": 3,
           "col": 2,
           "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "all-eyes-on-me",
+      "difficulty": "easy",
+      "answer_display": "All eyes on me",
+      "tiles": [
+        {
+          "text": "EYES",
+          "row": 1,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "EYES",
+          "row": 1,
+          "col": 3,
+          "style": "small"
+        },
+        {
+          "text": "ME",
+          "row": 2,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "EYES",
+          "row": 3,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "EYES",
+          "row": 3,
+          "col": 3,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "four-corners-earth",
+      "difficulty": "easy",
+      "answer_display": "Four corners of the earth",
+      "tiles": [
+        {
+          "text": "4",
+          "row": 1,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "4",
+          "row": 1,
+          "col": 3,
+          "style": "large"
+        },
+        {
+          "text": "EARTH",
+          "row": 2,
+          "col": 2,
+          "style": "bright"
+        },
+        {
+          "text": "4",
+          "row": 3,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "4",
+          "row": 3,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "fish-out-water",
+      "difficulty": "easy",
+      "answer_display": "A fish out of water",
+      "tiles": [
+        {
+          "text": "FISH",
+          "row": 1,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "WATER",
+          "row": 3,
+          "col": 2,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "long-story-short",
+      "difficulty": "easy",
+      "answer_display": "Long story short",
+      "tiles": [
+        {
+          "text": "LONG",
+          "row": 1,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "STORY",
+          "row": 2,
+          "col": 2,
+          "style": "normal"
+        },
+        {
+          "text": "SHORT",
+          "row": 3,
+          "col": 2,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "two-left-feet",
+      "difficulty": "easy",
+      "answer_display": "Two left feet",
+      "tiles": [
+        {
+          "text": "FEET",
+          "row": 1,
+          "col": 1,
+          "style": "normal"
+        },
+        {
+          "text": "FEET",
+          "row": 3,
+          "col": 1,
+          "style": "normal"
+        }
+      ]
+    },
+    {
+      "id": "backward-glance",
+      "difficulty": "easy",
+      "answer_display": "A backward glance",
+      "tiles": [
+        {
+          "text": "GLANCE",
+          "row": 2,
+          "col": 2,
+          "style": "flipped"
+        }
+      ]
+    },
+    {
+      "id": "thinking-outside-box",
+      "difficulty": "medium",
+      "answer_display": "Thinking outside the box",
+      "tiles": [
+        {
+          "text": "THINK",
+          "row": 1,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "BOX",
+          "row": 2,
+          "col": 2,
+          "style": "tight"
+        },
+        {
+          "text": "THINK",
+          "row": 3,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "a-step-behind",
+      "difficulty": "medium",
+      "answer_display": "A step behind",
+      "tiles": [
+        {
+          "text": "STEP",
+          "row": 2,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "STEP",
+          "row": 2,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "double-cross",
+      "difficulty": "medium",
+      "answer_display": "Double cross",
+      "tiles": [
+        {
+          "text": "CROSS",
+          "row": 1,
+          "col": 2,
+          "style": "crossed"
+        },
+        {
+          "text": "CROSS",
+          "row": 3,
+          "col": 2,
+          "style": "crossed"
+        }
+      ]
+    },
+    {
+      "id": "turning-tables",
+      "difficulty": "medium",
+      "answer_display": "Turning the tables",
+      "tiles": [
+        {
+          "text": "TABLE",
+          "row": 1,
+          "col": 2,
+          "style": "tilt"
+        },
+        {
+          "text": "TABLE",
+          "row": 3,
+          "col": 2,
+          "style": "flipped"
+        }
+      ]
+    },
+    {
+      "id": "small-world",
+      "difficulty": "medium",
+      "answer_display": "It's a small world",
+      "tiles": [
+        {
+          "text": "WORLD",
+          "row": 2,
+          "col": 2,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "uphill-battle",
+      "difficulty": "medium",
+      "answer_display": "Uphill battle",
+      "tiles": [
+        {
+          "text": "BATTLE",
+          "row": 3,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "BATTLE",
+          "row": 2,
+          "col": 2,
+          "style": "normal"
+        },
+        {
+          "text": "BATTLE",
+          "row": 1,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "far-and-away",
+      "difficulty": "hard",
+      "answer_display": "Far and away",
+      "tiles": [
+        {
+          "text": "FAR",
+          "row": 1,
+          "col": 1,
+          "style": "small"
+        },
+        {
+          "text": "AWAY",
+          "row": 3,
+          "col": 3,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "one-in-million",
+      "difficulty": "hard",
+      "answer_display": "One in a million",
+      "tiles": [
+        {
+          "text": "MILLION",
+          "row": 1,
+          "col": 2,
+          "style": "small"
+        },
+        {
+          "text": "ONE",
+          "row": 2,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "MILLION",
+          "row": 3,
+          "col": 2,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "cross-the-line",
+      "difficulty": "hard",
+      "answer_display": "Crossing the line",
+      "tiles": [
+        {
+          "text": "LINE",
+          "row": 1,
+          "col": 2,
+          "style": "small"
+        },
+        {
+          "text": "CROSS",
+          "row": 2,
+          "col": 2,
+          "style": "crossed"
+        },
+        {
+          "text": "LINE",
+          "row": 3,
+          "col": 2,
+          "style": "small"
+        }
+      ]
+    },
+    {
+      "id": "down-to-earth",
+      "difficulty": "hard",
+      "answer_display": "Down to earth",
+      "tiles": [
+        {
+          "text": "DOWN",
+          "row": 1,
+          "col": 2,
+          "style": "flipped"
+        },
+        {
+          "text": "2",
+          "row": 2,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "EARTH",
+          "row": 3,
+          "col": 2,
+          "style": "normal"
+        }
+      ]
+    },
+    {
+      "id": "the-last-word",
+      "difficulty": "hard",
+      "answer_display": "The last word",
+      "tiles": [
+        {
+          "text": "WORD",
+          "row": 3,
+          "col": 3,
+          "style": "bright"
+        }
+      ]
+    },
+    {
+      "id": "falling-apart",
+      "difficulty": "hard",
+      "answer_display": "Falling apart",
+      "tiles": [
+        {
+          "text": "AP",
+          "row": 1,
+          "col": 1,
+          "style": "tilt"
+        },
+        {
+          "text": "AR",
+          "row": 2,
+          "col": 2,
+          "style": "tilt"
+        },
+        {
+          "text": "T",
+          "row": 3,
+          "col": 3,
+          "style": "tilt"
         }
       ]
     }

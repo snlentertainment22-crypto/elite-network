@@ -34,6 +34,7 @@ from game_builder.admin_save import save_game_builder_question
 from game_builder.admin_review import review_game_builder_question
 from game_builder.admin_ai import prepare_admin_game_slot
 from game_builder.admin_auto_build import build_auto_games
+from game_builder.admin_publish import preflight_game, publish_game
 
 BASE_DIR = Path(__file__).resolve().parent
 WEB_DIR = BASE_DIR / "web"
@@ -79,48 +80,91 @@ def media_file_version(path):
 
 
 POLL_MS = 250
-APP_BUILD = "NETWORK-SHELL-1F-GIBBERISH"
+APP_BUILD = "NETWORK-SHELL-1G-FOUR-MINIS"
 
+
+
+# Standalone minis use one deterministic, balanced random schedule per broadcast day.
+# The TV's next-game announcement and the actual launcher call this same planner.
+STANDALONE_MINI_TYPES = ("reaction_rush", "skee_ball", "gibberish", "brain_warp")
+STANDALONE_MINI_TITLES = {
+    "reaction_rush": "ELITE REACTION RUSH",
+    "skee_ball": "ELITE SKEE-BALL CHALLENGE",
+    "gibberish": "ELITE GIBBERISH",
+    "brain_warp": "ELITE BRAIN WARP",
+}
+
+
+def _standalone_mini_slots_for_day(day, config):
+    """Plan mini starts for a day beginning at 11 AM, including after midnight.
+
+    Shuffle *fairly* rather than purely at random: pick among least-used games,
+    never repeat the immediately previous game, and use a stable SHA256 tie-break
+    so every server poll predicts the exact same next game.
+    """
+    anchor = day.replace(hour=0, minute=0, second=0, microsecond=0)
+    slots = []
+    for window in config.get("mini_windows", []) or []:
+        try:
+            sh, sm = map(int, str(window["start"]).split(":"))
+            eh, em = map(int, str(window["end"]).split(":"))
+            begin = anchor + timedelta(hours=sh, minutes=sm)
+            if sh < 11:
+                begin += timedelta(days=1)
+            end = begin.replace(hour=eh, minute=em)
+            if end <= begin:
+                end += timedelta(days=1)
+            every = max(5, int(window.get("every_minutes", 20)))
+            allowed = tuple(k for k in window.get("rotation", STANDALONE_MINI_TYPES)
+                            if k in STANDALONE_MINI_TYPES)
+            if not allowed:
+                continue
+            # The morning window starts at 11:05, then repeats at 11:20,
+            # 11:35, etc. Preserve the opening join window and a true
+            # 15-minute cadence (rather than 11:05 immediately then 11:15).
+            cursor = begin + (timedelta(minutes=5)
+                              if sh == 11 and sm == 0 else timedelta(0))
+            while cursor < end:
+                slots.append((cursor, allowed))
+                cursor += timedelta(minutes=every)
+        except (KeyError, TypeError, ValueError, OverflowError):
+            continue
+
+    slots.sort(key=lambda item: item[0])
+    counts = {game: 0 for game in STANDALONE_MINI_TYPES}
+    previous = None
+    result = []
+    for when, allowed in slots:
+        eligible = [game for game in allowed if game != previous] or list(allowed)
+        fewest = min(counts[game] for game in eligible)
+        tied = [game for game in eligible if counts[game] == fewest]
+        digest = hashlib.sha256(
+            ("ELITE-MINI-V1|" + when.isoformat() + "|" + ",".join(tied)).encode("utf-8")
+        ).digest()
+        chosen = tied[int.from_bytes(digest[:8], "big") % len(tied)]
+        counts[chosen] += 1
+        previous = chosen
+        title = STANDALONE_MINI_TITLES[chosen]
+        if chosen == "gibberish" and (when.hour >= 22 or when.hour < 1):
+            title = "ELITE GIBBERISH AFTER DARK"
+        result.append({"when": when, "game_type": chosen, "title": title})
+    return result
 
 
 def next_standalone_mini(now, config):
-    """Next configured long-break mini slot, including the 11:05 startup slot."""
-    windows = config.get("mini_windows", []) or []
+    """Next actual scheduled long-break mini within the upcoming hour."""
     candidates = []
     for day_delta in (-1, 0, 1):
-        day = (now + timedelta(days=day_delta)).replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
-        for window in windows:
-            try:
-                sh, sm = map(int, str(window["start"]).split(":"))
-                eh, em = map(int, str(window["end"]).split(":"))
-                begin = day + timedelta(hours=sh, minutes=sm)
-                end = day + timedelta(hours=eh, minutes=em)
-                if end <= begin:
-                    end += timedelta(days=1)
-                every = max(5, int(window.get("every_minutes", 20)))
-                rotation = [
-                    kind for kind in (window.get("rotation") or ["reaction_rush", "skee_ball", "gibberish"])
-                    if kind in ("reaction_rush", "skee_ball", "gibberish")
-                ]
-                if not rotation:
-                    rotation = ["reaction_rush", "skee_ball", "gibberish"]
-                slot_index = 0
-                cursor = begin
-                while cursor < end:
-                    # At 11 AM the channel has just emerged from standby.
-                    # Give the first mini an actual on-air QR window.
-                    when = cursor + (timedelta(minutes=5) if sh == 11 and sm == 0 and slot_index == 0 else timedelta())
-                    if 0 < (when - now).total_seconds() <= 3600:
-                        kind = rotation[slot_index % len(rotation)]
-                        title = {"reaction_rush":"ELITE REACTION RUSH", "skee_ball":"ELITE SKEE-BALL CHALLENGE", "gibberish":"ELITE GIBBERISH"}.get(kind, "ELITE MINI-GAME")
-                        candidates.append({"game_type":kind, "title":title, "start_iso":when.isoformat(), "seconds_until":max(0,int((when-now).total_seconds()))})
-                    cursor += timedelta(minutes=every)
-                    slot_index += 1
-            except (KeyError, ValueError, TypeError, ZeroDivisionError):
-                continue
-    return min(candidates, key=lambda x:x["seconds_until"]) if candidates else None
+        for entry in _standalone_mini_slots_for_day(now + timedelta(days=day_delta), config):
+            seconds = (entry["when"] - now).total_seconds()
+            if 0 < seconds <= 3600:
+                candidates.append({
+                    "game_type": entry["game_type"],
+                    "title": entry["title"],
+                    "start_iso": entry["when"].isoformat(),
+                    "seconds_until": max(0, int(seconds)),
+                })
+    return min(candidates, key=lambda x: x["seconds_until"]) if candidates else None
 
 class NetworkScheduler:
     """Local schedule brain for the Elite Network channel shell."""
@@ -700,7 +744,7 @@ class NetworkScheduler:
                 available_rotation = ["sponsor"]
 
 
-            sponsor_seconds = 18  # Independent of other filler durations.
+            sponsor_seconds = max(8, min(20, int(channel_config.get("sponsor_seconds", 12))))  # Configurable sponsor dwell.
 
             # Different content can have
             # different screen durations.
@@ -1069,7 +1113,7 @@ class MiniGameController:
     - reaction_rush
     - skee_ball
     - gibberish
-    - brain_warp (manual test only)
+    - brain_warp
     """
 
     def __init__(
@@ -1183,7 +1227,7 @@ class MiniGameController:
         self.gibberish_current = None
         self.gibberish_rounds = []
         self.gibberish_go_started = None
-        self.gibberish_question_seconds = 35.0
+        self.gibberish_question_seconds = 50.0
         self.gibberish_reveal_seconds = 7.0
         # Wrong guesses are tracked separately; they are never counted as a solved puzzle.
         self.gibberish_wrong_guesses = {}
@@ -1717,7 +1761,7 @@ class MiniGameController:
 
                     self.deadline = (
                         now
-                        + 5.0
+                        + 3.0
                     )
 
                     return
@@ -1729,7 +1773,7 @@ class MiniGameController:
 
                     self.deadline = (
                         now
-                        + 5.0
+                        + 3.0
                     )
 
                     return
@@ -2502,12 +2546,21 @@ class MiniGameController:
         )
 
 
+        # ELITE_RESULT_STAGES_REACTION_20261120: names for TV result cards.
+        team_names = {}
+        if self.team_provider is not None:
+            team_names = {
+                str(t.get("id")): str(t.get("name", "PLAYER"))
+                for t in (self.team_provider() or [])
+            }
+
         for index, row in enumerate(
             rows,
             start=1,
         ):
 
             row["rank"] = index
+            row["name"] = team_names.get(str(row.get("team_id")), f"PLAYER {index}")
 
 
         return rows[:5]
@@ -4934,7 +4987,7 @@ class NetworkController:
             try:
                 adult_gibberish = (
                     game_type == "gibberish"
-                    and (now.hour >= 23 or now.hour < 1)
+                    and (now.hour >= 22 or now.hour < 1)
                 )
                 self.mini_game.start(
                     reason,
@@ -5117,11 +5170,11 @@ class NetworkController:
         if elapsed < 0:
             elapsed += 1440
 
-        # First 11 AM mini is delayed five minutes to allow on-air joining.
-        startup_mini = (window_start == 11 * 60 and elapsed == 5)
-        if elapsed % every != 0 and not startup_mini:
-            return
-        if window_start == 11 * 60 and elapsed == 0:
+        # Five-minute startup grace period, then every 15 minutes from 11:05.
+        if window_start == 11 * 60:
+            if elapsed < 5 or (elapsed - 5) % every != 0:
+                return
+        elif elapsed % every != 0:
             return
 
         # Polling happens several times a
@@ -5168,27 +5221,19 @@ class NetworkController:
         ):
             return
 
-        rotation = (
-            active_window.get(
-                "rotation"
-            )
-            or [
-                "reaction_rush", "gibberish", "skee_ball",
-            ]
+        # Use exactly the same balanced day plan as the on-screen announcement.
+        # For after-midnight slots, this belongs to yesterday's broadcast day.
+        broadcast_day = now - timedelta(days=1) if now.hour < 11 else now
+        scheduled = next(
+            (item for item in _standalone_mini_slots_for_day(broadcast_day, config)
+             if item["when"].date() == now.date()
+             and item["when"].hour == now.hour
+             and item["when"].minute == now.minute),
+            None,
         )
-        rotation = [
-            kind for kind in rotation
-            if kind in ("reaction_rush", "gibberish", "skee_ball")
-        ] or ["reaction_rush", "gibberish", "skee_ball"]
-
-        slot_number = (
-            0 if startup_mini else elapsed // every
-        )
-
-        game_type = rotation[
-            slot_number
-            % len(rotation)
-        ]
+        if scheduled is None:
+            return
+        game_type = scheduled["game_type"]
 
         self.last_auto_mini_slot = slot
 
@@ -5357,6 +5402,7 @@ class EliteHeartbeatMonitor:
         self.last_tv_seen_monotonic = None
         self.last_tv_seen_wall = None
         self.last_tv_client = None
+        self.demo_tv_seen = {}  # ELITE_DEMO_SINGLE_VENUE_CONTROL_20261120
         self.fail_sent = False
         self.last_cloud_ping_wall = None
         self.last_cloud_error = None
@@ -5381,6 +5427,12 @@ class EliteHeartbeatMonitor:
         payload = payload if isinstance(payload, dict) else {}
         with self.lock:
             self.last_tv_seen_monotonic = time.monotonic()
+            demo_id = str(payload.get("client_id") or "").strip()
+            if 3 <= len(demo_id) <= 96:
+                self.demo_tv_seen[demo_id] = self.last_tv_seen_monotonic
+            now = self.last_tv_seen_monotonic
+            self.demo_tv_seen = {client_id: stamp for client_id, stamp in self.demo_tv_seen.items()
+                                 if now - stamp <= 45.0}
             self.last_tv_seen_wall = datetime.now().astimezone().isoformat(timespec="seconds")
             self.last_tv_client = {
                 "client_id": str(payload.get("client_id") or ""),
@@ -5388,6 +5440,13 @@ class EliteHeartbeatMonitor:
                 "path": str(payload.get("path") or ""),
                 "client_ip": str(client_ip or ""),
             }
+
+    def active_demo_tv_ids(self):
+        # Report only TVs with recent real browser heartbeats.
+        with self.lock:
+            now = time.monotonic()
+            return sorted(client_id for client_id, stamp in self.demo_tv_seen.items()
+                          if now - stamp <= 45.0)
 
     def snapshot(self):
         with self.lock:
@@ -5475,6 +5534,65 @@ NETWORK_CONTROL = NetworkController(NETWORK, ENGINE, GAME_DATA)
 
 class EliteRequestHandler(BaseHTTPRequestHandler):
     server_version = f"AutoEliteLocal/{APP_BUILD}"
+
+    # ELITE_GLOBAL_MINI_OVERRIDE_20261120
+    # Global control of the CURRENT server. Scoped command contract is ready for
+    # a future venue ID, but ONLY target.kind='all' is implemented today.
+    def _elite_remote_authorized(self):
+        if os.environ.get("ELITE_REMOTE_OVERRIDE_ENABLED") != "1":
+            return False
+        token = os.environ.get("ELITE_REMOTE_ADMIN_TOKEN", "")
+        if len(token) < 32:
+            return False
+        supplied = self.headers.get("Authorization", "")
+        if not supplied.startswith("Bearer "):
+            return False
+        # Browser origin should be the Monitor's own site. curl/CLI may omit it;
+        # the bearer token remains required in all cases.
+        origin = self.headers.get("Origin", "")
+        if origin:
+            from urllib.parse import urlparse as _urlparse
+            parsed_origin = _urlparse(origin)
+            host = self.headers.get("Host", "").split(":", 1)[0].lower()
+            if parsed_origin.hostname != host:
+                return False
+            if os.environ.get("RENDER") and parsed_origin.scheme != "https":
+                return False
+        return secrets.compare_digest(supplied[7:], token)
+
+    def _elite_remote_gate_locked(self, game_type="reaction_rush"):
+        # Caller holds NETWORK_CONTROL.lock for both status and launch.
+        NETWORK_CONTROL.tick()
+        snapshot = NETWORK_CONTROL.get_snapshot()
+        active = bool(snapshot.get("game_active") or NETWORK_CONTROL.active_event_instance is not None)
+        scheduled = snapshot.get("scheduled_program") or {}
+        reason = None
+        # A Blitz underway ALWAYS owns the TV, even after its nominal slot end.
+        if active:
+            reason = "Blitz is running. Remote override is locked."
+        elif scheduled.get("kind") in NETWORK_CONTROL.SHOW_KINDS:
+            reason = "Blitz scheduled slot is active. Remote override is locked."
+        elif not snapshot.get("network_on_air"):
+            reason = "The channel is in standby; remote mini-games require on-air programming."
+        else:
+            upcoming = snapshot.get("next_event") or {}
+            seconds = upcoming.get("seconds_until")
+            try:
+                seconds = float(seconds) if seconds is not None else None
+            except (TypeError, ValueError):
+                seconds = None
+            # A Skee-Ball round can take longer with multiple players.
+            minimum = 900 if game_type == "skee_ball" else 480
+            if seconds is not None and 0 <= seconds <= minimum:
+                reason = "Next Blitz begins too soon for a full mini-game (" + str(minimum // 60) + "-minute safety window)."
+        return {
+            "can_launch": reason is None,
+            "blocked_reason": reason,
+            "blitz_active": active,
+            "active_tv_count": len(HEARTBEAT.active_demo_tv_ids()),
+            "next_blitz": (snapshot.get("next_event") or {}).get("title", ""),
+            "scope": {"kind": "all", "id": "all"},
+        }
 
     def log_message(self, fmt, *args):
         return
@@ -5727,7 +5845,9 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
     def do_GET(self):
         parsed = urlparse(self.path)
         path = parsed.path
-        if os.environ.get("ELITE_HEADLESS") == "1" and (path in ("/game-builder", "/admin/game-builder") or path.startswith("/api/admin/")):
+        # Allow only the authenticated remote override status API on headless Render.
+        # All Game Builder and other administration routes stay blocked.
+        if os.environ.get("ELITE_HEADLESS") == "1" and (path in ("/game-builder", "/admin/game-builder") or (path.startswith("/api/admin/") and path != "/api/admin/mini-override/status")):
             self.send_error(403, "Administration disabled on public server")
             return
         query = parse_qs(parsed.query)
@@ -6159,6 +6279,15 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
             return self._send_json(
                 {"ok": True, "service": "Auto Elite Local", "app_build": APP_BUILD + "-" + os.environ.get("RENDER_GIT_COMMIT", "local")[:12], "deploy_commit": os.environ.get("RENDER_GIT_COMMIT", "local")}
             )
+        if path == "/api/admin/mini-override/status":
+            if not self._elite_remote_authorized():
+                return self._send_json({"ok": False, "error": "Override disabled or unauthorized"}, HTTPStatus.FORBIDDEN)
+            game_type = str((query.get("game_type") or ["reaction_rush"])[0])
+            if game_type not in ("reaction_rush", "skee_ball", "brain_warp", "gibberish"):
+                return self._send_json({"ok": False, "error": "Unknown mini-game"}, HTTPStatus.BAD_REQUEST)
+            with NETWORK_CONTROL.lock:
+                gate = self._elite_remote_gate_locked(game_type)
+            return self._send_json({"ok": True, **gate})
         if path == "/api/monitor":
             return self._send_json({"ok": True, "heartbeat": HEARTBEAT.snapshot()})
         if path.startswith("/assets/"):
@@ -6209,6 +6338,13 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
                     return self._send_json({"ok": False, "error": str(exc)}, HTTPStatus.BAD_REQUEST)
                 except Exception:
                     return self._send_json({"ok": False, "error": "Puzzle temporarily unavailable. Please try again."}, HTTPStatus.SERVICE_UNAVAILABLE)
+            if parsed.path == "/api/admin/mini-override":
+                try:
+                    request_length = int(self.headers.get("Content-Length", "0"))
+                except ValueError:
+                    request_length = 0
+                if not 0 < request_length <= 1024:
+                    return self._send_json({"ok": False, "error": "Invalid override request size"}, HTTPStatus.BAD_REQUEST)
             payload = self._read_json_body()
 
             # ====================================================
@@ -6222,6 +6358,34 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
             # ====================================================
             # ELITE NETWORK GAME BUILDER -- AI PREP
             # ====================================================
+
+            if parsed.path == "/api/admin/game-builder/game-publication":
+                # Publication is deliberately LOCAL-ONLY. Do not expose a
+                # unauthenticated publish operation on Render or the LAN.
+                remote_ip = str(self.client_address[0] if self.client_address else "")
+                host = str(self.headers.get("Host", "")).split(":")[0].lower()
+                origin = str(self.headers.get("Origin", "")).lower()
+                if (os.environ.get("ELITE_HEADLESS") == "1"
+                    or remote_ip not in ("127.0.0.1", "::1")
+                    or host not in ("localhost", "127.0.0.1", "[::1]")
+                    or (origin and not (origin.startswith("http://localhost:") or
+                                        origin.startswith("http://127.0.0.1:")))
+                    or self.headers.get("X-Elite-Local-Admin") != "1"):
+                    return self._send_json({"ok": False, "error": "Local admin only"},
+                                           HTTPStatus.FORBIDDEN)
+                try:
+                    game_key = str(payload.get("game_key") or "").strip()
+                    action = str(payload.get("action") or "preflight").lower()
+                    if action == "preflight":
+                        result = preflight_game(game_key)
+                    elif action == "publish":
+                        result = publish_game(game_key, payload.get("confirm"))
+                    else:
+                        raise ValueError("Invalid publication action")
+                    return self._send_json({"ok": True, "result": result})
+                except (ValueError, RuntimeError) as exc:
+                    return self._send_json({"ok": False, "error": str(exc)},
+                                           HTTPStatus.BAD_REQUEST)
 
             if parsed.path == "/api/admin/game-builder/auto-build":
 
@@ -6318,6 +6482,37 @@ overlay.innerHTML=`<div class="networkShell"><div class="channelClock">${esc(n.n
                         "result": result,
                     }
                 )
+
+            if parsed.path == "/api/admin/mini-override":
+                if not self._elite_remote_authorized():
+                    return self._send_json({"ok": False, "error": "Override disabled or unauthorized"}, HTTPStatus.FORBIDDEN)
+                if not isinstance(payload, dict):
+                    return self._send_json({"ok": False, "error": "Invalid payload"}, HTTPStatus.BAD_REQUEST)
+                scope = payload.get("target") or {}
+                if not isinstance(scope, dict) or scope != {"kind": "all", "id": "all"}:
+                    return self._send_json({"ok": False, "error": "Only the global target is supported. Per-venue state is not available yet."}, HTTPStatus.BAD_REQUEST)
+                game_type = str(payload.get("game_type") or "")
+                if game_type not in ("reaction_rush", "skee_ball", "brain_warp", "gibberish"):
+                    return self._send_json({"ok": False, "error": "Unknown mini-game"}, HTTPStatus.BAD_REQUEST)
+                # Atomic guard/launch. A scheduled Blitz cannot slip in between.
+                with NETWORK_CONTROL.lock:
+                    gate = self._elite_remote_gate_locked(game_type)
+                    if not gate["can_launch"]:
+                        return self._send_json({"ok": False, "error": gate["blocked_reason"]}, HTTPStatus.CONFLICT)
+                    if game_type == "reaction_rush":
+                        if NETWORK_CONTROL.mini_game.active:
+                            NETWORK_CONTROL.mini_game.stop("remote global override")
+                        NETWORK_CONTROL.run_reaction_rush_now()
+                    elif game_type == "skee_ball":
+                        NETWORK_CONTROL.run_skee_ball_now()
+                    elif game_type == "brain_warp":
+                        NETWORK_CONTROL.run_brain_warp_now()
+                    else:
+                        now = NETWORK_CONTROL.scheduler.now()
+                        NETWORK_CONTROL.run_gibberish_now(adult=(now.hour >= 22 or now.hour < 1))
+                    NETWORK_CONTROL.scheduler.record_event("GLOBAL REMOTE MINI -> " + game_type)
+                return self._send_json({"ok": True, "game_type": game_type,
+                                        "scope": {"kind": "all", "id": "all"}})
 
             if parsed.path == "/api/tv-heartbeat":
                 HEARTBEAT.note_tv_client(

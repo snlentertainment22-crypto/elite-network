@@ -358,18 +358,19 @@ const ramp =
     new THREE.BoxGeometry(
       5.45,
       .18,
-      3.3
+      2.6
     ),
     laneMaterial
   );
 
+// The lane must rise toward the target, not slope downhill.
 ramp.rotation.x =
-  -THREE.MathUtils.degToRad(20);
+  THREE.MathUtils.degToRad(20);
 
 ramp.position.set(
   0,
-  1.22,
-  -6.7
+  1.10,
+  -6.35
 );
 
 ramp.receiveShadow = true;
@@ -641,6 +642,11 @@ let shotPower = 0;
 
 let shotAim = 0;
 
+// Independent motion phases: roll -> climb actual ramp -> launch -> target.
+let shotPhase = "rolling";
+let impactVisual = null;
+const boardHitLocal = new THREE.Vector3();
+
 let startPosition =
   new THREE.Vector3();
 
@@ -652,6 +658,26 @@ const playerNameElement =
   document.getElementById(
     "playerName"
   );
+
+// Make full team names as large as possible without cutting them off.
+function fitSkeeTeamName() {
+  playerNameElement.style.fontSize = "";
+  let size = parseFloat(getComputedStyle(playerNameElement).fontSize);
+  let attempts = 0;
+  while (playerNameElement.scrollWidth > playerNameElement.clientWidth &&
+         size > 24 && attempts++ < 25) {
+    size -= 2;
+    playerNameElement.style.fontSize = `${size}px`;
+  }
+}
+
+function setSkeeTeamName(name) {
+  const next = String(name || "WAITING...");
+  if (playerNameElement.textContent !== next) {
+    playerNameElement.textContent = next;
+    fitSkeeTeamName();
+  }
+}
 
 let networkSkeeState = null;
 let networkTeamId = null;
@@ -862,8 +888,7 @@ async function pollEliteSkeeState() {
       mini.game_type !== "skee_ball"
     ) {
 
-      playerNameElement.textContent =
-        "WAITING...";
+      setSkeeTeamName("WAITING...");
 
       return;
     }
@@ -895,8 +920,7 @@ async function pollEliteSkeeState() {
     }
 
 
-    playerNameElement.textContent =
-      team.name || "WAITING...";
+    setSkeeTeamName(team.name || "WAITING...");
 
 
     const ballNumber =
@@ -1000,6 +1024,11 @@ const playAgain =
 function resetBall() {
 
   shooting = false;
+  shotPhase = "rolling";
+  impactVisual = null;
+  ball.visible = true;
+  ball.scale.setScalar(1);
+  ballLight.intensity = 4;
 
   ball.position.set(
     aim * 1.7,
@@ -1160,6 +1189,11 @@ function shootBall() {
 
 
   shooting = true;
+  shotPhase = "rolling";
+  impactVisual = null;
+  ball.visible = true;
+  ball.scale.setScalar(1);
+  ballLight.intensity = 4;
 
   shotTime = 0;
 
@@ -1362,219 +1396,113 @@ function registerMiss() {
    SHOT SIMULATION
    ====================================================== */
 
-function updateShot(dt) {
+// The ball follows the visible (uphill) ramp first. At its lip, it gets
+// its upward impulse and flies toward the *tilted* target board. Using
+// board.worldToLocal() makes the hit and the displayed hole agree.
+const BALL_RADIUS = .26;
+const RAMP_ENTRY_Z = -5.2;
+const RAMP_LIP_Z = -7.55;
+const BOARD_GRAVITY = 8.5;
 
-  if (!shooting) {
-    return;
+function beginHoleVisual(hole) {
+  // Slide into the *scored* target instead of freezing at the board face.
+  const target = board.localToWorld(
+    new THREE.Vector3(hole.x, hole.y, -.17)
+  );
+  impactVisual = {
+    start: ball.position.clone(),
+    end: target,
+    elapsed: 0,
+    duration: .42
+  };
+}
+
+function updateImpactVisual(dt) {
+  if (!impactVisual) return;
+  impactVisual.elapsed += dt;
+  const t = Math.min(1, impactVisual.elapsed / impactVisual.duration);
+  const eased = t * t * (3 - 2 * t);
+  ball.position.lerpVectors(impactVisual.start, impactVisual.end, eased);
+  ball.scale.setScalar(Math.max(.09, 1 - eased * .91));
+  ballLight.position.copy(ball.position);
+  ballLight.intensity = 4 * (1 - eased);
+  if (t >= 1) {
+    ball.visible = false;
+    impactVisual = null;
   }
+}
 
-
+function updateShot(dt) {
+  if (!shooting) return;
   shotTime += dt;
 
-
-  /*
-    Flat lane
-  */
-
-  if (
-    ball.position.z > -5.2
-  ) {
-
-    ball.position.x +=
-      velocity.x * dt;
-
-    ball.position.z +=
-      velocity.z * dt;
-
-    ball.rotation.x -=
-      velocity.z *
-      dt *
-      2.7;
-
+  if (shotPhase === "rolling") {
+    ball.position.x += velocity.x * dt;
+    ball.position.z += velocity.z * dt;
+    ball.rotation.x -= velocity.z * dt * 2.7;
+    if (ball.position.z <= RAMP_ENTRY_Z) shotPhase = "ramp";
   }
-
-
-  /*
-    Ramp area:
-    launch upward
-  */
-
-  else if (
-    ball.position.z > -7.15
-  ) {
-
-    ball.position.x +=
-      velocity.x * dt;
-
-    ball.position.z +=
-      velocity.z * dt;
-
-    ball.position.y +=
-      3.6 *
-      shotPower *
-      dt;
-
-    ball.rotation.x -=
-      velocity.z *
-      dt *
-      2.7;
-
+  else if (shotPhase === "ramp") {
+    ball.position.x += velocity.x * dt;
+    ball.position.z += velocity.z * dt;
+    // Sphere center rides the real surface rather than a timed fake jump.
+    ball.position.y = ramp.position.y
+      - Math.sin(ramp.rotation.x) * (ball.position.z - ramp.position.z)
+      + Math.cos(ramp.rotation.x) * .09 + BALL_RADIUS;
+    ball.rotation.x -= velocity.z * dt * 2.7;
+    if (ball.position.z <= RAMP_LIP_Z) {
+      shotPhase = "airborne";
+      // More power provides the lift needed for middle/high scoring rings.
+      velocity.y = 1.5 + shotPower * 10;
+      velocity.z *= .35;
+      message.textContent = "AIRBORNE";
+    }
   }
+  else if (shotPhase === "airborne") {
+    velocity.y -= BOARD_GRAVITY * dt;
+    ball.position.addScaledVector(velocity, dt);
 
-
-  /*
-    airborne toward target
-  */
-
-  else {
-
-    velocity.y -=
-      8.5 * dt;
-
-
-    ball.position.x +=
-      velocity.x * dt;
-
-    ball.position.y +=
-      velocity.y * dt;
-
-    ball.position.z +=
-      velocity.z *
-      .45 *
-      dt;
-
-  }
-
-
-  /*
-    initial airborne impulse
-  */
-
-  if (
-    shotTime > .55 &&
-    shotTime < .55 + dt
-  ) {
-
-    velocity.y =
-      4.1 +
-      shotPower * 4.1;
-
-  }
-
-
-  ballLight.position.copy(
-    ball.position
-  );
-
-
-  /*
-    Detect approximate arrival at board.
-  */
-
-  if (
-    ball.position.z <
-    -8.05
-  ) {
-
-    const boardX =
-      ball.position.x;
-
-    const boardY =
-      ball.position.y -
-      board.position.y;
-
-
-    let scored =
-      null;
-
-
-    /*
-      Find closest scoring hole.
-    */
-
-    for (
-      const hole
-      of holes
-    ) {
-
-      const distance =
-        Math.sqrt(
-          Math.pow(
-            boardX - hole.x,
-            2
-          ) +
-          Math.pow(
-            boardY - hole.y,
-            2
-          )
+    // Convert world-space ball center to the board's inclined plane.
+    // The board face is local z=0, with the front of the ball at z-radius.
+    boardHitLocal.copy(ball.position);
+    board.worldToLocal(boardHitLocal);
+    if (boardHitLocal.z <= BALL_RADIUS) {
+      let scored = null;
+      let bestRatio = Infinity;
+      for (const hole of holes) {
+        const distance = Math.hypot(
+          boardHitLocal.x - hole.x,
+          boardHitLocal.y - hole.y
         );
-
-
-      if (
-        distance <
-        hole.radius * 1.20
-      ) {
-
-        scored = hole;
-
-        break;
-
+        const ratio = distance / hole.radius;
+        // Keep the existing forgiving hit tolerance, but choose the
+        // closest normalized target instead of the first ring in the list.
+        if (ratio < 1.20 && ratio < bestRatio) {
+          bestRatio = ratio;
+          scored = hole;
+        }
       }
-
+      shooting = false;
+      if (scored) {
+        scored.ring.material.emissiveIntensity = 4;
+        setTimeout(() => {
+          scored.ring.material.emissiveIntensity = 1.1;
+        }, 350);
+        beginHoleVisual(scored);
+        registerScore(scored.score);
+      } else {
+        registerMiss();
+      }
     }
-
-
-    shooting = false;
-
-
-    if (scored) {
-
-      scored.ring.material
-        .emissiveIntensity =
-        4;
-
-
-      setTimeout(
-        () => {
-
-          scored.ring.material
-            .emissiveIntensity =
-            1.1;
-
-        },
-        350
-      );
-
-
-      registerScore(
-        scored.score
-      );
-
-    }
-
-    else {
-
-      registerMiss();
-
-    }
-
   }
 
+  if (shooting) ballLight.position.copy(ball.position);
 
-  /*
-    safety timeout
-  */
-
-  if (
-    shotTime > 3
-  ) {
-
+  // Never post a miss twice after a successful collision.
+  if (shooting && shotTime > 3) {
     shooting = false;
-
     registerMiss();
-
   }
-
 }
 
 
@@ -1723,6 +1651,7 @@ function animate(now) {
 
 
   updateShot(dt);
+  updateImpactVisual(dt);
 
   updateCamera(dt);
 
@@ -1774,6 +1703,7 @@ window.addEventListener(
       window.innerWidth,
       window.innerHeight
     );
+    fitSkeeTeamName();
 
   }
 );

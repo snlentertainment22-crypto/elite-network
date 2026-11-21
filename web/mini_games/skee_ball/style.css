@@ -47,9 +47,9 @@ canvas {
   display: grid;
 
   grid-template-columns:
-    1fr
-    1fr
-    1fr;
+    minmax(0, .85fr)
+    minmax(0, 1.6fr)
+    minmax(0, .85fr);
 
   align-items: center;
 
@@ -72,8 +72,9 @@ canvas {
 }
 
 .top-center {
-  justify-self: center;
-
+  justify-self: stretch;
+  min-width: 0;
+  width: 100%;
   text-align: center;
 }
 
@@ -106,7 +107,7 @@ canvas {
 
 .player-label,
 .score-label {
-  font-size: .55vw;
+  font-size: clamp(16px, 1.05vw, 23px);
 
   font-weight: 800;
 
@@ -117,16 +118,22 @@ canvas {
 
 .player-name {
   margin-top: .35vh;
-
-  font-size: 1.2vw;
-
+  display: block;
+  width: 100%;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.12;
+  font-size: clamp(30px, 2.85vw, 58px);
   font-weight: 1000;
+  text-shadow: 0 2px 12px rgba(0,0,0,.94);
 }
 
 .score {
   margin-top: .2vh;
 
-  font-size: 2.6vw;
+  font-size: clamp(42px, 3.25vw, 70px);
 
   font-weight: 1000;
 
@@ -356,7 +363,7 @@ canvas {
 .balls-label {
   margin-right: .25vw;
 
-  font-size: .5vw;
+  font-size: clamp(16px, 1.05vw, 24px);
 
   font-weight: 900;
 
@@ -366,8 +373,8 @@ canvas {
 }
 
 .ball-dot {
-  width: 1vw;
-  height: 1vw;
+  width: clamp(18px, 1.5vw, 29px);
+  height: clamp(18px, 1.5vw, 29px);
 
   border-radius: 50%;
 
@@ -404,7 +411,7 @@ canvas {
   transform:
     translateX(-50%);
 
-  font-size: 1vw;
+  font-size: clamp(20px, 1.85vw, 38px);
 
   font-weight: 1000;
 

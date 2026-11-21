@@ -28,6 +28,20 @@ small{color:#97a7bd}.events{list-style:none;padding:0;margin:0}.events li{font:1
 </div>
 <section class="panel"><h2>Recent Network Events</h2><ul id="events" class="events"><li>Waiting for state…</li></ul></section>
 <section class="panel"><h2>Upcoming Today's Shows</h2><div id="guide" class="detail">Waiting for schedule…</div></section>
+
+<!-- ELITE_GLOBAL_MINI_OVERRIDE_20261120: authenticated ALL-server mini-game control. -->
+<section class="panel" id="demoPanel">
+ <h2>Mini-game override <small>Entire Network — testing mode</small></h2>
+ <div class="detail" style="margin-bottom:12px">Launches on <strong>ALL TVs and browser sessions</strong> connected to this server. Requires your private admin token. Blitz always takes priority; upcoming Blitz safety windows are 8 minutes (most minis) or 15 minutes (Skee-Ball). Venue targeting is reserved for a future release.</div>
+ <div class="grid" style="align-items:end">
+  <label><span class="label">Admin token (not saved)</span><input type="password" id="demoSecret" autocomplete="off" spellcheck="false" style="display:block;width:100%;margin-top:5px;padding:10px;background:#111a2a;color:#fff;border:1px solid #536480;border-radius:7px"></label>
+  <label><span class="label">Target</span><select id="demoTarget" disabled style="display:block;width:100%;margin-top:5px;padding:10px;background:#111a2a;color:#fff;border:1px solid #536480;border-radius:7px"><option value="all">Entire Network (all screens)</option></select></label>
+  <label><span class="label">Mini-game</span><select id="demoGame" style="display:block;width:100%;margin-top:5px;padding:10px;background:#111a2a;color:#fff;border:1px solid #536480;border-radius:7px"><option value="reaction_rush">Reaction Rush</option><option value="skee_ball">Skee-Ball</option><option value="gibberish">Gibberish (Rated R at 10 PM)</option><option value="brain_warp">Brain Warp</option></select></label>
+  <button id="demoCheck" type="button" style="padding:10px;background:#375778;color:white;border:0;border-radius:8px;cursor:pointer">Check availability</button>
+  <button id="demoLaunch" type="button" disabled style="padding:10px;background:#1f8e66;color:white;border:0;border-radius:8px;cursor:pointer">Launch on Entire Network</button>
+ </div>
+ <div id="demoStatus" class="detail" role="status" aria-live="polite">Locked until you enter your private token and check availability.</div>
+</section>
 <p><small id="updated">Waiting for first update…</small></p>
 <script>
 'use strict';
@@ -74,6 +88,45 @@ async function refresh(){
 }
 async function monitorLoop(){await refresh();setTimeout(monitorLoop,monitorPollDelay);}
 monitorLoop();
+
+// ELITE_GLOBAL_MINI_OVERRIDE_20261120 — token stays only in this page's memory.
+const demoSecret=()=>el('demoSecret').value.trim();
+const demoStatus=msg=>{el('demoStatus').textContent=msg;};
+const demoHeaders=()=>({'Authorization':'Bearer '+demoSecret()});
+let demoAllowed=false;
+el('demoSecret').addEventListener('input',()=>{
+ demoAllowed=false;el('demoLaunch').disabled=true;
+});
+el('demoGame').addEventListener('change',()=>{
+ demoAllowed=false;el('demoLaunch').disabled=true;
+ demoStatus('Game changed. Check availability before launching.');
+});
+el('demoCheck').addEventListener('click',async()=>{
+ demoAllowed=false;el('demoLaunch').disabled=true;
+ if(demoSecret().length<32){demoStatus('Enter the private 32+ character admin token.');return;}
+ try{
+  const game=el('demoGame').value;
+  const r=await fetch('/api/admin/mini-override/status?game_type='+encodeURIComponent(game),{cache:'no-store',headers:demoHeaders()});
+  const j=await r.json();
+  if(!r.ok||!j.ok)throw Error(j.error||('HTTP '+r.status));
+  if(!j.can_launch){demoStatus('LOCKED: '+(j.blocked_reason||'Unavailable')+' TVs recently seen: '+j.active_tv_count);return;}
+  demoAllowed=true;el('demoLaunch').disabled=false;
+  demoStatus('READY: '+game.replaceAll('_',' ')+' can launch on ENTIRE NETWORK. TVs recently seen: '+j.active_tv_count+'.');
+ }catch(e){demoStatus('Control unavailable: '+e.message);}
+});
+el('demoLaunch').addEventListener('click',async()=>{
+ if(!demoAllowed||!demoSecret())return;
+ const game=el('demoGame').value;
+ if(!confirm('Launch '+game.replaceAll('_',' ')+' on EVERY SCREEN connected to this Network server? Blitz has priority.'))return;
+ demoAllowed=false;el('demoLaunch').disabled=true;
+ try{
+  const r=await fetch('/api/admin/mini-override',{method:'POST',cache:'no-store',headers:{...demoHeaders(),'Content-Type':'application/json'},body:JSON.stringify({game_type:game,target:{kind:'all',id:'all'}})});
+  const j=await r.json();
+  if(!r.ok||!j.ok)throw Error(j.error||('HTTP '+r.status));
+  demoStatus('LAUNCH ACCEPTED: '+game.replaceAll('_',' ')+' on the entire Network. Watch the TV/tablet.');
+ }catch(e){demoStatus('LAUNCH BLOCKED: '+e.message);}
+});
+
 </script>
 </body>
 </html>
