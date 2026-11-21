@@ -1254,7 +1254,12 @@ class MiniGameController:
         # Reaction Rush state.
         self.reaction_go_started = None
         self.reaction_wait_seconds = 3.0
-        self.reaction_window_seconds = 4.0
+        self.reaction_window_seconds = 2.8
+        # 3 rounds × 3 random GO lights; each light gets one tap per team.
+        self.reaction_cue_index = 0
+        self.reaction_total_cues = 9
+        self.reaction_cues_per_round = 3
+        self.reaction_light_orders = [[1, 2, 3] for _ in range(3)]
 
         # Skee-Ball Challenge state.
         self.skee_queue = []
@@ -1263,6 +1268,7 @@ class MiniGameController:
         self.skee_throws = {}
         self.skee_balls_per_team = 3
         self.skee_turn_timeout_seconds = 20.0
+        self.skee_join_seconds = 25.0
 
         self.skee_last_result = None
 
@@ -1449,6 +1455,9 @@ class MiniGameController:
                 self.gibberish_current = selected[0]
                 self.gibberish_go_started = None
 
+            # Skee-Ball collects its queue when the intro ends, allowing new joins.
+            # If nobody joins, the server exits cleanly back to the channel.
+
             self.game_type = game_type
 
             self.active = True
@@ -1467,13 +1476,7 @@ class MiniGameController:
 
             if game_type == "skee_ball":
 
-                teams = self._get_skee_teams()
-
-                if not teams:
-                    raise ValueError(
-                        "No active teams are available "
-                        "for Skee-Ball."
-                    )
+                teams = []  # Queue is collected at intro deadline (late joiners welcome).
 
                 self.title = (
                     "ELITE SKEE-BALL CHALLENGE"
@@ -1496,15 +1499,8 @@ class MiniGameController:
                 self.skee_control_seq = 0
                 self.skee_control = None
 
-                self.deadline = (
-                    time.monotonic()
-                    + self.intro_seconds
-                )
-
-                self._log(
-                    "MINI-GAME -> "
-                    "ELITE SKEE-BALL CHALLENGE"
-                )
+                self.deadline = time.monotonic() + self.skee_join_seconds
+                self._log("MINI-GAME -> ELITE SKEE-BALL CHALLENGE (join window)")
 
 
             elif game_type == "gibberish":
@@ -1529,12 +1525,9 @@ class MiniGameController:
                     "ELITE REACTION RUSH"
                 )
 
-                self.reaction_wait_seconds = (
-                    random.uniform(
-                        2.0,
-                        5.0,
-                    )
-                )
+                self.reaction_cue_index = 0
+                self.reaction_light_orders = [random.sample([1, 2, 3], 3) for _ in range(3)]
+                self.reaction_wait_seconds = random.uniform(2.0, 4.5)
 
                 self.deadline = (
                     time.monotonic()
@@ -1620,13 +1613,16 @@ class MiniGameController:
             ):
 
                 if self.phase == "intro":
-
+                    teams = self._get_skee_teams()
+                    if not teams:
+                        self.stop("Skee-Ball join window expired: no players -> channel")
+                        return
+                    self.skee_queue = teams
+                    self.skee_current_index = 0
+                    self.skee_scores = {team["id"]: 0 for team in teams}
+                    self.skee_throws = {team["id"]: [] for team in teams}
                     self.phase = "turn"
-                    self.deadline = (
-                        now
-                        + self.skee_turn_timeout_seconds
-                    )
-
+                    self.deadline = now + self.skee_turn_timeout_seconds
                     return
 
 
@@ -1719,80 +1715,52 @@ class MiniGameController:
 
 
             # ================================================
-            # REACTION RUSH
+            # REACTION RUSH: THREE ROUNDS, THREE RANDOM LIGHTS PER ROUND
             # ================================================
-
-            if (
-                self.game_type
-                == "reaction_rush"
-            ):
-
+            if self.game_type == "reaction_rush":
+                import random
                 if self.phase == "intro":
-
                     self.phase = "waiting"
-
-                    self.deadline = (
-                        now
-                        + self.reaction_wait_seconds
-                    )
-
+                    self.reaction_wait_seconds = random.uniform(2.0, 4.5)
+                    self.deadline = now + self.reaction_wait_seconds
                     return
-
-
                 if self.phase == "waiting":
-
                     self.phase = "question"
-
-                    self.reaction_go_started = (
-                        now
-                    )
-
-                    self.deadline = (
-                        now
-                        + self.reaction_window_seconds
-                    )
-
+                    self.reaction_go_started = now
+                    self.deadline = now + self.reaction_window_seconds
                     return
-
-
                 if self.phase == "question":
-
-                    self.phase = "reveal"
-
-                    self.deadline = (
-                        now
-                        + 3.0
-                    )
-
+                    self.reaction_go_started = None
+                    if self.reaction_cue_index + 1 >= self.reaction_total_cues:
+                        self.phase = "reveal"
+                        self.deadline = now + 3.0
+                    else:
+                        completed_cue = self.reaction_cue_index
+                        self.reaction_cue_index += 1
+                        if (completed_cue + 1) % self.reaction_cues_per_round == 0:
+                            self.phase = "round_break"
+                            self.deadline = now + 1.6
+                        else:
+                            self.phase = "waiting"
+                            self.reaction_wait_seconds = random.uniform(2.0, 4.5)
+                            self.deadline = now + self.reaction_wait_seconds
                     return
-
-
+                if self.phase == "round_break":
+                    self.phase = "waiting"
+                    self.reaction_wait_seconds = random.uniform(2.0, 4.5)
+                    self.deadline = now + self.reaction_wait_seconds
+                    return
                 if self.phase == "reveal":
-
                     self.phase = "outro"
-
-                    self.deadline = (
-                        now
-                        + 3.0
-                    )
-
+                    self.deadline = now + 3.0
                     return
-
-
                 if self.phase == "outro":
-
                     self.active = False
                     self.phase = "idle"
-
                     self.deadline = None
-
-                    self._log(
-                        "MINI-GAME COMPLETE "
-                        "-> CHANNEL"
-                    )
-
+                    self._log("REACTION RUSH COMPLETE -> CHANNEL")
                     return
-
+                return
 
             # ================================================
             # ELITE GIBBERISH / BRAIN WARP: three puzzles, progressively harder.
@@ -2192,104 +2160,33 @@ class MiniGameController:
 
 
             # ================================================
-            # REACTION RUSH
+            # REACTION RUSH: one authenticated tap for each GO light.
             # ================================================
-
-            if (
-                self.game_type
-                == "reaction_rush"
-            ):
-
+            if self.game_type == "reaction_rush":
                 if self.phase != "question":
-
-                    raise ValueError(
-                        "WAIT FOR GO!"
-                    )
-
-
-                team_key = str(
-                    team_id
-                )
-
-                response_key = (
-                    0,
-                    team_key,
-                )
-
-
+                    raise ValueError("WAIT FOR GO!")
+                if type(question_index) is not int or question_index != self.reaction_cue_index:
+                    raise ValueError("That light has ended. Wait for the next GO!")
+                team_key = str(team_id)
+                response_key = (self.reaction_cue_index, team_key)
                 if response_key in self.responses:
-
-                    raise ValueError(
-                        "Your reaction is already locked in."
-                    )
-
-
+                    raise ValueError("Your tap for this light is already locked in.")
                 if self.reaction_go_started is None:
-
-                    raise ValueError(
-                        "Reaction timer is not ready."
-                    )
-
-
-                reaction_seconds = max(
-                    0.0,
-                    time.monotonic()
-                    - self.reaction_go_started,
-                )
-
-
-                prior = [
-                    response
-                    for response
-                    in self.responses.values()
-                    if (
-                        response.get(
-                            "reaction_seconds"
-                        )
-                        is not None
-                    )
-                ]
-
-
-                rank = (
-                    len(prior)
-                    + 1
-                )
-
-
+                    raise ValueError("Reaction timer is not ready.")
+                reaction_seconds = max(0.0, time.monotonic() - self.reaction_go_started)
+                if reaction_seconds > self.reaction_window_seconds + 0.15:
+                    raise ValueError("Too late for this light.")
+                cue_prior = sum(1 for key in self.responses if key[0] == self.reaction_cue_index)
                 response = {
-                    "team_id":
-                        team_key,
-
-                    "question_index":
-                        0,
-
-                    "choice_index":
-                        0,
-
-                    "correct":
-                        True,
-
-                    "reaction_seconds":
-                        round(
-                            reaction_seconds,
-                            3,
-                        ),
-
-                    "rank":
-                        rank,
+                    "team_id": team_key,
+                    "question_index": self.reaction_cue_index,
+                    "choice_index": 0,
+                    "correct": True,
+                    "reaction_seconds": round(reaction_seconds, 3),
+                    "rank": cue_prior + 1,
                 }
-
-
-                self.responses[
-                    response_key
-                ] = response
-
-
-                return dict(
-                    response
-                )
-
+                self.responses[response_key] = response
+                return dict(response)
 
             # ================================================
             # QUICK 3 - Gibberish uses its own typed-answer method.
@@ -2476,13 +2373,8 @@ class MiniGameController:
 
 
             question_index = (
-                0
-                if (
-                    self.game_type
-                    == "reaction_rush"
-                )
-                else
-                self.question_index
+                self.reaction_cue_index if self.game_type == "reaction_rush"
+                else self.question_index
             )
 
 
@@ -2519,52 +2411,34 @@ class MiniGameController:
             )
 
 
-    def _reaction_leaderboard(
-        self,
-    ):
-
-        rows = [
-            dict(response)
-            for response
-            in self.responses.values()
-            if (
-                response.get(
-                    "reaction_seconds"
-                )
-                is not None
-            )
-        ]
-
-
-        rows.sort(
-            key=lambda row:
-                float(
-                    row[
-                        "reaction_seconds"
-                    ]
-                )
-        )
-
-
-        # ELITE_RESULT_STAGES_REACTION_20261120: names for TV result cards.
+    def _reaction_leaderboard(self):
+        """Lowest nine-light average wins; missed lights get a window-time penalty."""
+        by_team = {}
+        for response in self.responses.values():
+            if response.get("reaction_seconds") is not None:
+                by_team.setdefault(str(response["team_id"]), []).append(float(response["reaction_seconds"]))
         team_names = {}
         if self.team_provider is not None:
             team_names = {
                 str(t.get("id")): str(t.get("name", "PLAYER"))
                 for t in (self.team_provider() or [])
             }
-
-        for index, row in enumerate(
-            rows,
-            start=1,
-        ):
-
-            row["rank"] = index
-            row["name"] = team_names.get(str(row.get("team_id")), f"PLAYER {index}")
-
-
+        rows = []
+        for team_id, values in by_team.items():
+            hits = min(len(values), self.reaction_total_cues)
+            missed = self.reaction_total_cues - hits
+            average = (sum(values[:self.reaction_total_cues]) + missed * self.reaction_window_seconds) / self.reaction_total_cues
+            rows.append({
+                "team_id": team_id,
+                "name": team_names.get(team_id, "PLAYER"),
+                "reaction_seconds": round(average, 3),
+                "successful_taps": hits,
+                "missed_taps": missed,
+            })
+        rows.sort(key=lambda r: (r["reaction_seconds"], -r["successful_taps"], r["team_id"]))
+        for rank, row in enumerate(rows, 1):
+            row["rank"] = rank
         return rows[:5]
-
 
     def snapshot(self):
 
@@ -2757,83 +2631,34 @@ class MiniGameController:
             # ================================================
             # REACTION RUSH SNAPSHOT
             # ================================================
-
-            if (
-                self.game_type
-                == "reaction_rush"
-            ):
-
-                q = None
-
-                if self.active:
-
-                    q = {
-                        "category":
-                            "REACTION RUSH",
-
-                        "question":
-                            (
-                                "TAP NOW!"
-                                if self.phase
-                                == "question"
-                                else
-                                "WAIT FOR GO"
-                            ),
-
-                        "choices":
-                            [],
-
-                        "correct_index":
-                            0,
-
-                        "answer_display":
-                            "",
-                    }
-
-
+            if self.game_type == "reaction_rush":
+                cue = self.reaction_cue_index
+                round_number = min(3, cue // self.reaction_cues_per_round + 1)
+                order = self.reaction_light_orders[min(2, cue // self.reaction_cues_per_round)]
+                light_number = order[cue % self.reaction_cues_per_round]
                 return {
-                    "active":
-                        self.active,
-
-                    "game_type":
-                        "reaction_rush",
-
-                    "title":
-                        self.title,
-
-                    "phase":
-                        self.phase,
-
-                    "question_index":
-                        0,
-
-                    "question_number":
-                        1,
-
-                    "question_count":
-                        1,
-
-                    "seconds_remaining":
-                        round(
-                            remaining,
-                            2,
-                        ),
-
-                    "question":
-                        q,
-
-                    "leaderboard":
-                        self._reaction_leaderboard(),
-
-                    "response_count":
-                        len(
-                            self.responses
-                        ),
-
-                    "started_reason":
-                        self.started_reason,
+                    "active": self.active,
+                    "game_type": "reaction_rush",
+                    "title": self.title,
+                    "phase": self.phase,
+                    "question_index": cue,
+                    "question_number": cue + 1,
+                    "question_count": self.reaction_total_cues,
+                    "reaction_round": round_number,
+                    "reaction_round_count": 3,
+                    "reaction_light": light_number,
+                    "reaction_round_order": list(order),
+                    "reaction_lights_per_round": self.reaction_cues_per_round,
+                    "seconds_remaining": round(remaining, 2),
+                    "question": {
+                        "category": "REACTION RUSH",
+                        "question": "TAP NOW!" if self.phase == "question" else "WAIT FOR GO",
+                        "choices": [], "correct_index": 0, "answer_display": "",
+                    } if self.active else None,
+                    "leaderboard": self._reaction_leaderboard() if self.phase in ("reveal", "outro") else [],
+                    "response_count": sum(1 for key in self.responses if key[0] == cue),
+                    "started_reason": self.started_reason,
                 }
-
 
             # ================================================
             # GIBBERISH / BRAIN WARP SNAPSHOT
@@ -5312,15 +5137,10 @@ class NetworkController:
                     "A scheduled Elite Blitz game is running right now."
                 )
 
+            # Players may join while the Skee-Ball intro is on screen.
             if self.mini_game.active:
-                self.mini_game.stop(
-                    "host override"
-                )
-
-            self.mini_game.start(
-                "host test",
-                game_type="skee_ball",
-            )
+                self.mini_game.stop("host override")
+            self.mini_game.start("host test", game_type="skee_ball")
 
     def get_snapshot(self):
         self.tick()

@@ -18,18 +18,28 @@ body{background:
 .card{background:rgba(9,14,24,.90);border-color:rgba(99,223,255,.42)}
 .brand{color:#fff;text-shadow:0 0 10px rgba(255,78,220,.55),0 0 18px rgba(99,223,255,.35)}
 /* Brain Warp: mobile-friendly 3x3 visual word puzzle. */
-.phoneWarp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,72px);
+.phoneWarp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));min-height:clamp(300px,43dvh,450px);
  background:linear-gradient(135deg,#212b53,#090e23);border:3px solid #7eeaff;
  border-radius:16px;padding:8px;margin:15px 0;box-shadow:0 7px 22px rgba(0,0,0,.3)}
 .phoneWarpTile{display:flex;align-items:center;justify-content:center;min-width:0;color:white;
- font-size:clamp(18px,5vw,28px);font-weight:1000;white-space:nowrap;letter-spacing:-.03em}
-.phoneWarpTile.small{font-size:clamp(13px,3.5vw,20px)}
-.phoneWarpTile.large{font-size:clamp(21px,5.6vw,32px)}
+ font-size:clamp(23px,6.5vw,38px);font-weight:1000;white-space:nowrap;letter-spacing:-.03em}
+.phoneWarpTile.small{font-size:clamp(16px,4.2vw,24px)}
+.phoneWarpTile.large{font-size:clamp(26px,7.4vw,44px)}
 .phoneWarpTile.bright{color:#ffe575}
 .phoneWarpTile.flipped{transform:scaleX(-1)}
 .phoneWarpTile.tilt{transform:rotate(-18deg)}
 .phoneWarpTile.crossed{text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:#ff628c}
-.phoneWarpTile.tight{font-size:clamp(11px,3vw,17px);letter-spacing:-.07em}
+.phoneWarpTile.tight{font-size:clamp(13px,3.6vw,20px);letter-spacing:-.07em}
+/* Reaction Rush: large thumb-sized TAP and three light indicators. */
+.reactionLamps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(6px,2.2vw,12px);margin:16px 0 12px}
+.reactionLamp{border:4px solid #536b8b;border-radius:999px;aspect-ratio:1;max-width:112px;width:100%;min-width:0;margin:auto;display:grid;place-items:center;font-size:clamp(30px,9vw,46px);font-weight:1000;background:#1d2735;color:#e4efff}
+.reactionLamp.done{background:#173d60;border-color:#5dc9ff;color:#c4edff}
+/* Neutral waiting state: no yellow preview; only GREEN means tap. */
+.reactionLamp.go{border-color:#6bffb2;background:#168849;color:white;box-shadow:0 0 32px rgba(61,255,146,.65)}
+.reactionTap{min-height:clamp(170px,27dvh,300px)!important;font-size:clamp(38px,10vw,66px)!important;justify-content:center!important;text-align:center!important;touch-action:manipulation}
+/* This only affects the visual-puzzle entry controls, not Blitz questions. */
+.phoneWarp~#gibTypedAnswer{min-height:64px;font-size:23px}
+.phoneWarp~#gibSubmitButton{min-height:68px;font-size:23px}
 </style>
 </head>
 <body>
@@ -489,12 +499,12 @@ function render(state){
           </div>
 
           <div class="question">
-            Players are being selected.
+            JOIN NOW! Skee-Ball begins when the countdown ends.
           </div>
         `;
 
         message.textContent=
-          'Skee-Ball Challenge starting.';
+          'Join before the countdown finishes.';
 
         return;
       }
@@ -643,191 +653,54 @@ function render(state){
 
 
     // ======================================================
-    // REACTION RUSH
+    // REACTION RUSH: 3 random GO lights × 3 rounds
     // ======================================================
-
     if(gameType==='reaction_rush'){
-
-      document.getElementById('category').textContent=
-        'REACTION RUSH';
-
-      document.getElementById('mode').textContent=
-        'ELITE REACTION RUSH';
-
-      document.getElementById('pointValue').textContent=
-        '';
-
-      document.getElementById('pointLabel').textContent=
-        '';
-
-      document.getElementById('timer').textContent=
-        phase==='question'
-          ?Math.ceil(mini.seconds_remaining||0)
-          :'';
-
-
+      const cue=Number(mini.question_index||0);
+      const round=Number(mini.reaction_round||Math.floor(cue/3)+1);
+      const light=Number(mini.reaction_light||cue%3+1);
+      const order=Array.isArray(mini.reaction_round_order)?mini.reaction_round_order:[1,2,3];
+      const completed=phase==='reveal'||phase==='outro';
+      const myRank=(mini.leaderboard||[]).find(row=>String(row.team_id)===String(state.team.id));
+      document.getElementById('category').textContent='REACTION RUSH';
+      document.getElementById('mode').textContent=completed?'FINAL RESULTS':`ROUND ${round}/3 • TAP ${cue%3+1}/3`;
+      document.getElementById('pointValue').textContent=completed?'9':String(cue+1);
+      document.getElementById('pointLabel').textContent='LIGHTS';
+      document.getElementById('timer').textContent=phase==='question'?Math.ceil(mini.seconds_remaining||0):'';
       if(phase==='intro'){
-
-        content.innerHTML=`
-          <div class="big">ELITE REACTION RUSH</div>
-          <div class="question">
-            Get ready.<br><br>
-            Wait for <strong>GO!</strong>
-          </div>
-        `;
-
-        message.textContent=
-          'Do not tap early.';
-
+        content.innerHTML=`<div class="big">ELITE REACTION RUSH</div>
+          <div class="question">3 rounds with 3 lights each.<br>Tap the big button THREE TIMES per round — once for each GREEN light.</div>`;
+        message.textContent='Nine taps total. Wait for GREEN before every tap!';
         return;
       }
-
-
-      if(phase==='waiting'){
-
-        content.innerHTML=`
-          <div class="big" style="font-size:48px">
-            WAIT...
-          </div>
-
-          <button
-            class="answer"
-            disabled
-            style="
-              width:100%;
-              min-height:180px;
-              margin-top:25px;
-              font-size:42px;
-              font-weight:1000;
-              opacity:.45;
-            "
-          >
-            WAIT FOR GO
-          </button>
-        `;
-
-        message.textContent=
-          'Hold it...';
-
+      if(completed){
+        content.innerHTML=`<div class="big">REACTION RUSH COMPLETE</div>
+          <div class="question">${myRank?`${Number(myRank.reaction_seconds||0).toFixed(3)} SEC AVERAGE`:'NO TAPS RECORDED'}</div>
+          <div class="locked">${myRank?`RANK #${myRank.rank} • ${myRank.successful_taps}/9 LIGHTS`:'PLAY AGAIN NEXT TIME'}</div>`;
+        message.textContent='Winners on the TV. Stay connected!';
         return;
       }
-
-
-      if(phase==='question'){
-
-        const disabled=
-          miniResponse||busy
-            ?'disabled'
-            :'';
-
-        content.innerHTML=`
-          <div
-            class="big"
-            style="font-size:58px"
-          >
-            GO!
-          </div>
-
-          <button
-            class="answer"
-            ${disabled}
-            onclick="submitMiniAnswer(0)"
-            style="
-              width:100%;
-              min-height:220px;
-              margin-top:20px;
-              font-size:58px;
-              font-weight:1000;
-            "
-          >
-            TAP NOW!
-          </button>
-        `;
-
-
-        if(miniResponse){
-
-          message.textContent=
-            `LOCKED — ${Number(
-              miniResponse.reaction_seconds||0
-            ).toFixed(3)} sec`;
-
-        }else{
-
-          message.textContent=
-            'TAP! TAP! TAP!';
-        }
-
+      if(phase==='round_break'){
+        content.innerHTML=`<div class="big">ROUND ${Math.max(1,round-1)} COMPLETE</div>
+          <div class="question">Get ready for the next three lights!</div>`;
+        message.textContent='Keep your finger ready.';
         return;
       }
-
-
-      if(phase==='reveal'){
-
-        if(miniResponse){
-
-          content.innerHTML=`
-            <div class="big">
-              YOUR REACTION
-            </div>
-
-            <div
-              class="question"
-              style="font-size:52px"
-            >
-              ${Number(
-                miniResponse.reaction_seconds||0
-              ).toFixed(3)}
-              SECONDS
-            </div>
-
-            <div
-              class="locked"
-              style="font-size:30px"
-            >
-              RANK #${miniResponse.rank||'-'}
-            </div>
-          `;
-
-          message.textContent=
-            'Reaction locked in.';
-
-        }else{
-
-          content.innerHTML=`
-            <div class="big">
-              TOO LATE
-            </div>
-
-            <div class="question">
-              No reaction recorded.
-            </div>
-          `;
-
-          message.textContent=
-            'Reaction Rush complete.';
-        }
-
-        return;
-      }
-
-
-      content.innerHTML=`
-        <div class="big">
-          REACTION RUSH COMPLETE
-        </div>
-
-        <div class="question">
-          Stay connected. More Elite programming is coming up.
-        </div>
-      `;
-
-      message.textContent=
-        'No need to scan again.';
-
+      const lamps=[1,2,3].map(i=>{
+        const cls=order.indexOf(i)<cue%3?'done':i===light&&phase==='question'?'go':'';
+        return `<div class="reactionLamp ${cls}">${i}</div>`;
+      }).join('');
+      const canTap=phase==='question'&&!miniResponse&&!busy;
+      content.innerHTML=`<div class="big" style="margin:14px 0">${phase==='question'?'GO!':'WAIT...'}</div>
+        <div class="reactionLamps">${lamps}</div>
+        <button class="answer reactionTap" ${canTap?'':'disabled'} onclick="submitMiniAnswer(0)">
+          ${miniResponse?'TAP SAVED':phase==='question'?'TAP NOW!':'WAIT FOR GREEN'}
+        </button>`;
+      message.textContent=miniResponse
+        ?`LIGHT ${light} LOCKED — ${Number(miniResponse.reaction_seconds||0).toFixed(3)} SEC`
+        :phase==='question'?'TAP ONCE NOW!':'Wait for the random green light.';
       return;
     }
-
 
     // ======================================================
     // QUICK 3 / ELITE GIBBERISH / BRAIN WARP
