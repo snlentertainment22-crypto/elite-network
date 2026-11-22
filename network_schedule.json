@@ -362,7 +362,6 @@
         "end": "11:45",
         "every_minutes": 15,
         "rotation": [
-          "skee_ball",
           "gibberish",
           "reaction_rush",
           "brain_warp"
@@ -373,7 +372,6 @@
         "end": "17:45",
         "every_minutes": 15,
         "rotation": [
-          "skee_ball",
           "gibberish",
           "reaction_rush",
           "brain_warp"
@@ -384,7 +382,6 @@
         "end": "21:45",
         "every_minutes": 15,
         "rotation": [
-          "skee_ball",
           "gibberish",
           "reaction_rush",
           "brain_warp"
@@ -395,7 +392,6 @@
         "end": "01:00",
         "every_minutes": 15,
         "rotation": [
-          "skee_ball",
           "gibberish",
           "reaction_rush",
           "brain_warp"

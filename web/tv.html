@@ -590,13 +590,13 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 #eliteStableMiniJoin{padding:3% 5% 8%;--mj-unit:min(1vw,1.7778vh)}
 #eliteStableMiniJoin .eliteMiniJoinLayout{display:grid;grid-template-columns:minmax(0,1fr) 32%;gap:5%;align-items:center;width:100%;max-height:100%}
 #eliteStableMiniJoin .eliteMiniJoinCopy{min-width:0;text-align:center}
-#eliteStableMiniJoin .networkKicker{font-size:calc(var(--mj-unit)*1.8);margin:0 0 calc(var(--mj-unit)*.75)}
-#eliteStableMiniJoin .networkTitle{font-size:calc(var(--mj-unit)*4.2);line-height:1.04}
-#eliteStableMiniJoin .networkSub{font-size:calc(var(--mj-unit)*2.05);margin-top:calc(var(--mj-unit)*.85);line-height:1.15;overflow-wrap:anywhere}
-#eliteStableMiniJoin .comingTime{font-size:calc(var(--mj-unit)*5.4);margin:calc(var(--mj-unit)*.85) 0;line-height:1}
+#eliteStableMiniJoin .networkKicker{font-size:calc(var(--mj-unit)*1.9);margin:0 0 calc(var(--mj-unit)*.75)}
+#eliteStableMiniJoin .networkTitle{font-size:calc(var(--mj-unit)*4.5);line-height:1.04}
+#eliteStableMiniJoin .networkSub{font-size:calc(var(--mj-unit)*2.18);margin-top:calc(var(--mj-unit)*.85);line-height:1.15;overflow-wrap:anywhere}
+#eliteStableMiniJoin .comingTime{font-size:calc(var(--mj-unit)*5.75);margin:calc(var(--mj-unit)*.85) 0;line-height:1}
 #eliteStableMiniJoin .networkNext{font-size:calc(var(--mj-unit)*1.55);margin-top:calc(var(--mj-unit)*1.15);padding:calc(var(--mj-unit)*.7) calc(var(--mj-unit)*1.3);line-height:1.2}
 #eliteStableMiniJoin .eliteMiniJoinQr{justify-self:center;background:white;padding:calc(var(--mj-unit)*.85);border-radius:18px}
-#eliteStableMiniJoin .eliteMiniJoinQr img{display:block;width:calc(var(--mj-unit)*22);height:calc(var(--mj-unit)*22);object-fit:contain}
+#eliteStableMiniJoin .eliteMiniJoinQr img{display:block;width:calc(var(--mj-unit)*23);height:calc(var(--mj-unit)*23);object-fit:contain}
 
 /* ELITE_RESULT_STAGES_20261120: show answer then large, centered results. */
 .eliteCenterReveal{width:96%;height:88%;max-width:1500px;margin:auto;padding:1.1% 2%;
@@ -737,11 +737,11 @@ function renderCategory(state){
 
       <div style="width:66%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-width:0">
 
-        <div class="pill">
+        <div class="pill" style="font-size:38px;line-height:1.15">
           ROUND ${q.round}  -  QUESTION ${q.question_number} OF ${state.round_question_count}
         </div>
 
-        <div class="categoryTitle" style="width:100%;max-height:56%;font-size:145px;margin:4% 0 2%;overflow:hidden">
+        <div class="categoryTitle" style="width:100%;max-height:62%;font-size:165px;margin:4% 0 2%;overflow:hidden">
           ${esc(q.category)}
         </div>
 
@@ -767,7 +767,7 @@ function renderCategory(state){
   const categoryTitle=document.querySelector('.categoryTitle');
   if(categoryTitle){
     requestAnimationFrame(()=>{
-      fitText(categoryTitle,145,42);
+      fitText(categoryTitle,165,48);
     });
   }
 }

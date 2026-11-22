@@ -2914,10 +2914,26 @@ class GameEngine:
             return "final_wager"
         return q.get("scoring_type", "fixed")
 
+    def _effective_answer_seconds_locked(self, q=None):
+        q = q or self.question
+        duration = float(q.get("timer_seconds", 120))
+        if self._is_final_wager(q):
+            return duration
+        if self._is_roulette(q):
+            from collections import Counter
+            regular = [
+                float(item.get("timer_seconds", 120))
+                for item in self.questions
+                if self._scoring_type(item) in ("fixed", "fastest")
+            ]
+            if regular:
+                duration = Counter(regular).most_common(1)[0][0]
+        return max(1.0, duration - 10.0)
+
     def _timer_duration_for_screen_locked(self):
         if self.screen == "wager":
             return float(self.question.get("wager_seconds", 30))
-        return float(self.question.get("timer_seconds", 120))
+        return self._effective_answer_seconds_locked()
 
     def _remaining_locked(self):
         if not self.timer_running or self.timer_ends_monotonic is None:
@@ -2934,7 +2950,7 @@ class GameEngine:
 
         max_points = int(q.get("max_points", 10))
         min_points = int(q.get("min_points", 5))
-        duration = max(0.001, float(q.get("timer_seconds", 120)))
+        duration = max(0.001, self._effective_answer_seconds_locked(q))
 
         if elapsed is None:
             if self.timer_running and self.timer_started_monotonic is not None:
@@ -4190,7 +4206,7 @@ class GameEngine:
                     "choices": q.get("choices", []),
                     "correct_index": correct_index,
                     "answer_display": answer_display,
-                    "timer_seconds": int(q.get("timer_seconds", 120)),
+                    "timer_seconds": int(self._effective_answer_seconds_locked(q)),
                     "wager_seconds": int(q.get("wager_seconds", 30)),
                     # Final Wager is score-based, not a 10/20/30/40 point question.
                     # Return zero point fields so any client that reads these values
@@ -4891,13 +4907,13 @@ class NetworkController:
                     or [
                         "reaction_rush",
                         "gibberish",
-                        "skee_ball",
+                        "brain_warp",
                     ]
                 )
                 rotation = [
                     kind for kind in rotation
-                    if kind in ("reaction_rush", "gibberish", "skee_ball")
-                ] or ["reaction_rush", "gibberish", "skee_ball"]
+                    if kind in ("reaction_rush", "gibberish", "brain_warp")
+                ] or ["reaction_rush", "gibberish", "brain_warp"]
 
                 start_iso = (
                     next_event.get(
