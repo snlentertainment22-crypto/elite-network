@@ -335,7 +335,7 @@
   ],
   "channel": {
     "filler_seconds": 12,
-    "fact_seconds": 18,
+    "fact_seconds": 12,
     "auto_mini_enabled": true,
     "lead_in_enabled": true,
     "join_before_mini_seconds": 600,
@@ -435,7 +435,7 @@
       0,
       30
     ],
-    "tv_guide_seconds": 20,
+    "tv_guide_seconds": 12,
     "coming_up_minutes_of_hour": [
       34
     ],

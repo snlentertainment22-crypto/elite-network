@@ -40,6 +40,58 @@ body{background:
 /* This only affects the visual-puzzle entry controls, not Blitz questions. */
 .phoneWarp~#gibTypedAnswer{min-height:64px;font-size:23px}
 .phoneWarp~#gibSubmitButton{min-height:68px;font-size:23px}
+/* ELITE PHONE MINI THEMES 20261122 */
+
+/* Brain Warp: cosmic stars and purple nebula */
+body[data-elite-mini="warp"]{
+ background:
+  radial-gradient(circle at 15% 12%,#f0dcff 0 1px,transparent 2px),
+  radial-gradient(circle at 78% 28%,#9feaff 0 1px,transparent 2px),
+  radial-gradient(circle at 32% 74%,#ffffff 0 1px,transparent 2px),
+  radial-gradient(ellipse at 78% 15%,rgba(153,67,240,.45),transparent 55%),
+  radial-gradient(ellipse at 12% 80%,rgba(31,116,235,.35),transparent 55%),
+  linear-gradient(145deg,#200e48,#0b1735 65%,#040715);
+ background-attachment:fixed;
+}
+
+/* Reaction Rush: electric racing atmosphere */
+body[data-elite-mini="reaction"]{
+ background:
+  repeating-linear-gradient(120deg,
+   transparent 0 75px,rgba(0,205,255,.08) 77px,
+   transparent 81px),
+  radial-gradient(ellipse at 80% 15%,rgba(0,174,255,.38),transparent 55%),
+  linear-gradient(150deg,#05121e,#103b52 55%,#030914);
+ background-attachment:fixed;
+}
+
+/* Gibberish: playful colors */
+body[data-elite-mini="gibberish"]{
+ background:
+  radial-gradient(circle at 15% 20%,rgba(255,71,167,.35),transparent 40%),
+  radial-gradient(circle at 85% 75%,rgba(0,224,226,.3),transparent 45%),
+  radial-gradient(circle at 75% 8%,rgba(164,84,255,.4),transparent 40%),
+  linear-gradient(140deg,#2b0b40,#122044 65%,#060819);
+ background-attachment:fixed;
+}
+
+/* Branded panels without sacrificing readability */
+body[data-elite-mini] .card{
+ background:rgba(6,12,26,.91);
+ box-shadow:0 15px 45px rgba(0,0,0,.5);
+}
+body[data-elite-mini="warp"] .card{
+ border-color:rgba(187,133,255,.75);
+}
+body[data-elite-mini="reaction"] .card{
+ border-color:rgba(54,214,255,.75);
+}
+body[data-elite-mini="gibberish"] .card{
+ border-color:rgba(255,119,201,.75);
+}
+body[data-elite-mini="warp"] .phoneWarp{
+ box-shadow:0 0 24px rgba(141,76,255,.24);
+}
 </style>
 </head>
 <body>
@@ -989,6 +1041,7 @@ async function pollOnce(){
     const liveSessionId=data.state.server_session_id||'';if(requestServerSessionId&&liveSessionId&&requestServerSessionId!==liveSessionId){clearSavedTeamIdentity(liveSessionId);showJoin('This phone needs to join the current local game.');return;}
     playerPollDelay=computePlayerPollDelay(data.state);
     syncEliteMiniClock(data.state,sentPerf,receivedPerf);
+    applyEliteMiniPhoneTheme(data.state);
     render(data.state);
     updateEliteMiniPhoneClock();
   }catch(e){const target=teamId?document.getElementById('message'):joinMessage;target.textContent='Reconnecting to local Auto Elite server…';}
@@ -996,6 +1049,40 @@ async function pollOnce(){
 // Answers still POST instantly. These are only read-only state refreshes.
 // Keep registration responsive near a scheduled start and gameplay.
 let playerPollDelay = 30000;
+// ELITE PHONE MINI THEMES 20261122
+function elitePhoneThemeName(value){
+ const s=String(value||'').toLowerCase().replace(/[_-]/g,' ');
+ if(s.includes('brain warp'))return 'warp';
+ if(s.includes('reaction rush'))return 'reaction';
+ if(s.includes('gibberish'))return 'gibberish';
+ return '';
+}
+function applyEliteMiniPhoneTheme(state){
+ const n=state?.network||{};
+ const m=n.mini_game||{};
+ let theme='';
+ if(m.active){
+  theme=elitePhoneThemeName(
+   `${m.game_type||''} ${m.title||''}`);
+ }else{
+  const signup=n.standalone_mini_signup||{};
+  const seconds=Number(signup.seconds_until);
+  if(Number.isFinite(seconds)&&seconds>=0&&seconds<=600){
+   theme=elitePhoneThemeName(
+    `${signup.game_type||''} ${signup.title||''} ${signup.event_title||''}`);
+  }
+  if(!theme){
+   const next=n.next_event||{};
+   const remaining=Number(next.seconds_until);
+   if(Number.isFinite(remaining)&&remaining>=0&&remaining<=600){
+    theme=elitePhoneThemeName(
+     `${next.game_type||''} ${next.title||''}`);
+   }
+  }
+ }
+ if(theme)document.body.dataset.eliteMini=theme;
+ else delete document.body.dataset.eliteMini;
+}
 function computePlayerPollDelay(s){
  const n=s?.network||{}, mini=n.mini_game||{};
  if(mini.active)return 500;

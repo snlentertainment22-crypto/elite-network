@@ -645,6 +645,364 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
  .eliteWarpPlay .warpBoard{height:clamp(185px,32vh,285px);margin:5px auto}
 }
 
+/* ELITE MINI VISUAL THEMES 20261122 */
+
+/* BRAIN WARP: Cosmic atmosphere */
+.networkShell.miniGameShell.warpShell,
+.networkShell.miniRulesShell.warpShell {
+ background:
+  radial-gradient(circle at 73% 18%,
+   rgba(165,91,255,.42),transparent 38%),
+  radial-gradient(circle at 22% 76%,
+   rgba(47,131,246,.36),transparent 43%),
+  repeating-linear-gradient(115deg,
+   transparent 0px,transparent 95px,
+   rgba(181,157,255,.055) 96px,
+   transparent 99px),
+  linear-gradient(135deg,#180d3c,#081735 60%,#040715);
+}
+
+/* REACTION RUSH: Speed and adrenaline */
+.networkShell.miniGameShell.reactionShell,
+.networkShell.miniRulesShell.reactionShell {
+ background:
+  repeating-linear-gradient(118deg,
+   transparent 0px,transparent 75px,
+   rgba(48,226,255,.10) 77px,
+   transparent 82px),
+  radial-gradient(circle at 75% 25%,
+   rgba(0,174,255,.32),transparent 42%),
+  linear-gradient(135deg,#06121d,#09364d 50%,#030914);
+}
+
+/* ELITE GIBBERISH: Playful color */
+.networkShell.miniGameShell.gibberishShell,
+.networkShell.miniRulesShell.gibberishShell {
+ background:
+  radial-gradient(circle at 12% 22%,
+   rgba(255,73,164,.35),transparent 35%),
+  radial-gradient(circle at 85% 72%,
+   rgba(0,212,225,.26),transparent 40%),
+  radial-gradient(circle at 65% 12%,
+   rgba(145,78,255,.36),transparent 38%),
+  linear-gradient(140deg,#240c3b,#101b45 60%,#05091b);
+}
+
+/* Matching colored borders */
+.warpShell .miniWrap,
+.warpShell .miniRulesPanel {
+ border-color:rgba(185,137,255,.72);
+}
+.reactionShell .miniWrap,
+.reactionShell .miniRulesPanel {
+ border-color:rgba(76,216,255,.72);
+}
+.gibberishShell .miniWrap,
+.gibberishShell .miniRulesPanel {
+ border-color:rgba(255,122,206,.72);
+}
+/* ELITE DYK PERSONALITY 20261122 */
+.eliteDykBackdrop {
+ position:absolute;
+ inset:0;
+ overflow:hidden;
+ pointer-events:none;
+ background:
+  radial-gradient(circle at 12% 22%,rgba(255,102,185,.28),transparent 32%),
+  radial-gradient(circle at 87% 20%,rgba(255,221,74,.24),transparent 33%),
+  radial-gradient(circle at 50% 92%,rgba(66,190,255,.22),transparent 48%),
+  linear-gradient(140deg,#22103e,#0b2348 58%,#07101e);
+}
+.eliteDykHeading {
+ position:absolute;
+ top:12%;
+ left:22%;
+ right:22%;
+ font-size:clamp(46px,5vw,90px);
+ font-weight:1000;
+ color:#ffe779;
+ text-align:center;
+ line-height:1.05;
+ text-shadow:0 5px 20px #000,0 0 25px rgba(255,220,65,.35);
+ letter-spacing:.035em;
+}
+.eliteDykBrain {
+ position:absolute;
+ width:19%;
+ left:4%;
+ top:10%;
+ filter:drop-shadow(0 0 24px rgba(255,89,180,.4));
+}
+.eliteDykBulb {
+ position:absolute;
+ width:15%;
+ right:6%;
+ top:10%;
+ filter:drop-shadow(0 0 30px rgba(255,225,74,.6));
+}
+.eliteDykSpark {
+ position:absolute;
+ color:#8cecff;
+ font-size:clamp(25px,3vw,55px);
+ text-shadow:0 0 18px rgba(110,225,255,.7);
+}
+.eliteDykSpark.one{left:11%;bottom:19%}
+.eliteDykSpark.two{right:13%;bottom:23%}
+/* ELITE CHANNEL MEDIA FADE 20261122 */
+.eliteChannelMediaFade {
+ animation: eliteChannelSlideEnter .5s ease-out both;
+ transform-origin:center center;
+}
+
+@keyframes eliteChannelSlideEnter {
+ from {
+  opacity:0;
+  transform:scale(1.012);
+ }
+ to {
+  opacity:1;
+  transform:scale(1);
+ }
+}
+
+@media (prefers-reduced-motion:reduce) {
+ .eliteChannelMediaFade {
+  animation:none;
+ }
+}
+/* ELITE BRAIN WARP PERSONALITY 20261122 */
+.eliteWarpPlay {
+ position:relative;
+ isolation:isolate;
+}
+.eliteWarpBrand {
+ position:absolute;
+ left:2.2%;
+ top:2.2%;
+ width:17%;
+ max-width:210px;
+ max-height:98px;
+ object-fit:contain;
+ z-index:4;
+ filter:drop-shadow(0 4px 12px rgba(0,0,0,.78));
+}
+.eliteWarpAlien {
+ position:absolute;
+ left:1.3%;
+ top:34%;
+ width:20%;
+ height:50%;
+ opacity:.38;
+ pointer-events:none;
+ z-index:0;
+ filter:drop-shadow(0 0 22px rgba(133,88,255,.48));
+}
+.eliteWarpPlay .gibKicker {
+ margin-bottom:8px;
+ line-height:1.12;
+ letter-spacing:.12em;
+}
+.eliteWarpPlay .gibRound {
+ margin:6px 0 12px;
+ line-height:1.25;
+}
+.eliteWarpPlay .gibHud {
+ margin-top:2px;
+ margin-bottom:10px;
+}
+/* ELITE BRAIN WARP BACKGROUND HOOK 20261122 */
+.networkShell.warpShell{
+  position:absolute;
+  overflow:hidden;
+  background:
+    linear-gradient(rgba(7,10,22,.10),rgba(7,10,22,.22)),
+    url('/assets/channel/elite_brain_warp_clean.webp') center/cover no-repeat !important;
+}
+.networkShell.warpShell::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,
+      rgba(4,7,18,.08) 0%,
+      rgba(4,7,18,.02) 35%,
+      rgba(4,7,18,.12) 100%);
+}
+.networkShell.warpShell > *{
+  position:relative;
+  z-index:1;
+}
+
+/* Hide the temporary test mascot/logo now that the art is baked in. */
+.networkShell.warpShell .eliteWarpBrand,
+.networkShell.warpShell .eliteWarpAlien{
+  display:none !important;
+}
+/* ELITE WARP VISUAL CLEANUP 20261122 */
+
+/* Show the full space illustration */
+.networkShell.warpShell{
+ background-size:100% 100% !important;
+ background-position:center center !important;
+}
+
+/* Remove the giant dark rectangle */
+.networkShell.warpShell .miniWrap,
+.networkShell.warpShell .miniRulesPanel{
+ background:transparent !important;
+ box-shadow:none !important;
+ border-color:transparent !important;
+}
+
+/* Keep instruction cards readable */
+.networkShell.warpShell .miniRulesStep{
+ background:rgba(6,14,36,.88);
+ border-color:rgba(126,234,255,.45);
+}
+
+/* Preserve a dark surface for the puzzle */
+.networkShell.warpShell .warpBoard{
+ background:linear-gradient(145deg,
+  rgba(10,23,48,.94),
+  rgba(5,12,31,.94));
+}
+
+/* Keep the actual Elite logo visible */
+.networkShell.warpShell .eliteWarpBrand{
+ display:block !important;
+ left:2%;
+ top:2%;
+ width:16%;
+ max-width:190px;
+}
+
+/* The artwork now supplies the alien */
+.networkShell.warpShell .eliteWarpAlien{
+ display:none !important;
+}
+
+/* Larger Top 3 results */
+.networkShell.warpShell .eliteCenterReveal
+.eliteResultHeader{
+ font-size:clamp(32px,3.2vw,50px) !important;
+}
+.networkShell.warpShell .eliteCenterReveal
+.eliteResultSub{
+ font-size:clamp(27px,2.6vw,39px) !important;
+}
+.networkShell.warpShell .eliteResultRank{
+ font-size:clamp(33px,3vw,47px) !important;
+}
+.networkShell.warpShell .eliteResultName{
+ font-size:clamp(33px,3vw,47px) !important;
+}
+.networkShell.warpShell .eliteResultPoints{
+ font-size:clamp(29px,2.7vw,43px) !important;
+}
+.networkShell.warpShell .eliteResultRow{
+ padding:12px 14px;
+ gap:12px;
+}
+/* ELITE WARP JOIN ART 20261122 */
+
+/* Dedicated branded JOIN background */
+#eliteStableMiniJoin.warpShell {
+ background-image:url('/assets/channel/elite_brain_warp_join.webp') !important;
+ background-size:100% 100% !important;
+ background-position:center center !important;
+}
+
+/* The artwork already says BRAIN WARP */
+#eliteStableMiniJoin.warpShell .networkKicker,
+#eliteStableMiniJoin.warpShell #eliteMiniJoinEvent {
+ display:none !important;
+}
+
+/* Leave room for the title at the top */
+#eliteStableMiniJoin.warpShell .eliteMiniJoinCopy {
+ transform:translateY(12vh);
+}
+#eliteStableMiniJoin.warpShell .eliteMiniJoinQr {
+ transform:translateY(19vh);
+}
+
+/* The correct Elite Trivia logo is now on the alien's shirt */
+.networkShell.warpShell .eliteWarpBrand {
+ display:none !important;
+}
+/* ELITE WARP FINAL LAYOUT 20261122 */
+
+/* Branded JOIN screen: title is in the artwork */
+#eliteStableMiniJoin.warpShell {
+ background: url('/assets/channel/elite_brain_warp_join.webp')
+ center center / 100% 100% no-repeat !important;
+}
+
+#eliteStableMiniJoin.warpShell .eliteMiniJoinLayout {
+ position:absolute !important;
+ left:27% !important;
+ right:5% !important;
+ top:32% !important;
+ bottom:7% !important;
+ width:auto !important;
+ max-height:none !important;
+ display:grid !important;
+ grid-template-columns:minmax(0,1fr) 36% !important;
+ gap:4% !important;
+ align-items:center !important;
+}
+
+#eliteStableMiniJoin.warpShell .eliteMiniJoinCopy,
+#eliteStableMiniJoin.warpShell .eliteMiniJoinQr {
+ transform:none !important;
+}
+
+#eliteStableMiniJoin.warpShell .networkKicker,
+#eliteStableMiniJoin.warpShell #eliteMiniJoinEvent {
+ display:none !important;
+}
+
+#eliteStableMiniJoin.warpShell .networkTitle {
+ font-size:clamp(34px,3.8vw,62px) !important;
+}
+
+#eliteStableMiniJoin.warpShell .comingTime {
+ font-size:clamp(55px,5.2vw,85px) !important;
+}
+
+#eliteStableMiniJoin.warpShell .eliteMiniJoinQr img {
+ width:min(20vw,320px) !important;
+ height:min(20vw,320px) !important;
+}
+
+/* Move instructions away from the alien */
+.networkShell.warpShell.miniRulesShell .miniRulesPanel {
+ width:57% !important;
+ max-width:none !important;
+ margin-left:25% !important;
+ margin-right:18% !important;
+ padding:1% !important;
+}
+
+.networkShell.warpShell.miniRulesShell .miniRulesBrand {
+ display:none !important;
+}
+
+/* Larger heading without enlarging the puzzle area */
+.networkShell.warpShell .eliteWarpPlay .gibKicker {
+ font-size:clamp(38px,3.4vw,56px) !important;
+ line-height:1.05 !important;
+ margin-bottom:4px !important;
+}
+
+.networkShell.warpShell .eliteWarpPlay .gibRound {
+ margin:2px 0 7px !important;
+}
+
+.networkShell.warpShell .eliteWarpPlay .gibHud {
+ margin-bottom:6px !important;
+}
 </style>
 </head>
 <body>
@@ -988,6 +1346,72 @@ function renderMiniGame(state){
    }else{
      const points=100+Math.floor(seconds*10);
      html=`<div class="networkShell miniGameShell warpShell"><div class="miniWrap warpWrap eliteWarpPlay">
+<img class="eliteWarpBrand"
+ src="/assets/channel/elite_trivia_logo.png"
+ alt="Elite Trivia">
+
+<svg class="eliteWarpAlien" viewBox="0 0 320 320"
+ xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ <defs>
+  <linearGradient id="ewBody" x1="0" y1="0" x2="1" y2="1">
+   <stop offset="0%" stop-color="#8d6bff"/>
+   <stop offset="100%" stop-color="#5fd6ff"/>
+  </linearGradient>
+  <linearGradient id="ewDome" x1="0" y1="0" x2="0" y2="1">
+   <stop offset="0%" stop-color="#e9d7ff" stop-opacity=".78"/>
+   <stop offset="100%" stop-color="#a5f3ff" stop-opacity=".18"/>
+  </linearGradient>
+ </defs>
+
+ <!-- thought bubbles -->
+ <circle cx="205" cy="54" r="12" fill="#95ebff"/>
+ <circle cx="225" cy="36" r="16" fill="#c8a6ff"/>
+ <ellipse cx="255" cy="68" rx="50" ry="34" fill="#16284d" stroke="#98ebff" stroke-width="6"/>
+ <text x="255" y="59" text-anchor="middle" font-size="26" font-weight="900" fill="#ffe97d">A ? R</text>
+ <text x="255" y="87" text-anchor="middle" font-size="23" font-weight="900" fill="#ffb5ea">B ! Z</text>
+
+ <!-- antenna -->
+ <path d="M110 88 L92 52 M160 84 L177 46" stroke="#9deaff" stroke-width="8" fill="none" stroke-linecap="round"/>
+ <circle cx="92" cy="52" r="10" fill="#ffb1dd"/>
+ <circle cx="177" cy="46" r="10" fill="#ffe57f"/>
+
+ <!-- head -->
+ <path d="M135 86
+          C74 86 42 132 42 195
+          C42 252 84 285 135 285
+          C186 285 228 252 228 195
+          C228 132 196 86 135 86Z"
+       fill="url(#ewBody)" stroke="#97ecff" stroke-width="8"/>
+
+ <!-- dome / brain area -->
+ <path d="M84 108
+          C95 78 173 72 192 113
+          C176 119 156 123 135 123
+          C113 123 95 119 84 108Z"
+       fill="url(#ewDome)" stroke="#dff8ff" stroke-width="4"/>
+
+ <!-- squiggle brain letters -->
+ <text x="109" y="108" font-size="16" font-weight="900" fill="#ffed8e">Q</text>
+ <text x="126" y="101" font-size="15" font-weight="900" fill="#ffb3ea">R</text>
+ <text x="145" y="109" font-size="16" font-weight="900" fill="#a8f4ff">X</text>
+ <text x="162" y="101" font-size="14" font-weight="900" fill="#ffe97d">?</text>
+
+ <!-- eyes -->
+ <ellipse cx="102" cy="183" rx="24" ry="34" fill="#d5fbff"/>
+ <ellipse cx="168" cy="183" rx="24" ry="34" fill="#d5fbff"/>
+ <ellipse cx="106" cy="189" rx="10" ry="15" fill="#1d1842"/>
+ <ellipse cx="172" cy="189" rx="10" ry="15" fill="#1d1842"/>
+ <circle cx="111" cy="183" r="3.5" fill="#fff"/>
+ <circle cx="177" cy="183" r="3.5" fill="#fff"/>
+
+ <!-- mouth -->
+ <path d="M98 233 Q135 260 172 233" fill="none" stroke="#1d1842" stroke-width="8" stroke-linecap="round"/>
+ <path d="M117 225 Q135 215 153 225" fill="none" stroke="#f5ddff" stroke-width="4" stroke-linecap="round"/>
+
+ <!-- cheek / chin accent -->
+ <path d="M77 222 Q64 209 60 189" fill="none" stroke="#7eeaff" stroke-width="5" opacity=".55" stroke-linecap="round"/>
+</svg>
+
        <div class="gibKicker">ELITE BRAIN WARP</div>
        <div class="gibRound">VISUAL PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
        <div class="gibHud"><div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
@@ -1148,7 +1572,7 @@ function renderChannel(state){
   }
 
   overlay.innerHTML=`
-   <div style="
+   <div class="eliteChannelMediaFade" style="
     position:absolute;
     inset:0;
     background:#000;
@@ -1180,6 +1604,58 @@ function renderChannel(state){
   );
 
   overlay.innerHTML=`
+<div class="eliteDykBackdrop" aria-hidden="true">
+ <div class="eliteDykHeading">DID YOU KNOW?</div>
+
+ <svg class="eliteDykBrain" viewBox="0 0 240 220"
+      xmlns="http://www.w3.org/2000/svg">
+  <path d="M119 49 C94 24 62 35 57 60
+   C28 56 19 86 35 106
+   C15 128 33 157 59 162
+   C63 190 99 200 119 179
+   C141 201 177 190 183 163
+   C211 165 226 133 205 110
+   C224 83 202 58 181 60
+   C173 33 141 28 119 49Z"
+   fill="#ff91c9" stroke="#ffdcf0" stroke-width="6"/>
+  <path d="M119 49 V181
+   M81 58 Q57 78 76 94
+   M162 55 Q186 77 168 96
+   M53 125 Q75 116 82 140
+   M181 125 Q163 116 157 141"
+   fill="none" stroke="#bd4d91" stroke-width="5"
+   stroke-linecap="round"/>
+  <ellipse cx="89" cy="119" rx="7" ry="10" fill="#311436"/>
+  <ellipse cx="149" cy="119" rx="7" ry="10" fill="#311436"/>
+  <path d="M102 145 Q120 162 138 145"
+   fill="none" stroke="#311436" stroke-width="5"
+   stroke-linecap="round"/>
+ </svg>
+
+ <svg class="eliteDykBulb" viewBox="0 0 200 220"
+      xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#ffe56f" stroke-width="7" stroke-linecap="round">
+   <path d="M100 8V27 M30 38L43 51 M170 38L157 51
+    M12 104H30 M188 104H170"/>
+  </g>
+  <path d="M100 39 C61 39 39 68 39 101
+   C39 128 56 143 72 160
+   L128 160 C144 143 161 128 161 101
+   C161 68 139 39 100 39Z"
+   fill="#ffe675" stroke="#fff3af" stroke-width="6"/>
+  <path d="M78 162 H122 V180 H78Z"
+   fill="#6bdaff"/>
+  <rect x="81" y="181" width="38" height="14"
+   rx="6" fill="#ccecff"/>
+  <path d="M77 79 Q89 65 103 66"
+   fill="none" stroke="#fffbe0" stroke-width="8"
+   stroke-linecap="round"/>
+ </svg>
+
+ <div class="eliteDykSpark one">*</div>
+ <div class="eliteDykSpark two">*</div>
+</div>
+
    <div style="
     position:absolute;
     left:11%;
@@ -1480,7 +1956,27 @@ function renderNetworkProgram(state){
    panel=document.getElementById('eliteStableMiniJoin');
    panel.dataset.eventKey=eventKey;
   }
-  document.getElementById('eliteMiniJoinEvent').textContent=upcoming.title||'ELITE MINI-GAME';
+  // ELITE MINI JOIN THEMES 20261122
+// Match the upcoming game's TV theme without changing JOIN behavior.
+const miniJoinLabel=String([
+ upcoming.game_type,upcoming.title,upcoming.game_key
+].filter(Boolean).join(' ')).toLowerCase().replace(/[_-]/g,' ');
+
+const miniJoinTheme=
+ miniJoinLabel.includes('brain warp')?'warpShell':
+ miniJoinLabel.includes('reaction rush')?'reactionShell':
+ miniJoinLabel.includes('gibberish')?'gibberishShell':'';
+
+panel.classList.remove('miniGameShell','warpShell','reactionShell','gibberishShell');
+if(miniJoinTheme){
+ panel.classList.add('miniGameShell',miniJoinTheme);
+}
+panel.classList.toggle('warpShell',
+ /brain[\s_-]*warp/i.test(
+ [upcoming.title,upcoming.game_type,upcoming.kind]
+ .filter(Boolean).join(' ')
+ ));
+document.getElementById('eliteMiniJoinEvent').textContent=upcoming.title||'ELITE MINI-GAME';
   document.getElementById('eliteMiniJoinCountdown').textContent=formatCountdown(upcoming.seconds_until||0);
   const teams=Number(state.team_count||0);
   document.getElementById('eliteMiniJoinTeams').textContent=
