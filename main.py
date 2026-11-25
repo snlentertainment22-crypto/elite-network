@@ -1205,18 +1205,28 @@ class MiniGameController:
             allowed_styles = {"normal", "small", "large", "bright", "flipped", "tilt", "crossed", "tight"}
             for puzzle in warp_content.get("puzzles", []):
                 tiles = puzzle.get("tiles", [])
+                # ELITE BRAIN WARP OPTIONAL IMAGE SUPPORT 20261125
+                # Only project-owned, existing assets are accepted. No external URLs.
+                image_url = puzzle.get("image")
+                has_image = isinstance(image_url, str) and bool(
+                    re.fullmatch(r"/assets/channel/brain_warp/[a-z0-9][a-z0-9_-]*\.(?:webp|png|jpg|jpeg)", image_url)
+                ) and (BASE_DIR / image_url.lstrip("/")).is_file()
+                has_tiles = isinstance(tiles, list) and 1 <= len(tiles) <= 9 and not any(
+                    not isinstance(tile, dict)
+                    or not isinstance(tile.get("text"), str)
+                    or not 1 <= len(tile["text"]) <= 12
+                    or type(tile.get("row")) is not int or not 1 <= tile["row"] <= 3
+                    or type(tile.get("col")) is not int or not 1 <= tile["col"] <= 3
+                    or tile.get("style", "normal") not in allowed_styles
+                    for tile in tiles
+                )
                 if (puzzle.get("difficulty") not in ("easy", "medium", "hard")
                     or not isinstance(puzzle.get("answer_display"), str)
                     or not puzzle["answer_display"].strip()
-                    or not isinstance(tiles, list) or not 1 <= len(tiles) <= 9):
+                    or not (has_image or has_tiles)):
                     continue
-                if any(not isinstance(tile, dict)
-                       or not isinstance(tile.get("text"), str)
-                       or not 1 <= len(tile["text"]) <= 12
-                       or type(tile.get("row")) is not int or not 1 <= tile["row"] <= 3
-                       or type(tile.get("col")) is not int or not 1 <= tile["col"] <= 3
-                       or tile.get("style", "normal") not in allowed_styles
-                       for tile in tiles):
+                if image_url is not None and not has_image:
+                    # An invalid or missing image must never silently turn into a live puzzle.
                     continue
                 self.brain_warp_bank.append(puzzle)
         except (OSError, ValueError, TypeError, json.JSONDecodeError) as exc:
@@ -2675,7 +2685,9 @@ class MiniGameController:
                     }
                     if warp:
                         question["question"] = "SOLVE THE VISUAL PHRASE"
-                        question["tiles"] = [dict(tile) for tile in clue["tiles"]]
+                        question["tiles"] = [dict(tile) for tile in clue.get("tiles", [])]
+                        if clue.get("image"):
+                            question["image"] = clue["image"]
                     else:
                         question["question"] = clue["phrase"]
                     # Never disclose either game's answer until reveal.

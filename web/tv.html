@@ -1479,6 +1479,169 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
   justify-content:center;
 }
 
+
+/* ELITE MINI LAYOUT POLISH 20261125 V1 */
+/* Display-only. Keep the original game state, QR URLs, countdown and scoring. */
+
+/* Five-minute signup: make the real join QR smaller but clearly scannable. */
+#eliteStableMiniJoin .eliteMiniJoinQr {
+  box-sizing:border-box !important;
+  padding:clamp(6px,.65vw,12px) !important;
+  border-radius:14px !important;
+}
+#eliteStableMiniJoin .eliteMiniJoinQr img {
+  width:clamp(150px,13vw,214px) !important;
+  height:clamp(150px,13vw,214px) !important;
+  max-width:100% !important;
+  object-fit:contain !important;
+}
+
+/* Active/reveal QR panel for mini-games: reduce its on-screen footprint. */
+#gibJoinPanel {
+  transform:scale(.78) !important;
+  transform-origin:right bottom !important;
+}
+
+/* Gibberish: reserve air beside long phrases and the results/reveal. */
+.networkShell.gibberishShell .gibPlay .gibPhrase {
+  width:85% !important;
+  max-width:85% !important;
+  overflow-wrap:break-word;
+}
+.networkShell.gibberishShell .eliteCenterReveal .eliteResultCard,
+.networkShell.gibberishShell .eliteCenterReveal .eliteBigAnswer {
+  width:84% !important;
+  max-width:84% !important;
+}
+
+/* Reaction Rush: make leaderboard and empty-results headings legible on TV. */
+.networkShell.reactionShell .eliteResultHeader {
+  font-size:clamp(28px,3vw,52px) !important;
+  line-height:1.12 !important;
+}
+.networkShell.reactionShell .eliteResultSub {
+  font-size:clamp(20px,1.85vw,33px) !important;
+  line-height:1.15 !important;
+}
+.networkShell.reactionShell .eliteResultRow {
+  font-size:clamp(22px,2vw,35px) !important;
+  line-height:1.2 !important;
+}
+
+/* Five-minute sponsor slot: bring spotlight heading away from the art title. */
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinCopy > .networkTitle {
+  transform:translateY(2.2vh);
+}
+
+/* Daily Word inside signup: one clear message, a dedicated QR, no skinny column. */
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinPromoText {
+  font-size:clamp(18px,1.6vw,28px) !important;
+  line-height:1.2 !important;
+  padding:0 .6vw;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinPromoWord {
+  display:grid !important;
+  grid-template-columns:clamp(95px,9vw,145px) minmax(0,1fr) !important;
+  gap:1.5vw !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:100% !important;
+  min-width:0 !important;
+  font-size:clamp(17px,1.5vw,26px) !important;
+  line-height:1.17 !important;
+  overflow-wrap:normal !important;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinPromoWord img {
+  width:100% !important;
+  height:auto !important;
+  padding:5px !important;
+  box-sizing:border-box !important;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinPromoWord > div {
+  min-width:0 !important;
+  text-align:left !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinPromoWord small {
+  font-size:clamp(12px,1vw,18px) !important;
+  line-height:1.2 !important;
+}
+
+
+/* ELITE BRAIN WARP OPTIONAL IMAGE SUPPORT 20261125 — one rebus per screen */
+.networkShell.warpShell .warpBoard.warpBoardImage{
+  padding:8px !important;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.networkShell.warpShell .warpBoard.warpBoardImage img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border-radius:12px;
+}
+
+
+/* ELITE BLITZ FIVE-MINUTE STAGE THEMES 20261125
+   Same mini-game five-minute QR / sponsor rotation / countdown. */
+#eliteStableMiniJoin.eliteBlitzSports {
+ background: url('/assets/channel/elite_blitz_sports_stage.webp') center / 100% 100% no-repeat !important;
+}
+#eliteStableMiniJoin.eliteBlitzRegular {
+ background: url('/assets/channel/elite_blitz_regular_stage.webp') center / 100% 100% no-repeat !important;
+}
+#eliteStableMiniJoin.eliteBlitzAfterDark {
+ background: url('/assets/channel/elite_blitz_after_dark_stage.webp') center / 100% 100% no-repeat !important;
+}
+
+
+/* ELITE BLITZ QR CAPTION 20261125 */
+/* Only the five-minute Blitz signup. Keep sponsor spotlight unchanged. */
+#eliteStableMiniJoin .eliteBlitzQrStack {
+  position:relative;
+  justify-self:center;
+  display:flex;
+  align-items:center;
+  flex-direction:column;
+  min-width:0;
+}
+#eliteStableMiniJoin .eliteBlitzQrCaption {
+  position:absolute;
+  top:calc(100% + 9px);
+  left:50%;
+  transform:translateX(-50%);
+  width:min(32vw,420px);
+  text-align:center;
+  font-weight:1000;
+  font-size:clamp(18px,1.7vw,30px);
+  line-height:1.15;
+  letter-spacing:.015em;
+  color:white;
+  text-shadow:0 3px 10px rgba(0,0,0,.95);
+  pointer-events:none;
+}
+#eliteStableMiniJoin .eliteBlitzQrCaption span {display:block;white-space:nowrap}
+/* During the sponsor portions, hide the additional caption. */
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteBlitzQrCaption {display:none}
+
+
+/* ELITE REACTION RUSH RED WAITING LIGHTS 20261125 */
+/* Visuals only; the existing green GO class and 3x3 tap engine are unchanged. */
+.reactionTvLamp {
+  border-color:#ff5868;
+  background:radial-gradient(circle at 35% 27%,#ff6573 0%,#e52036 39%,#9d1026 77%,#560713 100%);
+  box-shadow:inset 0 6px 12px rgba(255,255,255,.17),inset 0 -12px 20px rgba(33,0,7,.42),0 0 19px rgba(255,43,75,.47),0 5px 16px rgba(0,0,0,.6);
+}
+.reactionTvLamp.go {
+  border-color:#8dffae;
+  background:radial-gradient(circle at 35% 27%,#d8ffe0 0%,#55fa8f 32%,#12ae50 72%,#075b28 100%);
+  box-shadow:inset 0 6px 12px rgba(255,255,255,.25),0 0 37px rgba(58,255,130,.86),0 0 80px rgba(58,255,130,.36);
+}
+
 </style>
 </head>
 <body>
@@ -1643,7 +1806,11 @@ function eliteResultBoard(mini, reaction=false){
   <span class="eliteResultPoints">${reaction?Number(r.reaction_seconds||0).toFixed(3)+' AVG':Number(r.points||0).toLocaleString('en-US')+' PTS'}</span>
  </div>`).join('')}</div>`;
 }
-function brainWarpBoard(tiles){
+function brainWarpBoard(tiles,imageUrl){
+  // ELITE BRAIN WARP OPTIONAL IMAGE SUPPORT 20261125
+  if(typeof imageUrl==='string' && /^\/assets\/channel\/brain_warp\/[a-z0-9][a-z0-9_-]*\.(webp|png|jpg|jpeg)$/.test(imageUrl)){
+    return `<div class="warpBoard warpBoardImage"><img src="${esc(imageUrl)}" alt="Brain Warp visual rebus puzzle"></div>`;
+  }
  const cells=(Array.isArray(tiles)?tiles:[]).slice(0,9);
  return `<div class="warpBoard" aria-label="Visual phrase puzzle">${cells.map(tile=>{
    const row=Math.max(1,Math.min(3,Number(tile.row)||2));
@@ -1767,7 +1934,7 @@ function renderMiniGame(state){
    const cue=Number(m.question_index||0),round=Number(m.reaction_round||Math.floor(cue/3)+1);
    const light=Number(m.reaction_light||cue%3+1);
    const order=Array.isArray(m.reaction_round_order)?m.reaction_round_order:[1,2,3];
-   const lamps=[1,2,3].map(i=>`<span class="reactionTvLamp ${i===light&&phase==='question'?'go':''}">${i}</span>`).join('');
+   const lamps=[1,2,3].map(i=>`<span class="reactionTvLamp ${i===light&&phase==='question'?'go':''}" aria-hidden="true"></span>`).join('');
    if(phase==='intro'){
      html=miniInstructionScreen('reaction_rush');
    }else if(phase==='round_break'){
@@ -1892,7 +2059,7 @@ function renderMiniGame(state){
        <div class="gibRound">VISUAL PUZZLE ${puzzleNumber} OF ${puzzleCount} - ${esc(difficulty)}</div>
        <div class="gibHud"><div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
        <div class="gibMetric points"><div class="number">${points.toLocaleString('en-US')}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div></div>
-       ${brainWarpBoard(q.tiles)}
+       ${brainWarpBoard(q.tiles,q.image)}
        <div class="gibInstruction">WHAT PHRASE DO YOU SEE? TYPE IT ON YOUR PHONE!</div>
        <div class="gibBottom">50 SECONDS PER PUZZLE - WRONG GUESSES COST POINTS</div>
      </div></div>`;
@@ -2032,7 +2199,7 @@ function setEliteAdLane(active){
 function updateEliteMiniJoinRotation(panel,n,upcoming){
  const remaining=Math.max(0,Number(upcoming.seconds_until)||0);
  const mode=remaining>240?'join':remaining>210?'sponsor':
-            remaining>180?'daily_word':remaining>120?'join':
+            remaining>180?'sponsor':remaining>120?'join':
             remaining>90?'sponsor':'join';
  const promo=panel.querySelector('#eliteMiniJoinPromo');
  const title=panel.querySelector('.networkTitle');
@@ -2359,6 +2526,51 @@ function renderNetworkProgram(state){
  const kind=p.kind||'channel';
 
  if(n.game_active)return false;
+ if((n.lead_in_phase==='join'||n.lead_in_phase==='teams_ready') && Number((n.lead_in_next_event||n.next_event||{}).seconds_until||0)<=300){
+  const upcoming=n.lead_in_next_event||n.next_event||{};
+  setBackground(null);
+  const overlay=document.getElementById('overlay');
+  const eventKey='blitz|'+String(upcoming.id||upcoming.start_iso||upcoming.title||'blitz');
+  let panel=document.getElementById('eliteStableMiniJoin');
+  // Keep the QR image node mounted while updating the countdown once per second.
+  if(!panel||panel.dataset.eventKey!==eventKey){
+   overlay.innerHTML=`
+    <div class="networkShell" id="eliteStableMiniJoin">
+     <div class="eliteMiniJoinLayout">
+      <div class="eliteMiniJoinCopy">
+       <div class="networkKicker">ELITE NETWORK BLITZ</div>
+       <div class="networkTitle">SCAN TO JOIN</div>
+       <div class="networkSub" id="eliteMiniJoinEvent"></div>
+       <div class="comingTime" id="eliteMiniJoinCountdown"></div>
+       <div class="networkSub" id="eliteMiniJoinTeams"></div>
+       <div class="networkNext">Scan now to join the upcoming Blitz!</div><div class="eliteMiniJoinPromo" id="eliteMiniJoinPromo" hidden></div>
+      </div>
+      <div class="eliteBlitzQrStack">
+       <div class="eliteMiniJoinQr">
+        <img src="/join-qr.png" alt="Scan to join Elite Network">
+       </div>
+       <div class="eliteBlitzQrCaption"><span>ELITE BLITZ TRIVIA</span><span>GAME STARTS SOON!</span></div>
+      </div>
+     </div>
+    </div>`;
+   panel=document.getElementById('eliteStableMiniJoin');
+   panel.dataset.eventKey=eventKey;
+  }
+  // Blitz artwork theme only: same signup/sponsor rotation as mini games.
+  const blitzKind=String(upcoming.kind||'');
+  const theme=blitzKind==='sports_blitz'?'sports':blitzKind==='after_dark'?'after_dark':'regular';
+  panel.classList.remove('miniGameShell','warpShell','reactionShell','gibberishShell',
+    'eliteBlitzSports','eliteBlitzRegular','eliteBlitzAfterDark');
+  panel.classList.add(theme==='sports'?'eliteBlitzSports':theme==='after_dark'?'eliteBlitzAfterDark':'eliteBlitzRegular');
+  document.getElementById('eliteMiniJoinEvent').textContent=upcoming.title||'ELITE MINI-GAME';
+  document.getElementById('eliteMiniJoinCountdown').textContent=formatCountdown(upcoming.seconds_until||0);
+  const teams=Number(state.team_count||0);
+  document.getElementById('eliteMiniJoinTeams').textContent=
+   `${teams} TEAM${teams===1?'':'S'} REGISTERED`;
+   updateEliteMiniJoinRotation(panel,n,upcoming);
+  return true;
+ }
+
   if(n.lead_in_phase==='join'||n.lead_in_phase==='teams_ready'){
   const nx=n.lead_in_next_event||n.next_event||{};
   const klass=

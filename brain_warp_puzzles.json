@@ -1,6 +1,13 @@
 {
   "version": 2,
+  "note": "Elite Brain Warp family playtest edition 2026-11-25; 22 image rebuses + 14 text rebuses. Editorial candidate, not yet public tested.",
   "puzzles": [
+    {
+      "id": "image-two-left-feet",
+      "difficulty": "easy",
+      "answer_display": "Two left feet",
+      "image": "/assets/channel/brain_warp/two_left_feet.webp"
+    },
     {
       "id": "head-over-heels",
       "difficulty": "easy",
@@ -21,48 +28,10 @@
       ]
     },
     {
-      "id": "mind-over-matter",
+      "id": "image-fish-out-of-water",
       "difficulty": "easy",
-      "answer_display": "Mind over matter",
-      "tiles": [
-        {
-          "text": "MIND",
-          "row": 1,
-          "col": 2,
-          "style": "normal"
-        },
-        {
-          "text": "MATTER",
-          "row": 3,
-          "col": 2,
-          "style": "normal"
-        }
-      ]
-    },
-    {
-      "id": "read-between-lines",
-      "difficulty": "easy",
-      "answer_display": "Read between the lines",
-      "tiles": [
-        {
-          "text": "LINE",
-          "row": 1,
-          "col": 2,
-          "style": "small"
-        },
-        {
-          "text": "READ",
-          "row": 2,
-          "col": 2,
-          "style": "bright"
-        },
-        {
-          "text": "LINE",
-          "row": 3,
-          "col": 2,
-          "style": "small"
-        }
-      ]
+      "answer_display": "A fish out of water",
+      "image": "/assets/channel/brain_warp/fish_out_of_water.webp"
     },
     {
       "id": "double-trouble",
@@ -84,6 +53,12 @@
       ]
     },
     {
+      "id": "image-under-the-weather",
+      "difficulty": "easy",
+      "answer_display": "Under the weather",
+      "image": "/assets/channel/brain_warp/under_the_weather.webp"
+    },
+    {
       "id": "high-five",
       "difficulty": "easy",
       "answer_display": "High five",
@@ -95,6 +70,12 @@
           "style": "large"
         }
       ]
+    },
+    {
+      "id": "image-butterfly",
+      "difficulty": "easy",
+      "answer_display": "Butterfly",
+      "image": "/assets/channel/brain_warp/butterfly.webp"
     },
     {
       "id": "under-pressure",
@@ -116,298 +97,10 @@
       ]
     },
     {
-      "id": "back-to-back",
-      "difficulty": "medium",
-      "answer_display": "Back to back",
-      "tiles": [
-        {
-          "text": "BACK",
-          "row": 2,
-          "col": 1,
-          "style": "small"
-        },
-        {
-          "text": "BACK",
-          "row": 2,
-          "col": 3,
-          "style": "flipped"
-        }
-      ]
-    },
-    {
-      "id": "split-second",
-      "difficulty": "medium",
-      "answer_display": "Split second",
-      "tiles": [
-        {
-          "text": "SEC",
-          "row": 2,
-          "col": 1,
-          "style": "large"
-        },
-        {
-          "text": "OND",
-          "row": 2,
-          "col": 3,
-          "style": "large"
-        }
-      ]
-    },
-    {
-      "id": "broken-heart",
-      "difficulty": "medium",
-      "answer_display": "Broken heart",
-      "tiles": [
-        {
-          "text": "HE",
-          "row": 2,
-          "col": 1,
-          "style": "large"
-        },
-        {
-          "text": "ART",
-          "row": 2,
-          "col": 3,
-          "style": "large"
-        }
-      ]
-    },
-    {
-      "id": "falling-in-love",
-      "difficulty": "medium",
-      "answer_display": "Falling in love",
-      "tiles": [
-        {
-          "text": "LOVE",
-          "row": 1,
-          "col": 1,
-          "style": "tilt"
-        },
-        {
-          "text": "LOVE",
-          "row": 2,
-          "col": 2,
-          "style": "tilt"
-        },
-        {
-          "text": "LOVE",
-          "row": 3,
-          "col": 3,
-          "style": "tilt"
-        }
-      ]
-    },
-    {
-      "id": "right-under-nose",
-      "difficulty": "medium",
-      "answer_display": "Right under your nose",
-      "tiles": [
-        {
-          "text": "NOSE",
-          "row": 1,
-          "col": 2,
-          "style": "large"
-        },
-        {
-          "text": "RIGHT",
-          "row": 3,
-          "col": 2,
-          "style": "normal"
-        }
-      ]
-    },
-    {
-      "id": "long-time-no-see",
-      "difficulty": "medium",
-      "answer_display": "Long time no see",
-      "tiles": [
-        {
-          "text": "LONG",
-          "row": 1,
-          "col": 1,
-          "style": "large"
-        },
-        {
-          "text": "TIME",
-          "row": 1,
-          "col": 3,
-          "style": "small"
-        },
-        {
-          "text": "NO",
-          "row": 3,
-          "col": 1,
-          "style": "normal"
-        },
-        {
-          "text": "SEE",
-          "row": 3,
-          "col": 3,
-          "style": "normal"
-        }
-      ]
-    },
-    {
-      "id": "stand-in-line",
-      "difficulty": "hard",
-      "answer_display": "Stand in line",
-      "tiles": [
-        {
-          "text": "LINE",
-          "row": 1,
-          "col": 2,
-          "style": "small"
-        },
-        {
-          "text": "STAND",
-          "row": 2,
-          "col": 2,
-          "style": "large"
-        },
-        {
-          "text": "LINE",
-          "row": 3,
-          "col": 2,
-          "style": "small"
-        }
-      ]
-    },
-    {
-      "id": "three-blind-mice",
-      "difficulty": "hard",
-      "answer_display": "Three blind mice",
-      "tiles": [
-        {
-          "text": "MICE",
-          "row": 1,
-          "col": 2,
-          "style": "crossed"
-        },
-        {
-          "text": "MICE",
-          "row": 2,
-          "col": 2,
-          "style": "crossed"
-        },
-        {
-          "text": "MICE",
-          "row": 3,
-          "col": 2,
-          "style": "crossed"
-        }
-      ]
-    },
-    {
-      "id": "all-for-one",
-      "difficulty": "hard",
-      "answer_display": "All for one",
-      "tiles": [
-        {
-          "text": "ALL",
-          "row": 1,
-          "col": 1,
-          "style": "small"
-        },
-        {
-          "text": "ALL",
-          "row": 1,
-          "col": 3,
-          "style": "small"
-        },
-        {
-          "text": "ONE",
-          "row": 2,
-          "col": 2,
-          "style": "large"
-        },
-        {
-          "text": "ALL",
-          "row": 3,
-          "col": 1,
-          "style": "small"
-        },
-        {
-          "text": "ALL",
-          "row": 3,
-          "col": 3,
-          "style": "small"
-        }
-      ]
-    },
-    {
-      "id": "forgive-and-forget",
-      "difficulty": "hard",
-      "answer_display": "Forgive and forget",
-      "tiles": [
-        {
-          "text": "4",
-          "row": 1,
-          "col": 1,
-          "style": "large"
-        },
-        {
-          "text": "GIVE",
-          "row": 1,
-          "col": 2,
-          "style": "large"
-        },
-        {
-          "text": "4",
-          "row": 3,
-          "col": 1,
-          "style": "large"
-        },
-        {
-          "text": "GET",
-          "row": 3,
-          "col": 2,
-          "style": "large"
-        }
-      ]
-    },
-    {
-      "id": "piece-of-cake",
-      "difficulty": "hard",
-      "answer_display": "Piece of cake",
-      "tiles": [
-        {
-          "text": "CA",
-          "row": 2,
-          "col": 1,
-          "style": "large"
-        },
-        {
-          "text": "KE",
-          "row": 2,
-          "col": 3,
-          "style": "large"
-        }
-      ]
-    },
-    {
-      "id": "six-feet-under",
-      "difficulty": "hard",
-      "answer_display": "Six feet under",
-      "tiles": [
-        {
-          "text": "6",
-          "row": 1,
-          "col": 2,
-          "style": "large"
-        },
-        {
-          "text": "FEET",
-          "row": 2,
-          "col": 2,
-          "style": "large"
-        },
-        {
-          "text": "UNDER",
-          "row": 3,
-          "col": 2,
-          "style": "small"
-        }
-      ]
+      "id": "image-time-flies",
+      "difficulty": "easy",
+      "answer_display": "Time flies",
+      "image": "/assets/channel/brain_warp/time_flies.webp"
     },
     {
       "id": "all-eyes-on-me",
@@ -447,117 +140,97 @@
       ]
     },
     {
-      "id": "four-corners-earth",
+      "id": "image-the-last-straw",
       "difficulty": "easy",
-      "answer_display": "Four corners of the earth",
-      "tiles": [
-        {
-          "text": "4",
-          "row": 1,
-          "col": 1,
-          "style": "large"
-        },
-        {
-          "text": "4",
-          "row": 1,
-          "col": 3,
-          "style": "large"
-        },
-        {
-          "text": "EARTH",
-          "row": 2,
-          "col": 2,
-          "style": "bright"
-        },
-        {
-          "text": "4",
-          "row": 3,
-          "col": 1,
-          "style": "large"
-        },
-        {
-          "text": "4",
-          "row": 3,
-          "col": 3,
-          "style": "large"
-        }
-      ]
+      "answer_display": "The last straw",
+      "image": "/assets/channel/brain_warp/the_last_straw.webp"
     },
     {
-      "id": "fish-out-water",
+      "id": "image-on-thin-ice",
       "difficulty": "easy",
-      "answer_display": "A fish out of water",
+      "answer_display": "On thin ice",
+      "image": "/assets/channel/brain_warp/on_thin_ice.webp"
+    },
+    {
+      "id": "image-man-overboard",
+      "difficulty": "medium",
+      "answer_display": "Man overboard",
+      "image": "/assets/channel/brain_warp/man_overboard.webp"
+    },
+    {
+      "id": "back-to-back",
+      "difficulty": "medium",
+      "answer_display": "Back to back",
       "tiles": [
         {
-          "text": "FISH",
-          "row": 1,
-          "col": 2,
-          "style": "large"
-        },
-        {
-          "text": "WATER",
-          "row": 3,
-          "col": 2,
+          "text": "BACK",
+          "row": 2,
+          "col": 1,
           "style": "small"
-        }
-      ]
-    },
-    {
-      "id": "long-story-short",
-      "difficulty": "easy",
-      "answer_display": "Long story short",
-      "tiles": [
-        {
-          "text": "LONG",
-          "row": 1,
-          "col": 2,
-          "style": "large"
         },
         {
-          "text": "STORY",
+          "text": "BACK",
           "row": 2,
-          "col": 2,
-          "style": "normal"
-        },
-        {
-          "text": "SHORT",
-          "row": 3,
-          "col": 2,
-          "style": "small"
-        }
-      ]
-    },
-    {
-      "id": "two-left-feet",
-      "difficulty": "easy",
-      "answer_display": "Two left feet",
-      "tiles": [
-        {
-          "text": "FEET",
-          "row": 1,
-          "col": 1,
-          "style": "normal"
-        },
-        {
-          "text": "FEET",
-          "row": 3,
-          "col": 1,
-          "style": "normal"
-        }
-      ]
-    },
-    {
-      "id": "backward-glance",
-      "difficulty": "easy",
-      "answer_display": "A backward glance",
-      "tiles": [
-        {
-          "text": "GLANCE",
-          "row": 2,
-          "col": 2,
+          "col": 3,
           "style": "flipped"
         }
       ]
+    },
+    {
+      "id": "image-head-in-clouds",
+      "difficulty": "medium",
+      "answer_display": "Head in the clouds",
+      "image": "/assets/channel/brain_warp/head_in_clouds.webp"
+    },
+    {
+      "id": "split-second",
+      "difficulty": "medium",
+      "answer_display": "Split second",
+      "tiles": [
+        {
+          "text": "SEC",
+          "row": 2,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "OND",
+          "row": 2,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "image-penny-for-thoughts",
+      "difficulty": "medium",
+      "answer_display": "A penny for your thoughts",
+      "image": "/assets/channel/brain_warp/penny_for_thoughts.webp"
+    },
+    {
+      "id": "broken-heart",
+      "difficulty": "medium",
+      "answer_display": "Broken heart",
+      "tiles": [
+        {
+          "text": "HE",
+          "row": 2,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "ART",
+          "row": 2,
+          "col": 3,
+          "style": "large"
+        }
+      ]
+    },
+    {
+      "id": "image-moonlight",
+      "difficulty": "medium",
+      "answer_display": "Moonlight",
+      "image": "/assets/channel/brain_warp/moonlight.webp"
     },
     {
       "id": "thinking-outside-box",
@@ -585,42 +258,10 @@
       ]
     },
     {
-      "id": "a-step-behind",
+      "id": "image-back-to-square-one",
       "difficulty": "medium",
-      "answer_display": "A step behind",
-      "tiles": [
-        {
-          "text": "STEP",
-          "row": 2,
-          "col": 1,
-          "style": "small"
-        },
-        {
-          "text": "STEP",
-          "row": 2,
-          "col": 3,
-          "style": "large"
-        }
-      ]
-    },
-    {
-      "id": "double-cross",
-      "difficulty": "medium",
-      "answer_display": "Double cross",
-      "tiles": [
-        {
-          "text": "CROSS",
-          "row": 1,
-          "col": 2,
-          "style": "crossed"
-        },
-        {
-          "text": "CROSS",
-          "row": 3,
-          "col": 2,
-          "style": "crossed"
-        }
-      ]
+      "answer_display": "Back to square one",
+      "image": "/assets/channel/brain_warp/back_to_square_one.webp"
     },
     {
       "id": "turning-tables",
@@ -642,61 +283,90 @@
       ]
     },
     {
-      "id": "small-world",
+      "id": "image-read-between-lines",
       "difficulty": "medium",
-      "answer_display": "It's a small world",
+      "answer_display": "Read between the lines",
+      "image": "/assets/channel/brain_warp/read_between_lines.webp"
+    },
+    {
+      "id": "image-over-easy",
+      "difficulty": "medium",
+      "answer_display": "Over easy",
+      "image": "/assets/channel/brain_warp/over_easy.webp"
+    },
+    {
+      "id": "image-break-the-ice",
+      "difficulty": "hard",
+      "answer_display": "Break the ice",
+      "image": "/assets/channel/brain_warp/break_the_ice.webp"
+    },
+    {
+      "id": "three-blind-mice",
+      "difficulty": "hard",
+      "answer_display": "Three blind mice",
       "tiles": [
         {
-          "text": "WORLD",
+          "text": "MICE",
+          "row": 1,
+          "col": 2,
+          "style": "crossed"
+        },
+        {
+          "text": "MICE",
           "row": 2,
           "col": 2,
-          "style": "small"
+          "style": "crossed"
+        },
+        {
+          "text": "MICE",
+          "row": 3,
+          "col": 2,
+          "style": "crossed"
         }
       ]
     },
     {
-      "id": "uphill-battle",
-      "difficulty": "medium",
-      "answer_display": "Uphill battle",
+      "id": "image-i-understand",
+      "difficulty": "hard",
+      "answer_display": "I understand",
+      "image": "/assets/channel/brain_warp/i_understand.webp"
+    },
+    {
+      "id": "forgive-and-forget",
+      "difficulty": "hard",
+      "answer_display": "Forgive and forget",
       "tiles": [
         {
-          "text": "BATTLE",
+          "text": "4",
+          "row": 1,
+          "col": 1,
+          "style": "large"
+        },
+        {
+          "text": "GIVE",
+          "row": 1,
+          "col": 2,
+          "style": "large"
+        },
+        {
+          "text": "4",
           "row": 3,
           "col": 1,
-          "style": "small"
+          "style": "large"
         },
         {
-          "text": "BATTLE",
-          "row": 2,
+          "text": "GET",
+          "row": 3,
           "col": 2,
-          "style": "normal"
-        },
-        {
-          "text": "BATTLE",
-          "row": 1,
-          "col": 3,
           "style": "large"
         }
       ]
     },
     {
-      "id": "far-and-away",
+      "id": "image-penniless",
       "difficulty": "hard",
-      "answer_display": "Far and away",
-      "tiles": [
-        {
-          "text": "FAR",
-          "row": 1,
-          "col": 1,
-          "style": "small"
-        },
-        {
-          "text": "AWAY",
-          "row": 3,
-          "col": 3,
-          "style": "small"
-        }
-      ]
+      "answer_display": "Penniless",
+      "image": "/assets/channel/brain_warp/penniless.webp"
     },
     {
       "id": "one-in-million",
@@ -724,6 +394,12 @@
       ]
     },
     {
+      "id": "image-fork-in-the-road",
+      "difficulty": "hard",
+      "answer_display": "A fork in the road",
+      "image": "/assets/channel/brain_warp/fork_in_the_road.webp"
+    },
+    {
       "id": "cross-the-line",
       "difficulty": "hard",
       "answer_display": "Crossing the line",
@@ -749,67 +425,28 @@
       ]
     },
     {
-      "id": "down-to-earth",
+      "id": "image-once-in-a-blue-moon",
       "difficulty": "hard",
-      "answer_display": "Down to earth",
-      "tiles": [
-        {
-          "text": "DOWN",
-          "row": 1,
-          "col": 2,
-          "style": "flipped"
-        },
-        {
-          "text": "2",
-          "row": 2,
-          "col": 2,
-          "style": "large"
-        },
-        {
-          "text": "EARTH",
-          "row": 3,
-          "col": 2,
-          "style": "normal"
-        }
-      ]
+      "answer_display": "Once in a blue moon",
+      "image": "/assets/channel/brain_warp/once_in_a_blue_moon.webp"
     },
     {
-      "id": "the-last-word",
+      "id": "image-cut-above-the-rest",
       "difficulty": "hard",
-      "answer_display": "The last word",
-      "tiles": [
-        {
-          "text": "WORD",
-          "row": 3,
-          "col": 3,
-          "style": "bright"
-        }
-      ]
+      "answer_display": "A cut above the rest",
+      "image": "/assets/channel/brain_warp/cut_above_the_rest.webp"
     },
     {
-      "id": "falling-apart",
+      "id": "image-behind-the-eight-ball",
       "difficulty": "hard",
-      "answer_display": "Falling apart",
-      "tiles": [
-        {
-          "text": "AP",
-          "row": 1,
-          "col": 1,
-          "style": "tilt"
-        },
-        {
-          "text": "AR",
-          "row": 2,
-          "col": 2,
-          "style": "tilt"
-        },
-        {
-          "text": "T",
-          "row": 3,
-          "col": 3,
-          "style": "tilt"
-        }
-      ]
+      "answer_display": "Behind the eight ball",
+      "image": "/assets/channel/brain_warp/behind_the_eight_ball.webp"
+    },
+    {
+      "id": "image-out-of-order",
+      "difficulty": "hard",
+      "answer_display": "Out of order",
+      "image": "/assets/channel/brain_warp/out_of_order.webp"
     }
   ]
 }
