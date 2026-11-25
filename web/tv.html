@@ -568,7 +568,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 #eliteSponsorHouse .houseSub{color:#c9d9ec;font-weight:800;font-size:clamp(14px,1.9vw,34px);}
 #eliteSponsorHouse img{height:32%;max-width:45%;aspect-ratio:1;object-fit:contain;background:white;border-radius:10px;}
 #eliteSponsorHouse .houseScan{color:#ffd85a;font-size:clamp(16px,2.1vw,38px);font-weight:950;}
-/* ELITE TV SAFE AREA — Daily Word and mini signup */
+/* ELITE TV SAFE AREA - Daily Word and mini signup */
 #eliteDailyWordTv{position:absolute;inset:0;display:grid;grid-template-rows:auto minmax(0,1fr);gap:3%;padding:3% 5% 6%;background:radial-gradient(ellipse at top,#244b75,#09182d 65%,#030913);text-align:center;overflow:hidden;--dw-unit:min(1vw,1.7778vh)}
 #eliteDailyWordTv .dwTag{font-size:calc(var(--dw-unit)*1.35);font-weight:900;letter-spacing:.14em;color:#7eeaff}
 #eliteDailyWordTv .dwTitle{font-size:calc(var(--dw-unit)*4.2);font-weight:1000;line-height:1.08;margin:.5% 0;color:#fff}
@@ -989,6 +989,131 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
  display:none !important;
 }
 
+/* ELITE GIB/REACTION BACKGROUNDS 20261124 */
+
+/* =========================
+   ELITE GIBBERISH
+   ========================= */
+
+.networkShell.gibberishShell{
+ position:absolute;
+ overflow:hidden;
+ background:
+  linear-gradient(rgba(7,10,22,.10),rgba(7,10,22,.22)),
+  url('/assets/channel/elite_gibberish_clean.webp') center/cover no-repeat !important;
+}
+
+#eliteStableMiniJoin.gibberishShell{
+ background:url('/assets/channel/elite_gibberish_join.webp')
+ center center / 100% 100% no-repeat !important;
+}
+
+#eliteStableMiniJoin.gibberishShell .eliteMiniJoinLayout{
+ position:absolute !important;
+ left:27% !important;
+ right:5% !important;
+ top:32% !important;
+ bottom:7% !important;
+ width:auto !important;
+ max-height:none !important;
+ display:grid !important;
+ grid-template-columns:minmax(0,1fr) 36% !important;
+ gap:4% !important;
+ align-items:center !important;
+}
+
+#eliteStableMiniJoin.gibberishShell .eliteMiniJoinCopy,
+#eliteStableMiniJoin.gibberishShell .eliteMiniJoinQr{
+ transform:none !important;
+}
+
+#eliteStableMiniJoin.gibberishShell .networkKicker,
+#eliteStableMiniJoin.gibberishShell #eliteMiniJoinEvent{
+ display:none !important;
+}
+
+#eliteStableMiniJoin.gibberishShell .networkTitle{
+ font-size:clamp(34px,3.8vw,62px) !important;
+}
+
+#eliteStableMiniJoin.gibberishShell .comingTime{
+ font-size:clamp(55px,5.2vw,85px) !important;
+}
+
+#eliteStableMiniJoin.gibberishShell .eliteMiniJoinQr img{
+ width:min(20vw,320px) !important;
+ height:min(20vw,320px) !important;
+}
+
+.networkShell.gibberishShell.miniRulesShell .miniRulesPanel{
+ width:57% !important;
+ max-width:none !important;
+ margin-left:25% !important;
+ margin-right:18% !important;
+ padding:1% !important;
+}
+
+.networkShell.gibberishShell.miniRulesShell .miniRulesBrand{
+ display:none !important;
+}
+
+/* =========================
+   ELITE REACTION RUSH
+   ========================= */
+
+.networkShell.reactionShell{
+ position:absolute;
+ overflow:hidden;
+ background:
+  linear-gradient(rgba(7,10,22,.10),rgba(7,10,22,.22)),
+  url('/assets/channel/elite_reaction_rush_clean.webp') center/cover no-repeat !important;
+}
+
+#eliteStableMiniJoin.reactionShell{
+ background:url('/assets/channel/elite_reaction_rush_join.webp')
+ center center / 100% 100% no-repeat !important;
+}
+
+#eliteStableMiniJoin.reactionShell .eliteMiniJoinLayout{
+ position:absolute !important;
+ left:38% !important;
+ right:4% !important;
+ top:24% !important;
+ bottom:8% !important;
+ width:auto !important;
+ max-height:none !important;
+ display:grid !important;
+ grid-template-columns:minmax(0,1fr) 34% !important;
+ gap:4% !important;
+ align-items:center !important;
+}
+
+#eliteStableMiniJoin.reactionShell .networkKicker,
+#eliteStableMiniJoin.reactionShell #eliteMiniJoinEvent{
+ display:none !important;
+}
+
+#eliteStableMiniJoin.reactionShell .networkTitle{
+ font-size:clamp(30px,3.5vw,56px) !important;
+}
+
+#eliteStableMiniJoin.reactionShell .comingTime{
+ font-size:clamp(52px,5vw,80px) !important;
+}
+
+#eliteStableMiniJoin.reactionShell .eliteMiniJoinQr img{
+ width:min(18vw,300px) !important;
+ height:min(18vw,300px) !important;
+}
+
+.networkShell.reactionShell.miniRulesShell .miniRulesPanel{
+ width:52% !important;
+ max-width:none !important;
+ margin-left:38% !important;
+ margin-right:8% !important;
+}
+
+
 /* Larger heading without enlarging the puzzle area */
 .networkShell.warpShell .eliteWarpPlay .gibKicker {
  font-size:clamp(38px,3.4vw,56px) !important;
@@ -1003,6 +1128,357 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
 .networkShell.warpShell .eliteWarpPlay .gibHud {
  margin-bottom:6px !important;
 }
+/* ELITE REACTION RULES POLISH 20261125 */
+
+.networkShell.reactionShell.miniRulesShell .miniRulesPanel {
+  box-sizing:border-box !important;
+  width:59% !important;
+  max-width:none !important;
+  max-height:84% !important;
+  margin-left:38% !important;
+  margin-right:3% !important;
+  padding:1.2% 1.5% !important;
+  gap:0 !important;
+}
+
+.reactionShell.miniRulesShell .miniRulesBrand {
+  display:none !important;
+}
+
+.reactionShell.miniRulesShell .miniRulesHeading {
+  font-size:clamp(32px,3.2vw,52px) !important;
+  line-height:1.05 !important;
+  margin:6px 0 8px !important;
+}
+
+.reactionShell.miniRulesShell .miniRulesSub {
+  font-size:clamp(20px,2vw,29px) !important;
+  margin-bottom:14px !important;
+}
+
+.reactionShell.miniRulesShell .miniRulesSteps {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+
+.reactionShell.miniRulesShell .miniRulesStep {
+  min-width:0 !important;
+  padding:12px 9px !important;
+  font-size:clamp(17px,1.55vw,25px) !important;
+  line-height:1.18 !important;
+  overflow-wrap:break-word !important;
+}
+
+.reactionShell.miniRulesShell .miniRulesFooter {
+  font-size:clamp(14px,1.15vw,19px) !important;
+  line-height:1.2 !important;
+  margin-top:12px !important;
+}
+
+/* REACTION RUSH INSTRUCTION FONT POLISH */
+.reactionShell.miniRulesShell .miniRulesStep {
+  font-size:clamp(15px,1.4vw,22px) !important;
+  line-height:1.25 !important;
+}
+
+
+/* ELITE REACTION RULES READABILITY V2 FIXED */
+/* Preserve three upright cards while giving their text more room. */
+.networkShell.reactionShell.miniRulesShell .miniRulesPanel {
+  box-sizing:border-box !important;
+  width:68% !important;
+  max-width:none !important;
+  max-height:94% !important;
+  margin-left:31% !important;
+  margin-right:1% !important;
+  padding:1.3% 1.4% !important;
+}
+.reactionShell.miniRulesShell .miniRulesSteps {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+.reactionShell.miniRulesShell .miniRulesStep {
+  box-sizing:border-box !important;
+  min-width:0 !important;
+  padding:12px 6px !important;
+  font-size:clamp(14px,1.26vw,20px) !important;
+  line-height:1.32 !important;
+  letter-spacing:0 !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+}
+.reactionShell.miniRulesShell .miniRulesHeading {
+  font-size:clamp(32px,3.2vw,52px) !important;
+  margin:6px 0 8px !important;
+}
+.reactionShell.miniRulesShell .miniRulesFooter {
+  font-size:clamp(14px,1.1vw,18px) !important;
+  line-height:1.25 !important;
+  margin-top:12px !important;
+  white-space:normal !important;
+}
+
+
+/* ELITE REACTION CARD LEGIBILITY 20261124 */
+.reactionShell.miniRulesShell .miniRulesStep {
+  font-size:clamp(16px,1.18vw,20px) !important;
+  line-height:1.34 !important;
+  font-weight:850 !important;
+  padding:10px 8px !important;
+}
+.reactionShell.miniRulesShell .miniRulesFooter {
+  font-size:clamp(14px,1.03vw,18px) !important;
+  line-height:1.25 !important;
+}
+
+/* ELITE MINI PANELS ART VISIBILITY 20261124 */
+/* Presentation only. Keep the left-side characters and reactor exposed. */
+
+/* Reaction Rush active WAIT/GO layout: shift content right, don't shrink lights. */
+.networkShell.reactionShell.miniGameShell > .miniWrap:not(.eliteCenterReveal) {
+  box-sizing:border-box !important;
+  width:61% !important;
+  max-width:none !important;
+  margin-left:36% !important;
+  margin-right:3% !important;
+  padding:2% 2.2% !important;
+  background:linear-gradient(145deg,rgba(9,25,49,.84),rgba(4,9,23,.84)) !important;
+}
+.networkShell.reactionShell.miniGameShell .reactionCounter {
+  font-size:clamp(20px,2.25vw,35px) !important;
+  letter-spacing:0 !important;
+}
+.networkShell.reactionShell.miniGameShell .reactionTvLights {
+  gap:clamp(8px,1vw,18px) !important;
+  margin:18px auto !important;
+}
+
+/* Reaction Rush answer and scoreboard use a different outer panel. */
+.networkShell.reactionShell.miniGameShell > .miniWrap.eliteCenterReveal {
+  box-sizing:border-box !important;
+  width:61% !important;
+  max-width:none !important;
+  height:auto !important;
+  min-height:53% !important;
+  max-height:82% !important;
+  margin-left:36% !important;
+  margin-right:3% !important;
+  padding:2% 2% !important;
+  background:linear-gradient(145deg,rgba(9,25,49,.85),rgba(4,9,23,.85)) !important;
+}
+.networkShell.reactionShell .eliteCenterReveal .eliteResultCard,
+.networkShell.reactionShell .eliteCenterReveal .eliteBigAnswer {
+  box-sizing:border-box !important;
+  width:94% !important;
+  max-width:100% !important;
+}
+.networkShell.reactionShell .eliteResultRow {
+  grid-template-columns:9% minmax(0,1fr) 23% !important;
+  gap:2% !important;
+}
+
+/* Gibberish: favor large puzzle/reveal lettering, leave the jester visible. */
+.networkShell.gibberishShell.miniGameShell > .miniWrap.gibWrap.gibPlay {
+  box-sizing:border-box !important;
+  width:70% !important;
+  max-width:none !important;
+  height:82% !important;
+  max-height:82% !important;
+  margin-left:27% !important;
+  margin-right:3% !important;
+  padding:1.2% 2% !important;
+  background:linear-gradient(145deg,rgba(9,25,49,.85),rgba(4,9,23,.85)) !important;
+}
+.networkShell.gibberishShell .gibPlay .gibPhrase {
+  width:91% !important;
+  max-width:100% !important;
+}
+.networkShell.gibberishShell .gibPlay .gibInstruction,
+.networkShell.gibberishShell .gibPlay .gibReveal {
+  max-width:91% !important;
+}
+.networkShell.gibberishShell .gibPlay .gibBottom {
+  width:82% !important;
+  max-width:82% !important;
+}
+
+/* Gibberish reveal/score: slim outer box, retain large answer text. */
+.networkShell.gibberishShell.miniGameShell > .miniWrap.eliteCenterReveal {
+  box-sizing:border-box !important;
+  width:70% !important;
+  max-width:none !important;
+  height:auto !important;
+  min-height:60% !important;
+  max-height:86% !important;
+  margin-left:27% !important;
+  margin-right:3% !important;
+  padding:1.5% 2% !important;
+  background:linear-gradient(145deg,rgba(9,25,49,.86),rgba(4,9,23,.86)) !important;
+}
+.networkShell.gibberishShell .eliteCenterReveal .eliteBigAnswer,
+.networkShell.gibberishShell .eliteCenterReveal .eliteResultCard {
+  box-sizing:border-box !important;
+  width:88% !important;
+  max-width:100% !important;
+}
+
+
+/* ELITE NETWORK INFO STAGE 20261124 */
+.eliteInfoPanel {
+ background:
+  radial-gradient(ellipse at 8% 0%,rgba(111,27,237,.42),transparent 31%),
+  radial-gradient(ellipse at 94% 0%,rgba(15,111,255,.38),transparent 32%),
+  radial-gradient(ellipse at 5% 88%,rgba(10,110,255,.27),transparent 26%),
+  radial-gradient(ellipse at 94% 87%,rgba(137,23,230,.24),transparent 27%),
+  linear-gradient(165deg,transparent 0 68%,rgba(20,75,155,.20) 86%,rgba(57,17,121,.27) 100%),
+  radial-gradient(ellipse at 45% 22%,#142c50 0%,#081831 45%,#030814 100%) !important;
+}
+
+/* ELITE NETWORK SHARED STAGE BACKGROUND */
+
+/* Programming / coming-up information screen */
+.eliteInfoPanel {
+    background:
+      url('/assets/channel/elite_network_stage_bg.webp')
+      center center / 100% 100% no-repeat !important;
+}
+
+/* Elite Daily Word promotional screen */
+#eliteDailyWordTv {
+    background:
+      url('/assets/channel/elite_network_stage_bg.webp')
+      center center / 100% 100% no-repeat !important;
+}
+
+/* ELITE MINI JOIN CONTENT ROTATION 20261125 */
+#eliteStableMiniJoin .eliteMiniJoinPromo[hidden],
+#eliteStableMiniJoin .networkNext[hidden]{display:none!important}
+#eliteStableMiniJoin .eliteMiniJoinPromo{
+ margin:1vh auto 0;max-width:100%;padding:1vh 1.2vw;
+ background:rgba(2,9,28,.89);border:2px solid rgba(91,215,255,.65);
+ border-radius:16px;box-shadow:0 0 24px rgba(46,144,255,.24);
+ text-align:center;color:#fff;box-sizing:border-box;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .networkTitle{
+ font-size:clamp(26px,3vw,54px);line-height:1.1
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .comingTime{
+ font-size:clamp(30px,4vw,72px);margin:.3vh auto
+}
+#eliteStableMiniJoin .eliteMiniJoinPromoText{font-size:clamp(15px,1.6vw,30px);font-weight:800}
+#eliteStableMiniJoin .eliteMiniJoinPromoWord{
+ display:flex;align-items:center;justify-content:center;gap:1.4vw;
+ font-size:clamp(17px,1.5vw,28px);font-weight:850
+}
+#eliteStableMiniJoin .eliteMiniJoinPromoWord img{
+ width:clamp(90px,10vw,175px);height:auto;background:#fff;padding:5px;border-radius:10px
+}
+#eliteStableMiniJoin .eliteMiniJoinPromoWord small,
+#eliteStableMiniJoin .eliteMiniJoinHouseAd small{
+ display:block;font-size:clamp(12px,1vw,19px);font-weight:600;margin-top:.6vh
+}
+#eliteStableMiniJoin .eliteMiniJoinHouseAd{
+ font-size:clamp(25px,2.7vw,48px);font-weight:950;line-height:1.12;padding:1vh .5vw
+}
+#eliteStableMiniJoin .eliteMiniJoinSponsorImage{
+ display:block;max-width:100%;width:100%;height:clamp(110px,24vh,230px);object-fit:contain
+}
+
+
+/* ELITE MINI SPONSOR LAYOUT POLISH 20261125 */
+/* Display-only: keeps existing countdown, teams and QR DOM elements intact. */
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinCopy {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  grid-template-areas:
+    "sponsor-title sponsor-title"
+    "sponsor-content sponsor-content"
+    "sponsor-time sponsor-teams";
+  grid-template-rows:auto minmax(0,1fr) auto;
+  align-items:center;
+  align-content:center;
+  gap:1.4vh 1vw;
+  min-height:0;
+  height: min(67vh, 590px);
+  box-sizing:border-box;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinCopy > .networkKicker,
+#eliteStableMiniJoin.eliteMiniJoinPromoActive #eliteMiniJoinEvent,
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinCopy > .networkNext {
+  display:none !important;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinCopy > .networkTitle {
+  grid-area:sponsor-title;
+  font-size:clamp(24px,2.8vw,46px) !important;
+  line-height:1.07;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:center;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive #eliteMiniJoinPromo {
+  grid-area:sponsor-content;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:0;
+  width:100%;
+  height:100%;
+  max-height:36vh;
+  overflow:hidden;
+  margin:0 !important;
+  padding:1vh 1vw;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinHouseAd {
+  font-size:clamp(26px,3vw,50px);
+  padding:1vh 1vw;
+  line-height:1.12;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinSponsorImage {
+  display:block;
+  width:100%;
+  max-width:100%;
+  max-height:32vh;
+  height:auto;
+  object-fit:contain;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinPromoWord {
+  max-width:100%;
+  gap:1vw;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive .eliteMiniJoinPromoWord img {
+  width:clamp(75px,9vw,150px);
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive #eliteMiniJoinCountdown {
+  grid-area:sponsor-time;
+  font-size:clamp(26px,3.1vw,52px) !important;
+  line-height:1;
+  margin:0 !important;
+  padding:1.1vh .7vw;
+  background:rgba(1,8,26,.82);
+  border:1px solid rgba(107,227,255,.8);
+  border-radius:12px;
+  text-align:center;
+  align-self:stretch;
+}
+#eliteStableMiniJoin.eliteMiniJoinPromoActive #eliteMiniJoinTeams {
+  grid-area:sponsor-teams;
+  font-size:clamp(13px,1.28vw,22px) !important;
+  line-height:1.12;
+  font-weight:850;
+  margin:0 !important;
+  padding:1.1vh .7vw;
+  background:rgba(1,8,26,.82);
+  border:1px solid rgba(107,227,255,.8);
+  border-radius:12px;
+  text-align:center;
+  align-self:stretch;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
 </style>
 </head>
 <body>
@@ -1016,7 +1492,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02040a;fon
       <img src="/join-qr.png" alt="Scan with your phone to join Elite Network">
       <div class="gibQrSub">PLAY ON YOUR PHONE</div>
     </div>
-    <div id="eliteAdBanner" class="hidden"><div class="eliteAdCopy"><div class="eliteAdHeadline">YOUR BUSINESS COULD BE HERE</div><div class="eliteAdSub">Founding sponsor opportunities • Advertise on Elite Network</div></div><div class="eliteAdScan">SCAN FOR<br>ADVERTISING RATES</div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUgAAAFIAQAAAAAab1qeAAACG0lEQVR4nO2azY7DMAiEZ1Z9/1f+9gA4jvbSVkqLs86hTeyRDIh/bPTk8/MscCM3ciM38l8gH5LkeCf+yW/M2Lno9PshH5JCXnK8WBLGWObYWYajFkg7pGk5f1RSti8//UbIx/wRBu6U5Pi77vSbI7GERSjm8J4fOv0WyNTPUkjLEZUsYnXo6CocdZBnKqKJGF/R6KSiq3D0XaRnH2lhTi8Xn35TpGXLNmHxEZTS7GOzB51rIWHkoOE4rRAonzj9ZkgceVKmTEwxPsumHnR2Rw5/KU0BCEelxORIV+GoAbLyeGNBFpkZlNLoW9C5ANIlO4VpY+av2OP7dK6CzPyzinbSzpXdJufS1+lcCjmMXZJslG0QPJXwDehcAFn9OhQCxdjpMcvcrzv9rkhbFgKMEAaReajY+fwb9aaP/rynLoiH0a/CUQNk5JwZjhAQGpslaBs6F0Ae/SXrlDrVsIPtP19HIolMPZHkKuYdG13o7I8s/1mjTWWMr3JTtb4MRx2QdlWZp5Gmh0ttQmd/ZCTvVCeJbIeQPXodoX4VjhrIc3xEchQmn5ujjF+Fowbx/bgFMsZwuWx2/f4S8nw/hLR8jrs3Q0FX4agFsu6HxOCISJNiGW17f1U/87Eo96lK7CmBrsJRK2TeVhqD+On6TSs6uyNj/pYZqDNPqoR0zzveqd81Dedsavhhma2fTyP/XAP56OkbuZEbuZHrIn8BDKPlo24jCaoAAAAASUVORK5CYII=" alt="Scan for Elite Network advertising packages"></div>
+    <div id="eliteAdBanner" class="hidden"><div class="eliteAdCopy"><div class="eliteAdHeadline">YOUR BUSINESS COULD BE HERE</div><div class="eliteAdSub">Founding sponsor opportunities - Advertise on Elite Network</div></div><div class="eliteAdScan">SCAN FOR<br>ADVERTISING RATES</div><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUgAAAFIAQAAAAAab1qeAAACG0lEQVR4nO2azY7DMAiEZ1Z9/1f+9gA4jvbSVkqLs86hTeyRDIh/bPTk8/MscCM3ciM38l8gH5LkeCf+yW/M2Lno9PshH5JCXnK8WBLGWObYWYajFkg7pGk5f1RSti8//UbIx/wRBu6U5Pi77vSbI7GERSjm8J4fOv0WyNTPUkjLEZUsYnXo6CocdZBnKqKJGF/R6KSiq3D0XaRnH2lhTi8Xn35TpGXLNmHxEZTS7GOzB51rIWHkoOE4rRAonzj9ZkgceVKmTEwxPsumHnR2Rw5/KU0BCEelxORIV+GoAbLyeGNBFpkZlNLoW9C5ANIlO4VpY+av2OP7dK6CzPyzinbSzpXdJufS1+lcCjmMXZJslG0QPJXwDehcAFn9OhQCxdjpMcvcrzv9rkhbFgKMEAaReajY+fwb9aaP/rynLoiH0a/CUQNk5JwZjhAQGpslaBs6F0Ae/SXrlDrVsIPtP19HIolMPZHkKuYdG13o7I8s/1mjTWWMr3JTtb4MRx2QdlWZp5Gmh0ttQmd/ZCTvVCeJbIeQPXodoX4VjhrIc3xEchQmn5ujjF+Fowbx/bgFMsZwuWx2/f4S8nw/hLR8jrs3Q0FX4agFsu6HxOCISJNiGW17f1U/87Eo96lK7CmBrsJRK2TeVhqD+On6TSs6uyNj/pYZqDNPqoR0zzveqd81Dedsavhhma2fTyP/XAP56OkbuZEbuZHrIn8BDKPlo24jCaoAAAAASUVORK5CYII=" alt="Scan for Elite Network advertising packages"></div>
     <div id="footer" class="debugFooter">Connecting...</div>
   </div>
 </div>
@@ -1148,7 +1624,7 @@ function setShowBug(state){const el=document.getElementById('showBug');if(el){el
 function gibScoreboard(mini){
  const leaders=(mini.leaderboard||[]).slice(0,5);
  if(!leaders.length)return '<div class="miniProgress">No scores yet</div>';
- return `<div class="miniProgress">TOP SCORES: ${leaders.map((r,i)=>`${i+1}. ${esc(r.name||'PLAYER')} ${Number(r.points||0)} pts`).join('  •  ')}</div>`;
+ return `<div class="miniProgress">TOP SCORES: ${leaders.map((r,i)=>`${i+1}. ${esc(r.name||'PLAYER')} ${Number(r.points||0)} pts`).join(' - ')}</div>`;
 }
 
 // ELITE_RESULT_STAGES_20261120: draw readable, centered results on the TV.
@@ -1185,22 +1661,22 @@ const ELITE_MINI_RULES={
    'Join during the countdown. Wait for your turn.',
    'Use your phone to AIM, then HOLD to charge power.',
    'RELEASE to roll! Aim for the highest score.'
-  ],footer:'THREE BALLS PER TURN · WATCH THE TV FOR YOUR SCORE'},
+  ],footer:'THREE BALLS PER TURN - WATCH THE TV FOR YOUR SCORE'},
   reaction_rush:{title:'ELITE REACTION RUSH',subtitle:'FASTEST FINGER WINS',theme:'reactionShell',steps:[
-   '3 rounds. Each round has 3 lights: 1, 2, 3.',
-   'Lights turn GREEN in random order. Tap your phone once for each green light.',
-   'Tap THREE TIMES per round — 9 taps total. Fastest average wins!'
-  ],footer:'3 TAPS PER ROUND · 9 TOTAL · DO NOT TAP EARLY'},
+    '3 rounds. 3 lights per round: 1, 2, 3.',
+    'When a light turns GREEN, tap your phone.',
+    '3 taps each round. 9 total. Fastest average wins!'
+   ],footer:'3 TAPS PER ROUND - 9 TOTAL - DO NOT TAP EARLY'},
   gibberish:{title:'ELITE GIBBERISH',subtitle:'SAY IT OUT LOUD',theme:'gibberishShell',steps:[
    'Read the funny-sounding words aloud.',
    'Figure out the REAL phrase they sound like.',
    'Type your guess on your phone. Be quick!'
-  ],footer:'3 PHRASES · 50 SECONDS EACH · WRONG GUESSES COST POINTS'},
+  ],footer:'3 PHRASES - 50 SECONDS EACH - WRONG GUESSES COST POINTS'},
   brain_warp:{title:'ELITE BRAIN WARP',subtitle:'THINK OUTSIDE THE BOX',theme:'warpShell',steps:[
    'Study the word arrangement on the screen.',
    'Decode the hidden saying or phrase.',
    'Type the FULL answer on your phone. Faster is better!'
-  ],footer:'3 VISUAL PUZZLES · 50 SECONDS EACH · WRONG GUESSES COST POINTS'},
+  ],footer:'3 VISUAL PUZZLES - 50 SECONDS EACH - WRONG GUESSES COST POINTS'},
 };
 function miniInstructionScreen(kind,mode){
  const r=ELITE_MINI_RULES[kind]||ELITE_MINI_RULES.reaction_rush;
@@ -1213,7 +1689,7 @@ function miniInstructionScreen(kind,mode){
    <div class="miniRulesHeading">${esc(title)}</div>
    <div class="miniRulesSub">${esc(r.subtitle)}</div>
    <div class="miniRulesSteps">${r.steps.map((s,i)=>`<div class="miniRulesStep"><span class="miniRulesStepNum">${i+1}</span><span>${esc(s)}</span></div>`).join('')}</div>
-   <div class="miniRulesFooter">${esc(r.footer)} · STARTING SHORTLY</div>
+    <div class="miniRulesFooter">${esc(r.footer)} - STARTING SHORTLY</div>
   </div>
  </div>`;
 }
@@ -1284,7 +1760,7 @@ function renderMiniGame(state){
 
 
  // ==========================================================
- // REACTION RUSH: 3 ROUNDS × 3 RANDOM GO LIGHTS
+ // REACTION RUSH: 3 ROUNDS - 3 RANDOM GO LIGHTS
  // ==========================================================
  if(gameType==='reaction_rush'){
    setBackground(null);
@@ -1299,7 +1775,7 @@ function renderMiniGame(state){
    }else if(phase==='waiting'||phase==='question'){
      html=`<div class="networkShell miniGameShell reactionShell"><div class="miniWrap">
        <div class="networkKicker">ELITE REACTION RUSH</div>
-       <div class="reactionCounter">ROUND ${round}/3 &nbsp;•&nbsp; TAP ${cue%3+1}/3</div>
+       <div class="reactionCounter">ROUND ${round}/3 - TAP ${cue%3+1}/3</div>
        <div class="miniTitle" style="font-size:110px">${phase==='question'?'GO!':'WAIT...'}</div>
        <div class="reactionTvLights">${lamps}</div>
        <div class="miniSub">${phase==='question'?'TAP THE GREEN LIGHT ON YOUR PHONE':'WAIT FOR THE RANDOM GREEN LIGHT'}</div>
@@ -1413,12 +1889,12 @@ function renderMiniGame(state){
 </svg>
 
        <div class="gibKicker">ELITE BRAIN WARP</div>
-       <div class="gibRound">VISUAL PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
+       <div class="gibRound">VISUAL PUZZLE ${puzzleNumber} OF ${puzzleCount} - ${esc(difficulty)}</div>
        <div class="gibHud"><div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
        <div class="gibMetric points"><div class="number">${points.toLocaleString('en-US')}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div></div>
        ${brainWarpBoard(q.tiles)}
        <div class="gibInstruction">WHAT PHRASE DO YOU SEE? TYPE IT ON YOUR PHONE!</div>
-       <div class="gibBottom">50 SECONDS PER PUZZLE · WRONG GUESSES COST POINTS</div>
+       <div class="gibBottom">50 SECONDS PER PUZZLE - WRONG GUESSES COST POINTS</div>
      </div></div>`;
    }
    document.getElementById('overlay').innerHTML=html;
@@ -1443,11 +1919,11 @@ function renderMiniGame(state){
      const possiblePoints=100+Math.floor(seconds*10);
      html=`<div class="networkShell miniGameShell gibberishShell"><div class="miniWrap gibWrap gibPlay">
        <div class="gibKicker">${esc(miniTitle)}</div>
-       <div class="gibRound">PUZZLE ${puzzleNumber} OF ${puzzleCount} · ${esc(difficulty)}</div>
+       <div class="gibRound">PUZZLE ${puzzleNumber} OF ${puzzleCount} - ${esc(difficulty)}</div>
        <div class="gibHud"><div class="gibMetric"><div class="number" id="eliteMiniTvSeconds">${Math.ceil(seconds)}</div><div class="metricLabel">SECONDS LEFT</div></div>
        <div class="gibMetric points"><div class="number">${possiblePoints.toLocaleString('en-US')}</div><div class="metricLabel">MAX FIRST-TRY POINTS</div></div></div>
        <div class="gibPhrase"><span class="gibPhraseText">${esc(q.question||'')}</span></div>
-       <div class="gibInstruction">TYPE YOUR GUESS ON YOUR PHONE · KEEP TRYING!</div>
+       <div class="gibInstruction">TYPE YOUR GUESS ON YOUR PHONE - KEEP TRYING!</div>
        <div class="gibBottom">WRONG GUESSES COST POINTS</div>
      </div></div>`;
    }
@@ -1543,14 +2019,49 @@ function renderEliteInfoPanel(mode, network){
   ? 'SEE YOU SOON!'
   : (start?'STARTS AT '+start:'COMING UP SOON');
  document.getElementById('eliteInfoNext').textContent=isOffAir
-  ? (next.title?'NEXT: '+next.title+(start?' · '+start:''):'SPORTS · ELITE BLITZ · AFTER DARK · MINI-GAMES')
-  : 'SPORTS · ELITE BLITZ · AFTER DARK · MINI-GAMES';
+  ? (next.title?'NEXT: '+next.title+(start?' - '+start:''):'SPORTS - ELITE BLITZ - AFTER DARK - MINI-GAMES')
+  : 'SPORTS - ELITE BLITZ - AFTER DARK - MINI-GAMES';
 }
 
 function setEliteAdLane(active){
  document.getElementById('stage').classList.toggle('eliteAdLane',active);
  document.getElementById('eliteAdBanner').classList.toggle('hidden',!active);
 }
+// ELITE MINI JOIN CONTENT ROTATION 20261125
+// Presentation only. Original QR stays mounted, timer and scheduling untouched.
+function updateEliteMiniJoinRotation(panel,n,upcoming){
+ const remaining=Math.max(0,Number(upcoming.seconds_until)||0);
+ const mode=remaining>240?'join':remaining>210?'sponsor':
+            remaining>180?'daily_word':remaining>120?'join':
+            remaining>90?'sponsor':'join';
+ const promo=panel.querySelector('#eliteMiniJoinPromo');
+ const title=panel.querySelector('.networkTitle');
+ const next=panel.querySelector('.networkNext');
+ if(!promo||!title||!next)return;
+ const sponsorUrl=(n.filler_type==='sponsor'&&n.content_item?.url)?String(n.content_item.url):'';
+ if(panel.dataset.rotationMode===mode && (mode!=='sponsor'||panel.dataset.rotationSponsorUrl===sponsorUrl))return;
+ panel.dataset.rotationMode=mode;
+ panel.classList.toggle('eliteMiniJoinPromoActive',mode!=='join');
+ promo.hidden=mode==='join';
+ next.hidden=mode!=='join';
+ if(mode==='join'){
+  title.textContent='SCAN TO JOIN';
+  promo.innerHTML='';
+  return;
+ }
+ if(mode==='daily_word'){
+  title.textContent='ELITE DAILY WORD';
+  promo.innerHTML=`<div class="eliteMiniJoinPromoText">5 LETTERS - 6 GUESSES - FIRST LETTER FREE</div>
+   <div class="eliteMiniJoinPromoWord"><img src="/daily-word-qr.png" alt="Scan to play Elite Daily Word"><div>SCAN TO PLAY DAILY WORD<small>The mini-game starts when the countdown ends.</small></div></div>`;
+  return;
+ }
+ title.textContent='SPONSOR SPOTLIGHT';
+ panel.dataset.rotationSponsorUrl=sponsorUrl;
+ promo.innerHTML=sponsorUrl?
+  `<img class="eliteMiniJoinSponsorImage" src="${esc(sponsorUrl)}" alt="Elite Network sponsor">`:
+  `<div class="eliteMiniJoinHouseAd">YOUR BUSINESS COULD BE HERE<small>Advertise on Elite Network</small></div>`;
+}
+
 function renderChannel(state){
  const n=state.network||{};
  const type=n.filler_type||'did_you_know';
@@ -1691,7 +2202,7 @@ function renderChannel(state){
   // A discreet lineup banner, not a full-screen "Coming Up" loop.
    const next=n.next_event||{};
    if(next.title){
-     overlay.insertAdjacentHTML('beforeend',`<div style="position:absolute;left:19%;right:19%;bottom:7%;font-size:20px;font-weight:850;text-align:center;color:#dbefff;text-shadow:0 2px 8px #000;background:rgba(0,0,0,.65);border-radius:10px;padding:8px">NEXT: ${esc(next.title)} ${next.start_iso?' • '+formatNetworkClock(next.start_iso):''}</div>`);
+     overlay.insertAdjacentHTML('beforeend',`<div style="position:absolute;left:19%;right:19%;bottom:7%;font-size:20px;font-weight:850;text-align:center;color:#dbefff;text-shadow:0 2px 8px #000;background:rgba(0,0,0,.65);border-radius:10px;padding:8px">NEXT: ${esc(next.title)} ${next.start_iso?' - '+formatNetworkClock(next.start_iso):''}</div>`);
    }
    return;
  }
@@ -1709,7 +2220,7 @@ function renderChannel(state){
   }
 
   setBackground(null);
-  overlay.innerHTML=`<div id="eliteSponsorHouse"><div class="houseKicker">ELITE NETWORK • FOUNDING SPONSORS</div><div class="houseTitle">YOUR BUSINESS<br>COULD BE HERE</div><div class="houseSub">Reach customers at participating bars as we grow.</div><img src="${document.querySelector('#eliteAdBanner img').src}" alt="Advertising QR code"><div class="houseScan">SCAN FOR ADVERTISING RATES</div><div class="houseSub">${networkNextLine(n)}</div></div>`;
+  overlay.innerHTML=`<div id="eliteSponsorHouse"><div class="houseKicker">ELITE NETWORK - FOUNDING SPONSORS</div><div class="houseTitle">YOUR BUSINESS<br>COULD BE HERE</div><div class="houseSub">Reach customers at participating bars as we grow.</div><img src="${document.querySelector('#eliteAdBanner img').src}" alt="Advertising QR code"><div class="houseScan">SCAN FOR ADVERTISING RATES</div><div class="houseSub">${networkNextLine(n)}</div></div>`;
 
   return;
  }
@@ -1726,7 +2237,7 @@ function renderChannel(state){
  if(type==='daily_word'){
   setBackground(null);
   if(!document.getElementById('eliteDailyWordTv')){
-   overlay.innerHTML=`<div id="eliteDailyWordTv"><header><div class="dwTag">ELITE NETWORK ORIGINALS</div><div class="dwTitle">ELITE DAILY WORD</div><div class="dwSub">5 LETTERS • 6 GUESSES • FIRST LETTER FREE</div></header><div class="dwBody"><div class="dwRules"><div><span class="dwTile dwGreen">A</span> Right letter, right spot</div><div><span class="dwTile dwYellow">B</span> Right letter, wrong spot</div><div><span class="dwTile dwGray">C</span> Letter not in word</div></div><div class="dwBoardWrap"><div class="dwBoard" aria-label="Example puzzle board, not today's answer">${Array.from({length:30},(_,i)=>i%5===0?'<span class="dwCell dwGreen">S</span>':'<span class="dwCell"></span>').join('')}</div><div class="dwExample">EXAMPLE BOARD • PLAY ON YOUR PHONE</div></div><div class="dwRight"><img src="/daily-word-qr.png" alt="Scan to play Elite Daily Word"><div class="dwScan">SCAN TO PLAY</div><div class="dwFree">FREE • NEW WORD DAILY</div></div></div></div>`;
+   overlay.innerHTML=`<div id="eliteDailyWordTv"><header><div class="dwTag">ELITE NETWORK ORIGINALS</div><div class="dwTitle">ELITE DAILY WORD</div><div class="dwSub">5 LETTERS - 6 GUESSES - FIRST LETTER FREE</div></header><div class="dwBody"><div class="dwRules"><div><span class="dwTile dwGreen">A</span> Right letter, right spot</div><div><span class="dwTile dwYellow">B</span> Right letter, wrong spot</div><div><span class="dwTile dwGray">C</span> Letter not in word</div></div><div class="dwBoardWrap"><div class="dwBoard" aria-label="Example puzzle board, not today's answer">${Array.from({length:30},(_,i)=>i%5===0?'<span class="dwCell dwGreen">S</span>':'<span class="dwCell"></span>').join('')}</div><div class="dwExample">EXAMPLE BOARD - PLAY ON YOUR PHONE</div></div><div class="dwRight"><img src="/daily-word-qr.png" alt="Scan to play Elite Daily Word"><div class="dwScan">SCAN TO PLAY</div><div class="dwFree">FREE - NEW WORD DAILY</div></div></div></div>`;
   }
   return;
  }
@@ -1946,7 +2457,7 @@ function renderNetworkProgram(state){
        <div class="networkSub" id="eliteMiniJoinEvent"></div>
        <div class="comingTime" id="eliteMiniJoinCountdown"></div>
        <div class="networkSub" id="eliteMiniJoinTeams"></div>
-       <div class="networkNext">Scan now to play when the countdown ends!</div>
+       <div class="networkNext">Scan now to play when the countdown ends!</div><div class="eliteMiniJoinPromo" id="eliteMiniJoinPromo" hidden></div>
       </div>
       <div class="eliteMiniJoinQr">
        <img src="/join-qr.png" alt="Scan to join Elite Network">
@@ -1981,6 +2492,7 @@ document.getElementById('eliteMiniJoinEvent').textContent=upcoming.title||'ELITE
   const teams=Number(state.team_count||0);
   document.getElementById('eliteMiniJoinTeams').textContent=
    `${teams} TEAM${teams===1?'':'S'} REGISTERED`;
+   updateEliteMiniJoinRotation(panel,n,upcoming);
   return true;
  }
  if(kind==='mini_game'){
